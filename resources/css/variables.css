@@ -1,0 +1,155 @@
+/**
+ * CSS Variables for Laravel Admin Theme
+ * Contains all color variables and theme configurations
+ */
+
+:root {
+    /* Primary colors with proper contrast ratios (WCAG AA compliant) */
+    --color-primary: #1565c0;        /* Darker blue for better contrast */
+    --color-primary-dark: #0d47a1;   /* Even darker for hover */
+    --color-primary-light: #1976d2;
+    
+    --color-success: #2e7d32;        /* Darker green for better contrast */
+    --color-success-dark: #1b5e20;   /* Even darker for hover */
+    --color-success-light: #388e3c;
+    
+    --color-warning: #ef6c00;        /* Darker orange for better contrast */
+    --color-warning-dark: #e65100;   /* Even darker for hover */
+    --color-warning-light: #ff9800;
+    
+    --color-info: #0277bd;           /* Darker cyan for better contrast */
+    --color-info-dark: #01579b;     /* Even darker for hover */
+    --color-info-light: #0288d1;
+    
+    --color-danger: #c62828;         /* Darker red for better contrast */
+    --color-danger-dark: #b71c1c;    /* Even darker for hover */
+    --color-danger-light: #d32f2f;
+    
+    --color-secondary: #424242;      /* Darker gray for better contrast */
+    --color-secondary-dark: #212121; /* Even darker for hover */
+    --color-secondary-light: #616161;
+    
+    /* Text colors */
+    --color-text-primary: #212121;   /* Slightly darker for better readability */
+    --color-text-secondary: #757575; /* Better contrast secondary text */
+    --color-text-white: #ffffff;
+    --color-text-light: #f5f5f5;
+    
+    /* Background colors */
+    --color-bg-light: #fafafa;       /* Slightly different light background */
+    --color-bg-white: #ffffff;
+    --color-bg-dark: #212121;        /* Consistent with text primary */
+}
+
+/* Override Bootstrap theme colors for better contrast */
+.bg-primary {
+    background-color: var(--color-primary) !important;
+    color: var(--color-text-white) !important;
+}
+
+.bg-success {
+    background-color: var(--color-success) !important;
+    color: var(--color-text-white) !important;
+}
+
+.bg-warning {
+    background-color: var(--color-warning) !important;
+    color: var(--color-text-white) !important;
+}
+
+.bg-info {
+    background-color: var(--color-info) !important;
+    color: var(--color-text-white) !important;
+}
+
+.bg-danger {
+    background-color: var(--color-danger) !important;
+    color: var(--color-text-white) !important;
+}
+
+.bg-secondary {
+    background-color: var(--color-secondary) !important;
+    color: var(--color-text-white) !important;
+}
+
+/* Text colors for better contrast */
+.text-primary {
+    color: var(--color-primary) !important;
+}
+
+.text-success {
+    color: var(--color-success) !important;
+}
+
+.text-warning {
+    color: var(--color-warning) !important;
+}
+
+.text-info {
+    color: var(--color-info) !important;
+}
+
+.text-danger {
+    color: var(--color-danger) !important;
+}
+
+.text-secondary {
+    color: var(--color-secondary) !important;
+}
+
+/* Progress bar colors with proper contrast */
+.progress-bar.bg-primary {
+    background-color: var(--color-primary) !important;
+}
+
+.progress-bar.bg-success {
+    background-color: var(--color-success) !important;
+}
+
+.progress-bar.bg-warning {
+    background-color: var(--color-warning) !important;
+}
+
+.progress-bar.bg-info {
+    background-color: var(--color-info) !important;
+}
+
+.progress-bar.bg-danger {
+    background-color: var(--color-danger) !important;
+}
+
+/* Accessibility utility classes for high contrast */
+.text-high-contrast {
+    color: var(--color-text-primary) !important;
+    font-weight: 500;
+}
+
+.bg-high-contrast {
+    background-color: var(--color-text-primary) !important;
+    color: var(--color-text-white) !important;
+}
+
+/* Border utilities with proper contrast */
+.border-primary {
+    border-color: var(--color-primary) !important;
+}
+
+.border-success {
+    border-color: var(--color-success) !important;
+}
+
+.border-warning {
+    border-color: var(--color-warning) !important;
+}
+
+.border-info {
+    border-color: var(--color-info) !important;
+}
+
+.border-danger {
+    border-color: var(--color-danger) !important;
+}
+
+.border-secondary {
+    border-color: var(--color-secondary) !important;
+}
