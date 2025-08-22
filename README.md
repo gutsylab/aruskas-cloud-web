@@ -1,171 +1,318 @@
-# Laravel Bootstrap 5 Admin Dashboard dengan Sidebar 3 Level
+# GutsyMail API 📧
 
-![Laravel](https://img.shields.io/badge/Laravel-12.19.3-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
-![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3.3-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white)
-![Status](https://img.shields.io/badge/Status-Ready-28a745?style=for-the-badge)
+![Laravel](https://img.shields.io/badge/Laravel-11.x-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
+![API](https://img.shields.io/badge/API-Mail_Service-00D9FF?style=for-the-badge&logo=api&logoColor=white)
+![Status](https://img.shields.io/badge/Status-Active-28a745?style=for-the-badge)
 
 ## 🚀 Deskripsi
 
-Project Laravel yang telah dikonversi dari TailwindCSS ke Bootstrap 5 dengan **sidebar responsive** yang mendukung **menu 3 level** (multi-level collapse navigation). Sidebar ini sangat cocok untuk aplikasi admin dashboard yang memerlukan navigasi hierarkis yang kompleks.
+GutsyMail API adalah aplikasi Laravel yang menyediakan layanan pengiriman email melalui REST API. Aplikasi ini memungkinkan client untuk mengirim email baik secara langsung maupun melalui sistem antrian (queue), dengan sistem tracking status pengiriman yang lengkap.
 
 ## ✨ Fitur Utama
 
-### 🎯 Sidebar 3 Level
-- **Level 1**: Menu utama (Dashboard, User Management, dll.)
-- **Level 2**: Sub menu dengan collapse animation
-- **Level 3**: Sub-sub menu dengan styling berbeda
-- **Active State**: Highlight otomatis untuk menu yang sedang aktif
-- **Icons**: Menggunakan Font Awesome 6.5.1
+- 📤 **Pengiriman Email Queue**: Mengirim email melalui sistem antrian untuk performa optimal
+- ⚡ **Pengiriman Email Langsung**: Mengirim email secara instant tanpa antrian
+- 📊 **Status Tracking**: Memantau status pengiriman email secara real-time
+- 🔐 **API Key Authentication**: Sistem autentikasi yang aman dengan API Key
+- 📈 **Multiple Email Providers**: Dukungan untuk berbagai provider email
+- 🚀 **High Performance**: Dioptimalkan untuk throughput tinggi
 
-### 📱 Responsive Design
-- **Desktop**: Sidebar fixed di sisi kiri (280px width)
-- **Mobile**: Sidebar tersembunyi, toggle dengan button
-- **Auto-hide**: Otomatis tersembunyi saat klik di luar area (mobile)
-- **Smooth Animation**: Transisi halus untuk semua interaksi
+## � API Endpoints
 
-## 🚀 Quick Start
+### 1. 📤 Send Email (Queue)
+```
+POST /api/send
+```
+Mengirim email melalui sistem antrian untuk memastikan performa aplikasi tetap optimal.
 
-### 1. Install Dependencies
+**Headers:**
+```
+Content-Type: application/json
+X-Api-Key: YOUR_API_KEY
+```
+
+**Body:**
+```json
+{
+  "to": "recipient@example.com",
+  "subject": "Subject Email",
+  "message": "Isi pesan email",
+  "from_name": "Nama Pengirim",
+  "from_email": "sender@example.com"
+}
+```
+
+**Response:**
+```json
+{
+  "status": "success",
+  "message": "Email has been queued for sending",
+  "message_id": "uuid-message-id",
+  "queue_status": "pending"
+}
+```
+
+### 2. ⚡ Send Email (Immediate)
+```
+POST /api/send-now
+```
+Mengirim email secara langsung tanpa melalui sistem antrian.
+
+**Headers:**
+```
+Content-Type: application/json
+X-Api-Key: YOUR_API_KEY
+```
+
+**Body:**
+```json
+{
+  "to": "recipient@example.com",
+  "subject": "Subject Email",
+  "message": "Isi pesan email",
+  "from_name": "Nama Pengirim",
+  "from_email": "sender@example.com"
+}
+```
+
+**Response:**
+```json
+{
+  "status": "success",
+  "message": "Email sent successfully",
+  "message_id": "uuid-message-id",
+  "sent_at": "2025-01-22T10:30:00Z"
+}
+```
+
+### 3. � Check Email Status
+```
+GET /api/messages/{id}
+```
+Melihat status email yang telah dikirim berdasarkan message ID.
+
+**Headers:**
+```
+X-Api-Key: YOUR_API_KEY
+```
+
+**Response:**
+```json
+{
+  "message_id": "uuid-message-id",
+  "status": "sent|pending|failed|delivered",
+  "to": "recipient@example.com",
+  "subject": "Subject Email",
+  "sent_at": "2025-01-22T10:30:00Z",
+  "delivered_at": "2025-01-22T10:31:15Z",
+  "provider": "smtp",
+  "error_message": null
+}
+```
+
+## 🔧 Installation & Setup
+
+### 1. Clone Repository
+```bash
+git clone https://github.com/iansaimima/gutsymail-api.git
+cd gutsymail-api
+```
+
+### 2. Install Dependencies
 ```bash
 composer install
 npm install
 ```
 
-### 2. Build Assets
-```bash
-npm run build
-```
-
-### 3. Setup Environment
+### 3. Environment Setup
 ```bash
 cp .env.example .env
 php artisan key:generate
 ```
 
-### 4. Run Server
+### 4. Database Setup
 ```bash
+php artisan migrate
+php artisan db:seed
+```
+
+### 5. Queue Configuration
+Pastikan konfigurasi queue di `.env`:
+```env
+QUEUE_CONNECTION=database
+# atau redis untuk performa lebih baik
+# QUEUE_CONNECTION=redis
+```
+
+### 6. Start Services
+```bash
+# Start web server
 php artisan serve
-# atau gunakan script yang disediakan
+
+# Start queue worker (di terminal terpisah)
+php artisan queue:work
+
+# Atau gunakan script yang disediakan
 ./start-server.sh
 ```
 
-### 5. Akses Aplikasi
-- **Homepage**: `http://localhost:8000`
-- **Admin Dashboard**: `http://localhost:8000/admin/dashboard`
-- **User Management**: `http://localhost:8000/admin/users`
+## � API Key Management
 
-## 🗂️ Struktur Menu Sidebar
+### Membuat API Key untuk Client Baru
+```bash
+php artisan apikey:issue [nama-client]
+```
 
-### 📊 Dashboard
-- Link langsung ke dashboard utama
+**Contoh:**
+```bash
+php artisan apikey:issue acme-company
+```
 
-### 👥 User Management
-- **All Users** → User listing page
-- **Roles & Permissions** (Level 2)
-  - Manage Roles (Level 3)
-  - Manage Permissions (Level 3)
-  - Assign Roles (Level 3)
-- **User Profiles** → Profile management
+**Output:**
+```
+API Key berhasil dibuat untuk client: acme-company
+API Key: ak_1234567890abcdef1234567890abcdef
+```
 
-### 📝 Content Management  
-- **Posts** (Level 2)
-  - All Posts (Level 3)
-  - Add New Post (Level 3)
-  - Categories (Level 3)
-  - Tags (Level 3)
-- **Pages** (Level 2)
-  - All Pages (Level 3)
-  - Add New Page (Level 3)
-  - Page Templates (Level 3)
-- **Media Library** → File management
+### Menggunakan API Key
+Sertakan API Key dalam header setiap request:
+```
+X-Api-Key: ak_1234567890abcdef1234567890abcdef
+```
 
-### 🛒 E-Commerce
-- **Products** (Level 2)
-  - All Products (Level 3)
-  - Add Product (Level 3)
-  - Product Categories (Level 3)
-  - Inventory (Level 3)
-- **Orders** → Order management
-- **Customers** → Customer data
+## 📊 Status Email
 
-### 📈 Reports & Analytics
-- **Sales Reports** → Sales analytics
-- **User Analytics** → User behavior
-- **Custom Reports** (Level 2)
-  - Report Builder (Level 3)
-  - Saved Reports (Level 3)
-  - Scheduled Reports (Level 3)
+| Status | Deskripsi |
+|--------|-----------|
+| `pending` | Email dalam antrian, belum diproses |
+| `processing` | Email sedang dalam proses pengiriman |
+| `sent` | Email berhasil dikirim |
+| `delivered` | Email berhasil diterima recipient |
+| `failed` | Email gagal dikirim |
+| `bounced` | Email ditolak oleh server penerima |
 
-### ⚙️ Settings
-- **General Settings** → App configuration
-- **System Settings** (Level 2)
-  - Email Configuration (Level 3)
-  - Cache Settings (Level 3)
-  - Backup Settings (Level 3)
-- **Security** → Security settings
+## 🔄 Queue Management
 
-## 📱 Browser Support
+### Memantau Queue
+```bash
+# Lihat jumlah job dalam queue
+php artisan queue:size
 
-- ✅ Chrome 90+
-- ✅ Firefox 88+
-- ✅ Safari 14+
-- ✅ Edge 90+
+# Monitor queue secara real-time
+php artisan queue:monitor
+
+# Restart queue workers
+php artisan queue:restart
+```
+
+### Failed Jobs
+```bash
+# Lihat failed jobs
+php artisan queue:failed
+
+# Retry failed job
+php artisan queue:retry {id}
+
+# Retry semua failed jobs
+php artisan queue:retry all
+```
+
+## 📈 Monitoring & Logging
+
+### Log Files
+- **Application Log**: `storage/logs/laravel.log`
+- **Email Log**: `storage/logs/email.log`
+- **Queue Log**: `storage/logs/queue.log`
+
+### Performance Monitoring
+```bash
+# Monitor memory usage
+php artisan queue:work --memory=512
+
+# Monitor dengan timeout
+php artisan queue:work --timeout=60
+```
+
+## 🛠️ Development
+
+### Running Tests
+```bash
+# Run semua tests
+php artisan test
+
+# Run specific test
+php artisan test --filter EmailSendingTest
+```
+
+### Code Quality
+```bash
+# PHP CS Fixer
+./vendor/bin/php-cs-fixer fix
+
+# PHPStan
+./vendor/bin/phpstan analyse
+```
+
+## 📚 Response Codes
+
+| Code | Status | Deskripsi |
+|------|--------|-----------|
+| 200 | OK | Request berhasil |
+| 201 | Created | Email berhasil dibuat dan dikirim/diqueue |
+| 400 | Bad Request | Parameter request tidak valid |
+| 401 | Unauthorized | API Key tidak valid atau tidak ada |
+| 404 | Not Found | Message ID tidak ditemukan |
+| 422 | Unprocessable Entity | Validasi gagal |
+| 429 | Too Many Requests | Rate limit terlampaui |
+| 500 | Internal Server Error | Error server |
+
+## 🔧 Configuration
+
+### Email Providers
+Edit file `config/mail.php` untuk mengkonfigurasi provider email:
+
+```php
+'mailers' => [
+    'smtp' => [
+        'transport' => 'smtp',
+        'host' => env('MAIL_HOST', 'smtp.mailgun.org'),
+        'port' => env('MAIL_PORT', 587),
+        'encryption' => env('MAIL_ENCRYPTION', 'tls'),
+        'username' => env('MAIL_USERNAME'),
+        'password' => env('MAIL_PASSWORD'),
+    ],
+],
+```
+
+### Rate Limiting
+Edit `config/services.php` untuk rate limiting:
+
+```php
+'rate_limiting' => [
+    'emails_per_minute' => 60,
+    'emails_per_hour' => 1000,
+],
+```
+
+## 🤝 Contributing
+
+1. Fork repository
+2. Buat feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push ke branch (`git push origin feature/amazing-feature`)
+5. Buat Pull Request
 
 ## 📄 License
 
-Open source - silakan digunakan untuk project apapun.
+Project ini menggunakan [MIT License](LICENSE).
+
+## 📞 Support
+
+Untuk support dan pertanyaan:
+- 📧 Email: support@gutsylab.com
+- 🐛 Issues: [GitHub Issues](https://github.com/iansaimima/gutsymail-api/issues)
+- 📖 Documentation: [Wiki](https://github.com/iansaimima/gutsymail-api/wiki)
 
 ---
 
-**Happy Coding!** 🎉
-
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
-
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
-
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+**Developed with ❤️ by GutsyLab Team**
