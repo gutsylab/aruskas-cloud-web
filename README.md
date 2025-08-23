@@ -1,6 +1,6 @@
 # GutsyMail API 📧
 
-![Laravel](https://img.shields.io/badge/Laravel-11.x-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
+![Laravel](https://img.shields.io/badge/Laravel-12.x-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
 ![API](https://img.shields.io/badge/API-Mail_Service-00D9FF?style=for-the-badge&logo=api&logoColor=white)
 ![Status](https://img.shields.io/badge/Status-Active-28a745?style=for-the-badge)
 
