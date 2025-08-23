@@ -24,6 +24,7 @@ class EmailSendController extends Controller
             'user_id' => $client->id,
             'email_provider_id' => $req->provider_id,
             'from_email' => $req->from,
+            'from_name' => $req->from_name ?? '',
             'to' => $req->to,
             'cc' => $req->cc ?? [],
             'bcc' => $req->bcc ?? [],
