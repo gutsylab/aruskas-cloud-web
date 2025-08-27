@@ -54,6 +54,18 @@ php artisan migrate:global
 
 # Atau dengan fresh (drop all tables)
 php artisan migrate:global --fresh
+
+# Cek status migration global
+php artisan migrate:global-status
+
+# Rollback migration global
+php artisan migrate:global-rollback
+
+# Rollback migration global dengan jumlah step tertentu
+php artisan migrate:global-rollback --step=3
+
+# Reset semua migration global (rollback all)
+php artisan migrate:global-reset
 ```
 
 ### 5. Buat Subscription Plans
@@ -127,8 +139,19 @@ Semua API endpoint yang menggunakan middleware `tenant` akan secara otomatis ter
 
 ### 1. Menambah Model Tenant
 
-Untuk model yang akan menggunakan database tenant:
+Gunakan command khusus untuk model tenant:
 
+```bash
+# Buat model tenant dengan migration
+php artisan make:model-tenant Product -m
+
+# Model akan otomatis:
+# - Menggunakan trait BelongsToTenant
+# - Migration disimpan di database/migrations/tenant/
+# - Menggunakan koneksi database tenant
+```
+
+Model yang dihasilkan:
 ```php
 <?php
 
@@ -145,16 +168,47 @@ class Product extends Model
 }
 ```
 
-### 2. Menambah Migration Tenant
+### 2. Menambah Model Global
 
-Letakkan migrations tenant di folder `database/migrations/tenant/`:
+Gunakan command khusus untuk model global:
 
 ```bash
-php artisan make:migration create_products_table
-# Pindahkan file migration ke database/migrations/tenant/
+# Buat model global dengan migration
+php artisan make:model-global GlobalConfig -m
+
+# Model akan otomatis:
+# - Disimpan di namespace App\Models\Global\
+# - Migration disimpan di database/migrations/global/
+# - Menggunakan koneksi database global
 ```
 
-### 3. Middleware Custom
+Model yang dihasilkan:
+```php
+<?php
+
+namespace App\Models\Global;
+
+use Illuminate\Database\Eloquent\Model;
+
+class GlobalConfig extends Model
+{
+    // Model menggunakan koneksi database global
+}
+```
+
+### 3. Menambah Migration Manual
+
+Jika hanya ingin membuat migration tanpa model:
+
+```bash
+# Migration global
+php artisan make:migration-global CreateGlobalSettingsTable --create=global_settings
+
+# Migration tenant
+php artisan make:migration-tenant CreateProductCategoriesTable --create=product_categories
+```
+
+### 4. Middleware Custom
 
 Untuk route yang perlu akses khusus:
 
@@ -164,7 +218,7 @@ Route::middleware(['tenant', 'auth'])->group(function () {
 });
 ```
 
-### 4. Mengakses Tenant Data
+### 5. Mengakses Tenant Data
 
 Dalam controller atau middleware:
 
@@ -179,27 +233,95 @@ public function index(Request $request)
 }
 ```
 
-## Commands Available
+## ✅ Migration & Model Management Lengkap
+
+### 🎯 **Membuat Migration & Model**
+
+| Command | Deskripsi | Contoh |
+|---------|-----------|---------|
+| `make:migration-global` | Buat migration global | `php artisan make:migration-global CreateGlobalSettingsTable --create=global_settings` |
+| `make:migration-tenant` | Buat migration tenant | `php artisan make:migration-tenant CreateProductsTable --create=products` |
+| `make:model-global` | Buat model global + migration | `php artisan make:model-global GlobalSetting -m` |
+| `make:model-tenant` | Buat model tenant + migration | `php artisan make:model-tenant Product -mcr` |
+
+### 🎯 **Migration Database Global**
+
+| Command | Deskripsi | Contoh |
+|---------|-----------|---------|
+| `migrate:global` | Jalankan migration global | `php artisan migrate:global` |
+| `migrate:global --fresh` | Drop tables + migrate global | `php artisan migrate:global --fresh` |
+| `migrate:global-status` | Status migration global | `php artisan migrate:global-status` |
+| `migrate:global-rollback` | Rollback migration global | `php artisan migrate:global-rollback` |
+| `migrate:global-rollback --step=N` | Rollback N migration | `php artisan migrate:global-rollback --step=3` |
+| `migrate:global-reset` | Reset semua migration | `php artisan migrate:global-reset` |
+
+### 🎯 **Migration Database Tenant**
+
+| Command | Deskripsi | Contoh |
+|---------|-----------|---------|
+| `tenant:migrate TENANT_ID` | Migrate satu tenant | `php artisan tenant:migrate 2B1GWBXL` |
+| `tenant:migrate --all` | Migrate semua tenant | `php artisan tenant:migrate --all` |
+| `tenant:migrate-status TENANT_ID` | Status satu tenant | `php artisan tenant:migrate-status 2B1GWBXL` |
+| `tenant:migrate-status --all` | Status semua tenant | `php artisan tenant:migrate-status --all` |
+| `tenant:migrate-rollback TENANT_ID` | Rollback satu tenant | `php artisan tenant:migrate-rollback 2B1GWBXL` |
+| `tenant:migrate-rollback --all` | Rollback semua tenant | `php artisan tenant:migrate-rollback --all` |
+
+### 🚀 **Workflow Development**
+
+#### Membuat Model & Migration Global
+```bash
+# Buat model global dengan migration
+php artisan make:model-global GlobalSetting -m
+
+# Buat model global dengan controller dan resource
+php artisan make:model-global User -mcr
+
+# Buat model global dengan semua file pendukung
+php artisan make:model-global Config --all
+
+# Jalankan migration global
+php artisan migrate:global
+```
+
+#### Membuat Model & Migration Tenant
+```bash
+# Buat model tenant dengan migration
+php artisan make:model-tenant Product -m
+
+# Buat model tenant dengan controller dan resource  
+php artisan make:model-tenant Order -mcr
+
+# Buat model tenant dengan semua file pendukung
+php artisan make:model-tenant Invoice --all
+
+# Jalankan migration untuk semua tenant
+php artisan tenant:migrate --all
+```
+
+#### Fitur Otomatis
+- **Model Global**: Otomatis disimpan di namespace `App\Models\Global\`
+- **Model Tenant**: Otomatis mendapat trait `BelongsToTenant`
+- **Migration Global**: Otomatis ke folder `database/migrations/global/`
+- **Migration Tenant**: Otomatis ke folder `database/migrations/tenant/`
+
+### 🚀 **Workflow Contoh**
 
 ```bash
-# Tenant management
-php artisan tenant:create "Merchant Name" "admin@email.com" --plan=basic
-php artisan tenant:drop merchant-slug
+# Setup aplikasi baru
+php artisan migrate:global --fresh --seed
+php artisan tenant:create "My Company" admin@test.com --plan=free
 
-# Tenant prefix management
-php artisan tenant:prefix show                    # Show current prefix configuration
-php artisan tenant:prefix list                    # List all tenant databases
-php artisan tenant:prefix change --new-prefix=company_ --dry-run
+# Cek status semua database
+php artisan migrate:global-status
+php artisan tenant:migrate-status --all
 
-# Global database
+# Update aplikasi (ada migration baru)
 php artisan migrate:global
-php artisan migrate:global --fresh
+php artisan tenant:migrate --all
 
-# Subscription plans
-php artisan plan:create "Plan Name" 29.99 --cycle=monthly --trial=14
-
-# Tenant migrations
-php artisan migrate --database=tenant_merchant-slug --path=database/migrations/tenant
+# Rollback jika ada masalah
+php artisan migrate:global-rollback --step=1
+php artisan tenant:migrate-rollback --all --step=1
 ```
 
 ## Struktur File
@@ -237,7 +359,113 @@ routes/
 └── api.php            # API routes
 ```
 
+## Commands Available
+
+### Development Commands
+```bash
+# Membuat migration & model global
+php artisan make:migration-global CreateGlobalSettingsTable --create=global_settings
+php artisan make:model-global GlobalSetting -m
+
+# Membuat migration & model tenant  
+php artisan make:migration-tenant CreateProductsTable --create=products
+php artisan make:model-tenant Product -mcr
+
+# Opsi yang tersedia untuk make:model-*:
+# -m, --migration    : Buat migration file
+# -c, --controller   : Buat controller  
+# -r, --resource     : Buat resource controller
+# -f, --factory      : Buat factory
+# -s, --seeder       : Buat seeder
+# --requests         : Buat form request classes
+# -a, --all          : Buat semua file di atas
+```
+
+### Tenant Management
+```bash
+# Membuat tenant baru
+php artisan tenant:create "Merchant Name" "admin@email.com" --plan=basic
+
+# Drop tenant (belum tersedia - manual delete dari database)
+```
+
+### Global Database
+```bash
+php artisan migrate:global                      # Migrate global database
+php artisan migrate:global --fresh              # Fresh migrate global
+php artisan migrate:global-status               # Status migration global
+php artisan migrate:global-rollback             # Rollback global migration
+php artisan migrate:global-rollback --step=3    # Rollback dengan jumlah step
+php artisan migrate:global-reset                # Reset semua migration global
+```
+
+### Tenant Database
+```bash
+php artisan tenant:migrate TENANT_ID            # Migrate satu tenant
+php artisan tenant:migrate --all                # Migrate semua tenant
+php artisan tenant:migrate TENANT_ID --fresh    # Fresh migrate tenant
+php artisan tenant:migrate-status TENANT_ID     # Status migration tenant
+php artisan tenant:migrate-status --all         # Status semua tenant
+php artisan tenant:migrate-rollback TENANT_ID   # Rollback tenant migration
+php artisan tenant:migrate-rollback --all       # Rollback semua tenant
+```
+
+### Subscription Plans
+```bash
+php artisan plan:create "Plan Name" 29.99 --cycle=monthly --trial=14
+```
+
+### Development Utilities
+```bash
+php artisan tenant:prefix show                  # Show current prefix configuration
+php artisan tenant:prefix list                  # List all tenant databases
+```
+
 ## Troubleshooting
+
+### Migration Issues
+
+#### Global Database
+```bash
+# Cek status migration global
+php artisan migrate:global-status
+
+# Jika ada migration yang belum berjalan
+php artisan migrate:global
+
+# Jika perlu rollback
+php artisan migrate:global-rollback --step=1
+
+# Jika database corrupt, reset dan migrate ulang
+php artisan migrate:global-reset
+php artisan migrate:global --seed
+```
+
+#### Tenant Database
+```bash
+# Cek status migration semua tenant
+php artisan tenant:migrate-status --all
+
+# Migrate tenant yang belum up-to-date
+php artisan tenant:migrate TENANT_ID
+
+# Jika ada masalah dengan satu tenant
+php artisan tenant:migrate-rollback TENANT_ID --step=1
+php artisan tenant:migrate TENANT_ID
+
+# Migrate semua tenant sekaligus
+php artisan tenant:migrate --all
+```
+
+#### Error: "Database does not exist"
+```bash
+# Pastikan tenant sudah dibuat dengan benar
+php artisan tenant:create "Company Name" admin@test.com --plan=free
+
+# Atau cek daftar tenant yang ada
+php artisan tinker
+>>> App\Models\Global\Merchant::all(['tenant_id', 'name', 'database_name']);
+```
 
 ### Database Connection Issues
 1. Pastikan konfigurasi database di `.env` sudah benar
@@ -249,9 +477,9 @@ routes/
 2. Pastikan subdomain atau parameter tenant sudah benar
 3. Periksa status merchant (harus aktif)
 
-### Migration Issues
+### Migration Issues (Legacy)
 1. Untuk global: `php artisan migrate:global`
-2. Untuk tenant: `php artisan migrate --database=tenant_slug --path=database/migrations/tenant`
+2. Untuk tenant: `php artisan tenant:migrate TENANT_ID` atau `php artisan tenant:migrate --all`
 
 ## Security Considerations
 
