@@ -23,6 +23,9 @@ class TenantResolver
      */
     public function handle(Request $request, Closure $next): Response
     {
+        // Get tenant_id from route parameter first
+        $tenantId = $request->route('tenant_id');
+        
         // Try to resolve tenant from path
         $tenant = $this->tenantService->getCurrentTenant();
 
@@ -45,6 +48,11 @@ class TenantResolver
         
         // Make tenant available in the request
         $request->attributes->set('tenant', $tenant);
+        
+        // Ensure tenant_id is available in route parameters for URL generation
+        if (!$tenantId) {
+            $request->route()->setParameter('tenant_id', $tenant->tenant_id);
+        }
         
         return $next($request);
     }

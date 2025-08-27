@@ -21,10 +21,17 @@ Route::prefix('{tenant_id}')->middleware(['tenant'])->group(function () {
 
     // Root tenant route - redirect to dashboard if authenticated
     Route::get('/', function () {
-        if (Auth::check()) {
-            return redirect()->route('dashboard', ['tenant_id' => request()->route('tenant_id')]);
+        $tenant = request()->attributes->get('tenant');
+        $tenantId = $tenant ? $tenant->tenant_id : request()->route('tenant_id');
+        
+        if (!$tenantId) {
+            abort(404, 'Tenant not found');
         }
-        return redirect()->route('login', ['tenant_id' => request()->route('tenant_id')]);
+        
+        if (Auth::check()) {
+            return redirect()->route('dashboard', ['tenant_id' => $tenantId]);
+        }
+        return redirect()->route('login', ['tenant_id' => $tenantId]);
     })->name('tenant.home');
 
     // Guest routes (not authenticated)
