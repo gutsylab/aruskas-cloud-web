@@ -20,6 +20,32 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Global Database Connection
+    |--------------------------------------------------------------------------
+    |
+    | This connection is used for global data such as merchants, 
+    | subscription plans, and merchant subscriptions.
+    |
+    */
+
+    'global' => env('DB_GLOBAL_CONNECTION', 'global_mysql'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Tenant Database Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configuration for tenant database naming and prefixes.
+    |
+    */
+
+    'tenant' => [
+        'prefix' => env('DB_TENANT_PREFIX', 'tenant_'),
+        'separator' => env('DB_TENANT_SEPARATOR', '_'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Database Connections
     |--------------------------------------------------------------------------
     |
@@ -40,6 +66,46 @@ return [
             'busy_timeout' => null,
             'journal_mode' => null,
             'synchronous' => null,
+        ],
+
+        'global_mysql' => [
+            'driver' => 'mysql',
+            'url' => env('DB_GLOBAL_URL'),
+            'host' => env('DB_GLOBAL_HOST', '127.0.0.1'),
+            'port' => env('DB_GLOBAL_PORT', '3306'),
+            'database' => env('DB_GLOBAL_DATABASE', 'gutsypos_global'),
+            'username' => env('DB_GLOBAL_USERNAME', 'root'),
+            'password' => env('DB_GLOBAL_PASSWORD', ''),
+            'unix_socket' => env('DB_GLOBAL_SOCKET', ''),
+            'charset' => env('DB_CHARSET', 'utf8mb4'),
+            'collation' => env('DB_COLLATION', 'utf8mb4_unicode_ci'),
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ],
+
+        'tenant_mysql' => [
+            'driver' => 'mysql',
+            'url' => env('DB_TENANT_URL'),
+            'host' => env('DB_TENANT_HOST', '127.0.0.1'),
+            'port' => env('DB_TENANT_PORT', '3306'),
+            'database' => '', // Will be set dynamically
+            'username' => env('DB_TENANT_USERNAME', 'root'),
+            'password' => env('DB_TENANT_PASSWORD', ''),
+            'unix_socket' => env('DB_TENANT_SOCKET', ''),
+            'charset' => env('DB_CHARSET', 'utf8mb4'),
+            'collation' => env('DB_COLLATION', 'utf8mb4_unicode_ci'),
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
         ],
 
         'mysql' => [
