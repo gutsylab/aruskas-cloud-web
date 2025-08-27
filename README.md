@@ -1,318 +1,269 @@
-# GutsyMail API 📧
+# Multi-Tenant Laravel Application Setup
 
-![Laravel](https://img.shields.io/badge/Laravel-12.x-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
-![API](https://img.shields.io/badge/API-Mail_Service-00D9FF?style=for-the-badge&logo=api&logoColor=white)
-![Status](https://img.shields.io/badge/Status-Active-28a745?style=for-the-badge)
+Aplikasi Laravel ini telah dikonfigurasi untuk mendukung multi-tenancy dengan arsitektur 1 merchant = 1 database, plus 1 database global untuk data subscription dan merchant.
 
-## 🚀 Deskripsi
+## Arsitektur
 
-GutsyMail API adalah aplikasi Laravel yang menyediakan layanan pengiriman email melalui REST API. Aplikasi ini memungkinkan client untuk mengirim email baik secara langsung maupun melalui sistem antrian (queue), dengan sistem tracking status pengiriman yang lengkap.
+### Database Global
+- `subscription_plans`: Rencana berlangganan yang tersedia
+- `merchants`: Data merchant/tenant
+- `merchant_subscriptions`: Langganan merchant 
+- `merchant_users`: User yang memiliki akses ke merchant
 
-## ✨ Fitur Utama
+### Database Tenant (Per Merchant)
+- `users`: User aplikasi untuk tenant
+- `cache`: Cache data tenant
+- `jobs`: Queue jobs tenant
+- `api_clients`: API clients untuk tenant
+- `email_messages` & `email_providers`: Data email untuk tenant
 
-- 📤 **Pengiriman Email Queue**: Mengirim email melalui sistem antrian untuk performa optimal
-- ⚡ **Pengiriman Email Langsung**: Mengirim email secara instant tanpa antrian
-- 📊 **Status Tracking**: Memantau status pengiriman email secara real-time
-- 🔐 **API Key Authentication**: Sistem autentikasi yang aman dengan API Key
-- 📈 **Multiple Email Providers**: Dukungan untuk berbagai provider email
-- 🚀 **High Performance**: Dioptimalkan untuk throughput tinggi
+## Setup Awal
 
-## � API Endpoints
+### 1. Konfigurasi Database
 
-### 1. 📤 Send Email (Queue)
-```
-POST /api/send
-```
-Mengirim email melalui sistem antrian untuk memastikan performa aplikasi tetap optimal.
+Copy file `.env.example.multitenant` ke `.env` dan sesuaikan konfigurasi database:
 
-**Headers:**
-```
-Content-Type: application/json
-X-Api-Key: YOUR_API_KEY
-```
-
-**Body:**
-```json
-{
-  "to": "recipient@example.com",
-  "subject": "Subject Email",
-  "message": "Isi pesan email",
-  "from_name": "Nama Pengirim",
-  "from_email": "sender@example.com"
-}
-```
-
-**Response:**
-```json
-{
-  "status": "success",
-  "message": "Email has been queued for sending",
-  "message_id": "uuid-message-id",
-  "queue_status": "pending"
-}
-```
-
-### 2. ⚡ Send Email (Immediate)
-```
-POST /api/send-now
-```
-Mengirim email secara langsung tanpa melalui sistem antrian.
-
-**Headers:**
-```
-Content-Type: application/json
-X-Api-Key: YOUR_API_KEY
-```
-
-**Body:**
-```json
-{
-  "to": "recipient@example.com",
-  "subject": "Subject Email",
-  "message": "Isi pesan email",
-  "from_name": "Nama Pengirim",
-  "from_email": "sender@example.com"
-}
-```
-
-**Response:**
-```json
-{
-  "status": "success",
-  "message": "Email sent successfully",
-  "message_id": "uuid-message-id",
-  "sent_at": "2025-01-22T10:30:00Z"
-}
-```
-
-### 3. � Check Email Status
-```
-GET /api/messages/{id}
-```
-Melihat status email yang telah dikirim berdasarkan message ID.
-
-**Headers:**
-```
-X-Api-Key: YOUR_API_KEY
-```
-
-**Response:**
-```json
-{
-  "message_id": "uuid-message-id",
-  "status": "sent|pending|failed|delivered",
-  "to": "recipient@example.com",
-  "subject": "Subject Email",
-  "sent_at": "2025-01-22T10:30:00Z",
-  "delivered_at": "2025-01-22T10:31:15Z",
-  "provider": "smtp",
-  "error_message": null
-}
-```
-
-## 🔧 Installation & Setup
-
-### 1. Clone Repository
 ```bash
-git clone https://github.com/iansaimima/gutsymail-api.git
-cd gutsymail-api
+cp .env.example.multitenant .env
 ```
+
+Pastikan konfigurasi database sudah benar:
+- `DB_GLOBAL_*`: untuk database global
+- `DB_TENANT_*`: untuk database tenant
+- `DB_TENANT_PREFIX`: prefix untuk nama database tenant (default: `tenant_`)
+- `DB_TENANT_SEPARATOR`: separator antara prefix dan slug (default: `_`)
 
 ### 2. Install Dependencies
+
 ```bash
 composer install
 npm install
 ```
 
-### 3. Environment Setup
+### 3. Generate Application Key
+
 ```bash
-cp .env.example .env
 php artisan key:generate
 ```
 
-### 4. Database Setup
+### 4. Setup Database Global
+
 ```bash
-php artisan migrate
-php artisan db:seed
+# Migrate database global
+php artisan migrate:global
+
+# Atau dengan fresh (drop all tables)
+php artisan migrate:global --fresh
 ```
 
-### 5. Queue Configuration
-Pastikan konfigurasi queue di `.env`:
-```env
-QUEUE_CONNECTION=database
-# atau redis untuk performa lebih baik
-# QUEUE_CONNECTION=redis
-```
+### 5. Buat Subscription Plans
 
-### 6. Start Services
 ```bash
-# Start web server
-php artisan serve
+# Buat plan basic
+php artisan plan:create "Basic Plan" 29.99 --cycle=monthly --trial=14
 
-# Start queue worker (di terminal terpisah)
-php artisan queue:work
+# Buat plan professional  
+php artisan plan:create "Professional Plan" 59.99 --cycle=monthly --trial=14
 
-# Atau gunakan script yang disediakan
-./start-server.sh
+# Buat plan enterprise
+php artisan plan:create "Enterprise Plan" 149.99 --cycle=monthly --trial=30
 ```
 
-## � API Key Management
+## Penggunaan
 
-### Membuat API Key untuk Client Baru
+### 1. Membuat Tenant Baru
+
 ```bash
-php artisan apikey:issue [nama-client]
+php artisan tenant:create "Nama Merchant" admin@merchant.com --plan=basic
 ```
 
-**Contoh:**
-```bash
-php artisan apikey:issue acme-company
+Command ini akan:
+- Membuat record merchant di database global
+- Membuat database tenant baru
+- Menjalankan migrations di database tenant
+- Membuat subscription untuk merchant
+- Membuat user admin untuk merchant
+
+### 2. Mengakses Aplikasi
+
+#### Admin Global
+Akses melalui URL utama atau path `/admin`:
+- `http://localhost/admin` - Dashboard admin global
+- `http://localhost/admin/merchants` - Kelola merchants
+- `http://localhost/admin/plans` - Kelola subscription plans
+
+#### Tenant/Merchant
+Akses melalui subdomain atau parameter:
+- `http://merchant-slug.localhost` - Dashboard merchant
+- `http://localhost?tenant=merchant-slug` - Alternative access
+
+### 3. API Endpoints
+
+#### Global API
+```
+GET /api/global/plans - List subscription plans
+POST /api/global/register-merchant - Register new merchant
 ```
 
-**Output:**
+#### Admin API
 ```
-API Key berhasil dibuat untuk client: acme-company
-API Key: ak_1234567890abcdef1234567890abcdef
-```
+GET /admin/merchants - List merchants
+POST /admin/merchants - Create merchant
+PUT /admin/merchants/{id} - Update merchant
+DELETE /admin/merchants/{id} - Delete merchant
 
-### Menggunakan API Key
-Sertakan API Key dalam header setiap request:
-```
-X-Api-Key: ak_1234567890abcdef1234567890abcdef
-```
+GET /admin/plans - List plans
+POST /admin/plans - Create plan
+PUT /admin/plans/{id} - Update plan
 
-## 📊 Status Email
-
-| Status | Deskripsi |
-|--------|-----------|
-| `pending` | Email dalam antrian, belum diproses |
-| `processing` | Email sedang dalam proses pengiriman |
-| `sent` | Email berhasil dikirim |
-| `delivered` | Email berhasil diterima recipient |
-| `failed` | Email gagal dikirim |
-| `bounced` | Email ditolak oleh server penerima |
-
-## 🔄 Queue Management
-
-### Memantau Queue
-```bash
-# Lihat jumlah job dalam queue
-php artisan queue:size
-
-# Monitor queue secara real-time
-php artisan queue:monitor
-
-# Restart queue workers
-php artisan queue:restart
+GET /admin/subscriptions - List subscriptions
+PUT /admin/subscriptions/{id} - Update subscription
 ```
 
-### Failed Jobs
-```bash
-# Lihat failed jobs
-php artisan queue:failed
+#### Tenant API
+Semua API endpoint yang menggunakan middleware `tenant` akan secara otomatis terhubung ke database tenant yang sesuai.
 
-# Retry failed job
-php artisan queue:retry {id}
+## Pengembangan
 
-# Retry semua failed jobs
-php artisan queue:retry all
-```
+### 1. Menambah Model Tenant
 
-## 📈 Monitoring & Logging
-
-### Log Files
-- **Application Log**: `storage/logs/laravel.log`
-- **Email Log**: `storage/logs/email.log`
-- **Queue Log**: `storage/logs/queue.log`
-
-### Performance Monitoring
-```bash
-# Monitor memory usage
-php artisan queue:work --memory=512
-
-# Monitor dengan timeout
-php artisan queue:work --timeout=60
-```
-
-## 🛠️ Development
-
-### Running Tests
-```bash
-# Run semua tests
-php artisan test
-
-# Run specific test
-php artisan test --filter EmailSendingTest
-```
-
-### Code Quality
-```bash
-# PHP CS Fixer
-./vendor/bin/php-cs-fixer fix
-
-# PHPStan
-./vendor/bin/phpstan analyse
-```
-
-## 📚 Response Codes
-
-| Code | Status | Deskripsi |
-|------|--------|-----------|
-| 200 | OK | Request berhasil |
-| 201 | Created | Email berhasil dibuat dan dikirim/diqueue |
-| 400 | Bad Request | Parameter request tidak valid |
-| 401 | Unauthorized | API Key tidak valid atau tidak ada |
-| 404 | Not Found | Message ID tidak ditemukan |
-| 422 | Unprocessable Entity | Validasi gagal |
-| 429 | Too Many Requests | Rate limit terlampaui |
-| 500 | Internal Server Error | Error server |
-
-## 🔧 Configuration
-
-### Email Providers
-Edit file `config/mail.php` untuk mengkonfigurasi provider email:
+Untuk model yang akan menggunakan database tenant:
 
 ```php
-'mailers' => [
-    'smtp' => [
-        'transport' => 'smtp',
-        'host' => env('MAIL_HOST', 'smtp.mailgun.org'),
-        'port' => env('MAIL_PORT', 587),
-        'encryption' => env('MAIL_ENCRYPTION', 'tls'),
-        'username' => env('MAIL_USERNAME'),
-        'password' => env('MAIL_PASSWORD'),
-    ],
-],
+<?php
+
+namespace App\Models;
+
+use App\Traits\BelongsToTenant;
+use Illuminate\Database\Eloquent\Model;
+
+class Product extends Model
+{
+    use BelongsToTenant;
+    
+    // Model akan otomatis menggunakan koneksi tenant
+}
 ```
 
-### Rate Limiting
-Edit `config/services.php` untuk rate limiting:
+### 2. Menambah Migration Tenant
+
+Letakkan migrations tenant di folder `database/migrations/tenant/`:
+
+```bash
+php artisan make:migration create_products_table
+# Pindahkan file migration ke database/migrations/tenant/
+```
+
+### 3. Middleware Custom
+
+Untuk route yang perlu akses khusus:
 
 ```php
-'rate_limiting' => [
-    'emails_per_minute' => 60,
-    'emails_per_hour' => 1000,
-],
+Route::middleware(['tenant', 'auth'])->group(function () {
+    // Routes yang membutuhkan autentikasi di level tenant
+});
 ```
 
-## 🤝 Contributing
+### 4. Mengakses Tenant Data
 
-1. Fork repository
-2. Buat feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit changes (`git commit -m 'Add amazing feature'`)
-4. Push ke branch (`git push origin feature/amazing-feature`)
-5. Buat Pull Request
+Dalam controller atau middleware:
 
-## 📄 License
+```php
+public function index(Request $request)
+{
+    $tenant = $request->attributes->get('tenant');
+    // $tenant adalah instance dari App\Models\Global\Merchant
+    
+    // Data akan otomatis menggunakan database tenant
+    $users = User::all();
+}
+```
 
-Project ini menggunakan [MIT License](LICENSE).
+## Commands Available
 
-## 📞 Support
+```bash
+# Tenant management
+php artisan tenant:create "Merchant Name" "admin@email.com" --plan=basic
+php artisan tenant:drop merchant-slug
 
-Untuk support dan pertanyaan:
-- 📧 Email: support@gutsylab.com
-- 🐛 Issues: [GitHub Issues](https://github.com/iansaimima/gutsymail-api/issues)
-- 📖 Documentation: [Wiki](https://github.com/iansaimima/gutsymail-api/wiki)
+# Tenant prefix management
+php artisan tenant:prefix show                    # Show current prefix configuration
+php artisan tenant:prefix list                    # List all tenant databases
+php artisan tenant:prefix change --new-prefix=company_ --dry-run
 
----
+# Global database
+php artisan migrate:global
+php artisan migrate:global --fresh
 
-**Developed with ❤️ by GutsyLab Team**
+# Subscription plans
+php artisan plan:create "Plan Name" 29.99 --cycle=monthly --trial=14
+
+# Tenant migrations
+php artisan migrate --database=tenant_merchant-slug --path=database/migrations/tenant
+```
+
+## Struktur File
+
+```
+app/
+├── Models/
+│   ├── Global/           # Models untuk database global
+│   │   ├── Merchant.php
+│   │   ├── SubscriptionPlan.php
+│   │   ├── MerchantSubscription.php
+│   │   └── MerchantUser.php
+│   └── User.php          # Model tenant (menggunakan BelongsToTenant)
+├── Services/
+│   └── TenantService.php # Service untuk mengelola tenant
+├── Http/Middleware/
+│   └── TenantResolver.php # Middleware untuk resolve tenant
+├── Traits/
+│   └── BelongsToTenant.php # Trait untuk model tenant
+└── Console/Commands/     # Commands untuk management
+    ├── CreateTenant.php
+    ├── CreateSubscriptionPlan.php
+    └── MigrateGlobal.php
+
+database/
+├── migrations/
+│   ├── global/          # Migrations untuk database global
+│   └── tenant/          # Migrations untuk database tenant
+└── seeders/
+    └── SubscriptionPlanSeeder.php
+
+routes/
+├── admin.php           # Routes untuk admin global
+├── web.php            # Routes untuk tenant (dengan middleware)
+└── api.php            # API routes
+```
+
+## Troubleshooting
+
+### Database Connection Issues
+1. Pastikan konfigurasi database di `.env` sudah benar
+2. Periksa koneksi database global dan tenant
+3. Jalankan `php artisan config:clear` setelah mengubah konfigurasi
+
+### Tenant Not Found
+1. Periksa apakah merchant sudah dibuat di database global
+2. Pastikan subdomain atau parameter tenant sudah benar
+3. Periksa status merchant (harus aktif)
+
+### Migration Issues
+1. Untuk global: `php artisan migrate:global`
+2. Untuk tenant: `php artisan migrate --database=tenant_slug --path=database/migrations/tenant`
+
+## Security Considerations
+
+1. **Database Isolation**: Setiap tenant memiliki database terpisah
+2. **Connection Security**: Pastikan kredensial database aman
+3. **Tenant Validation**: Middleware memvalidasi tenant sebelum mengakses data
+4. **Admin Access**: Route admin hanya dapat diakses melalui global connection
+
+## Performance Tips
+
+1. Gunakan Redis untuk session dan cache
+2. Implementasikan database connection pooling
+3. Monitor jumlah koneksi database
+4. Pertimbangkan read replicas untuk tenant database
+5. Implementasikan queue untuk operasi berat
