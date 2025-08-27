@@ -50,7 +50,7 @@ Route::prefix('{tenant_id}')->middleware(['tenant'])->group(function () {
 
         // Legacy route for backward compatibility
         Route::get('/users', function () {
-            return \App\Models\User::all();
+            return \App\Models\Tenant\User::all();
         });
         
         // Debug route - remove in production

@@ -56,6 +56,11 @@ class MakeGlobalModel extends Command
             $this->moveLatestMigrationToGlobal($name);
         }
 
+        // If controller was requested, move it to global namespace
+        if ($this->option('controller') || $this->option('resource') || $this->option('all')) {
+            $this->moveControllerToGlobal($name);
+        }
+
         $this->info("✓ Global model created: App\\Models\\Global\\{$name}");
         $this->line("  Remember to use: use App\\Models\\Global\\{$name};");
     }
@@ -86,6 +91,55 @@ class MakeGlobalModel extends Command
                 $this->warn("  ⚠ Could not move migration file automatically");
                 $this->line("  Please move manually: {$filename}");
             }
+        }
+    }
+
+    private function moveControllerToGlobal($modelName)
+    {
+        $controllerName = "{$modelName}Controller";
+        $originalPath = app_path("Http/Controllers/{$controllerName}.php");
+        $globalPath = app_path("Http/Controllers/Global/{$controllerName}.php");
+        
+        if (file_exists($originalPath)) {
+            // Ensure Global directory exists
+            $globalDir = app_path("Http/Controllers/Global");
+            if (!is_dir($globalDir)) {
+                mkdir($globalDir, 0755, true);
+            }
+
+            // Read and update the controller content
+            $content = file_get_contents($originalPath);
+            
+            // Update namespace
+            $content = str_replace(
+                'namespace App\\Http\\Controllers;',
+                'namespace App\\Http\\Controllers\\Global;',
+                $content
+            );
+
+            // Add Controller import if not exists
+            if (strpos($content, 'use App\\Http\\Controllers\\Controller;') === false) {
+                $content = str_replace(
+                    'namespace App\\Http\\Controllers\\Global;',
+                    "namespace App\\Http\\Controllers\\Global;\n\nuse App\\Http\\Controllers\\Controller;",
+                    $content
+                );
+            }
+
+            // Update model import if exists
+            $content = str_replace(
+                "use App\\Models\\{$modelName};",
+                "use App\\Models\\Global\\{$modelName};",
+                $content
+            );
+
+            // Write to new location
+            file_put_contents($globalPath, $content);
+            
+            // Remove original file
+            unlink($originalPath);
+            
+            $this->line("  ✓ Controller moved to: app/Http/Controllers/Global/{$controllerName}.php");
         }
     }
 }

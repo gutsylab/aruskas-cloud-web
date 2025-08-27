@@ -155,7 +155,7 @@ Model yang dihasilkan:
 ```php
 <?php
 
-namespace App\Models;
+namespace App\Models\Tenant;
 
 use App\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
@@ -300,7 +300,9 @@ php artisan tenant:migrate --all
 
 #### Fitur Otomatis
 - **Model Global**: Otomatis disimpan di namespace `App\Models\Global\`
-- **Model Tenant**: Otomatis mendapat trait `BelongsToTenant`
+- **Model Tenant**: Otomatis disimpan di namespace `App\Models\Tenant\` dengan trait `BelongsToTenant`
+- **Controller Global**: Otomatis disimpan di namespace `App\Http\Controllers\Global\`
+- **Controller Tenant**: Otomatis disimpan di namespace `App\Http\Controllers\Tenant\`
 - **Migration Global**: Otomatis ke folder `database/migrations/global/`
 - **Migration Tenant**: Otomatis ke folder `database/migrations/tenant/`
 
@@ -328,13 +330,28 @@ php artisan tenant:migrate-rollback --all --step=1
 
 ```
 app/
+├── Http/
+│   └── Controllers/
+│       ├── Global/           # Controllers untuk admin global
+│       │   ├── MerchantController.php
+│       │   ├── SubscriptionController.php
+│       │   └── AdminDashboardController.php
+│       ├── Tenant/           # Controllers untuk aplikasi tenant
+│       │   ├── DashboardController.php
+│       │   ├── ProductController.php
+│       │   └── OrderController.php
+│       └── Controller.php    # Base controller
 ├── Models/
 │   ├── Global/           # Models untuk database global
 │   │   ├── Merchant.php
 │   │   ├── SubscriptionPlan.php
 │   │   ├── MerchantSubscription.php
 │   │   └── MerchantUser.php
-│   └── User.php          # Model tenant (menggunakan BelongsToTenant)
+│   └── Tenant/           # Models untuk database tenant  
+│       ├── User.php      # Model tenant (menggunakan BelongsToTenant)
+│       ├── ApiClient.php
+│       ├── EmailMessage.php
+│       └── EmailProvider.php
 ├── Services/
 │   └── TenantService.php # Service untuk mengelola tenant
 ├── Http/Middleware/
@@ -371,6 +388,12 @@ php artisan make:model-global GlobalSetting -m
 php artisan make:migration-tenant CreateProductsTable --create=products
 php artisan make:model-tenant Product -mcr
 
+# Membuat controller global (untuk admin)
+php artisan make:controller-global AdminDashboardController -r
+
+# Membuat controller tenant (untuk aplikasi tenant)
+php artisan make:controller-tenant DashboardController -r
+
 # Opsi yang tersedia untuk make:model-*:
 # -m, --migration    : Buat migration file
 # -c, --controller   : Buat controller  
@@ -379,6 +402,13 @@ php artisan make:model-tenant Product -mcr
 # -s, --seeder       : Buat seeder
 # --requests         : Buat form request classes
 # -a, --all          : Buat semua file di atas
+
+# Opsi yang tersedia untuk make:controller-*:
+# -r, --resource     : Buat resource controller
+# --api              : Buat API resource controller
+# --invokable        : Buat single method controller
+# --model=ModelName  : Buat resource controller untuk model tertentu
+# --parent=ParentModel : Buat nested resource controller
 ```
 
 ### Tenant Management
