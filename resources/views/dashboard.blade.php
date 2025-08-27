@@ -58,7 +58,7 @@
                         <div class="ml-5 w-0 flex-1">
                             <dl>
                                 <dt class="text-sm font-medium text-gray-500 truncate">Total Users</dt>
-                                <dd class="text-lg font-medium text-gray-900">{{ \App\Models\User::count() }}</dd>
+                                <dd class="text-lg font-medium text-gray-900">{{ \App\Models\Tenant\User::count() }}</dd>
                             </dl>
                         </div>
                     </div>
@@ -79,7 +79,7 @@
                         <div class="ml-5 w-0 flex-1">
                             <dl>
                                 <dt class="text-sm font-medium text-gray-500 truncate">Active Users</dt>
-                                <dd class="text-lg font-medium text-gray-900">{{ \App\Models\User::whereNotNull('email_verified_at')->count() }}</dd>
+                                <dd class="text-lg font-medium text-gray-900">{{ \App\Models\Tenant\User::whereNotNull('email_verified_at')->count() }}</dd>
                             </dl>
                         </div>
                     </div>

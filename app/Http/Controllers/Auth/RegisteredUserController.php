@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use App\Models\Tenant\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -67,6 +67,6 @@ class RegisteredUserController extends Controller
             ], 201);
         }
 
-        return redirect('/dashboard')->with('success', 'Registration successful!');
+        return redirect()->route('dashboard', ['tenant_id' => $tenant->tenant_id])->with('success', 'Registration successful!');
     }
 }

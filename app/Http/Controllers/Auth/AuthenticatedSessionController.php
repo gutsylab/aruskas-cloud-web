@@ -46,7 +46,7 @@ class AuthenticatedSessionController extends Controller
         $connectionName = "tenant_{$tenant->tenant_id}";
         
         // Find user in tenant database
-        $user = \App\Models\User::on($connectionName)
+        $user = \App\Models\Tenant\User::on($connectionName)
             ->where('email', $request->email)
             ->first();
 
@@ -91,9 +91,8 @@ class AuthenticatedSessionController extends Controller
             ]);
         }
 
-        return redirect()->intended(
-            route('dashboard', ['tenant_id' => $tenant->tenant_id])
-        )->with('success', 'Login successful!');
+        return redirect()->route('dashboard', ['tenant_id' => $tenant->tenant_id])
+            ->with('success', 'Login successful!');
     }
 
     /**

@@ -53,7 +53,7 @@ class LoginRequest extends FormRequest
             config(["auth.providers.users.connection" => $connectionName]);
             
             // Also ensure the User model uses the tenant connection
-            \App\Models\User::resolveConnection($connectionName);
+            \App\Models\Tenant\User::resolveConnection($connectionName);
         }
 
         if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {

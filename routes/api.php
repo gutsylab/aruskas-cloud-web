@@ -2,10 +2,10 @@
 
 use App\Http\Middleware\ApiKeyAuth;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\EmailSendController;
+// use App\Http\Controllers\Tenant\EmailSendController; // Temporarily disabled
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
-use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Tenant\DashboardController;
 
 // Tenant-specific API routes (with tenant middleware)
 Route::middleware(['tenant'])->group(function () {
@@ -33,12 +33,12 @@ Route::middleware(['tenant'])->group(function () {
     });
 });
 
-// Legacy email API routes
-Route::middleware([
-    ApiKeyAuth::class,
-    'throttle:client'
-])->group(function () {
-    Route::post('/send', [EmailSendController::class, 'send']);
-    Route::post('/send-now', [EmailSendController::class, 'sendNow']);
-    Route::get('/messages/{id}', [EmailSendController::class, 'show']);
-});
+// Legacy email API routes - Temporarily disabled
+// Route::middleware([
+//     ApiKeyAuth::class,
+//     'throttle:client'
+// ])->group(function () {
+//     Route::post('/send', [EmailSendController::class, 'send']);
+//     Route::post('/send-now', [EmailSendController::class, 'sendNow']);
+//     Route::get('/messages/{id}', [EmailSendController::class, 'show']);
+// });

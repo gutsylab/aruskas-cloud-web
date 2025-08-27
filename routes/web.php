@@ -2,11 +2,11 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\FileManagerController;
+use App\Http\Controllers\Global\FileManagerController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\TenantRegistrationController;
+use App\Http\Controllers\Tenant\DashboardController;
+use App\Http\Controllers\Global\TenantRegistrationController;
 
 // Global routes (no tenant required)
 Route::get('/', function () {

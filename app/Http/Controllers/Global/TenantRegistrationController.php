@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Global;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\TenantRegistrationRequest;
 use App\Models\Global\Merchant;
 use App\Models\Global\SubscriptionPlan;
@@ -84,7 +85,7 @@ class TenantRegistrationController extends Controller
             $this->tenantService->setTenantConnection($merchant);
             
             // Create user in tenant database
-            $tenantUser = \App\Models\User::create([
+            $tenantUser = \App\Models\Tenant\User::create([
                 'name' => $request->admin_name,
                 'email' => $request->admin_email,
                 'password' => Hash::make($request->password),
