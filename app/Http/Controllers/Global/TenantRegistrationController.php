@@ -9,8 +9,10 @@ use App\Models\Global\SubscriptionPlan;
 use App\Models\Global\MerchantSubscription;
 use App\Models\Global\MerchantUser;
 use App\Services\TenantService;
+use App\Mail\TenantEmailVerification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 class TenantRegistrationController extends Controller
 {
@@ -45,15 +47,21 @@ class TenantRegistrationController extends Controller
             $tenantId = Merchant::generateTenantId();
             $databaseName = Merchant::generateDatabaseName($tenantId);
 
-            $plan = SubscriptionPlan::where('slug', '=', 'free')->first();
+            $plan = SubscriptionPlan::where('slug', '=', 'free-trial')->first();
+            if(!$plan) {
+                return back()->withErrors([
+                    'general' => 'Default subscription plan not found. Please contact support.'
+                ])->withInput();
+            }
 
-            // Create merchant
+            // Create merchant (email not verified yet)
             $merchant = Merchant::create([
                 'name' => $request->company_name,
                 'slug' => $slug,
                 'tenant_id' => $tenantId,
                 'database_name' => $databaseName,
                 'email' => $request->admin_email,
+                'email_verified_at' => null, // Not verified yet
                 'status' => true,
             ]);
 
@@ -84,16 +92,19 @@ class TenantRegistrationController extends Controller
             // Set connection to tenant database
             $this->tenantService->setTenantConnection($merchant);
             
-            // Create user in tenant database
+            // Create user in tenant database (email not verified yet)
             $tenantUser = \App\Models\Tenant\User::create([
                 'name' => $request->admin_name,
                 'email' => $request->admin_email,
                 'password' => Hash::make($request->password),
-                'email_verified_at' => now(), // Auto-verify admin user
+                'email_verified_at' => null, // Not verified yet
             ]);
 
             // Reset to global connection
             $this->tenantService->resetToGlobalConnection();
+
+            // Send email verification
+            Mail::to($merchant->email)->send(new TenantEmailVerification($merchant));
 
             // Redirect to success page with tenant info
             return view('tenant-registration-success', [

@@ -24,3 +24,21 @@
 /* Import admin custom components */
 @import './admin/filemanager.css';
 @import './admin/ajax-demo.css';
+
+/* Custom table and dropdown fixes */
+/* Fix dropdown being cut off in table-responsive */
+.table-responsive {
+    overflow: visible !important;
+}
+
+/* Alternative fix: ensure dropdown shows above other elements */
+.dropdown-menu {
+    z-index: 1050 !important;
+}
+
+/* For dropdowns in the last few rows, position them upward */
+.dropdown.dropup .dropdown-menu {
+    bottom: 100%;
+    top: auto;
+    margin-bottom: 2px;
+}

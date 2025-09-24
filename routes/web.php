@@ -6,7 +6,9 @@ use App\Http\Controllers\Global\FileManagerController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Tenant\DashboardController;
+use App\Http\Controllers\Tenant\CashCategoryController;
 use App\Http\Controllers\Global\TenantRegistrationController;
+use App\Http\Controllers\Global\EmailVerificationController;
 
 // Global routes (no tenant required)
 Route::get('/', function () {
@@ -15,6 +17,15 @@ Route::get('/', function () {
 
 Route::get('/register', [TenantRegistrationController::class, 'create'])->name('tenant.register');
 Route::post('/register', [TenantRegistrationController::class, 'store'])->name('tenant.register.store');
+
+// Email verification routes
+Route::get('/verify-email/{id}/{hash}', [EmailVerificationController::class, 'verify'])
+    ->name('tenant.email.verify')
+    ->middleware(['signed']);
+Route::get('/resend-verification', [EmailVerificationController::class, 'showResendForm'])
+    ->name('tenant.email.resend.form');
+Route::post('/resend-verification', [EmailVerificationController::class, 'resend'])
+    ->name('tenant.email.resend');
 
 // Tenant-specific routes with tenant ID in path: /{tenant_id}/...
 Route::prefix('{tenant_id}')->middleware(['tenant'])->group(function () {
@@ -54,6 +65,26 @@ Route::prefix('{tenant_id}')->middleware(['tenant'])->group(function () {
         Route::put('/profile', [DashboardController::class, 'updateProfile'])->name('profile.update');
 
         Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+
+        // Cash Management Routes
+        Route::prefix('cash')->name('cash.')->group(function () {
+            // Cash Categories
+            Route::prefix('categories')->name('categories.')->group(function () {
+                Route::get('/', [CashCategoryController::class, 'index'])->name('index');
+                Route::get('/create', [CashCategoryController::class, 'create'])->name('create');
+                Route::post('/', [CashCategoryController::class, 'store'])->name('store');
+                Route::get('/{cashCategory}', [CashCategoryController::class, 'show'])->name('show');
+                Route::get('/{cashCategory}/edit', [CashCategoryController::class, 'edit'])->name('edit');
+                Route::put('/{cashCategory}', [CashCategoryController::class, 'update'])->name('update');
+                Route::delete('/{cashCategory}', [CashCategoryController::class, 'destroy'])->name('destroy');
+                
+                // Additional routes for soft deletes and filtering
+                Route::get('/type/{type}', [CashCategoryController::class, 'getByType'])->name('by-type');
+                Route::get('/trashed/list', [CashCategoryController::class, 'trashed'])->name('trashed');
+                Route::post('/{id}/restore', [CashCategoryController::class, 'restore'])->name('restore');
+                Route::delete('/{id}/force', [CashCategoryController::class, 'forceDelete'])->name('force-delete');
+            });
+        });
 
         // Legacy route for backward compatibility
         Route::get('/users', function () {

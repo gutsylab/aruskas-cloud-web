@@ -21,6 +21,7 @@ return new class extends Migration
     {
         Schema::connection($this->getConnection())->create('merchants', function (Blueprint $table) {
             $table->id();
+
             $table->string('name');
             $table->string('slug')->unique();
             $table->string('tenant_id', 8)->unique();
@@ -30,9 +31,11 @@ return new class extends Migration
             $table->text('address')->nullable();
             $table->string('phone')->nullable();
             $table->string('email')->nullable();
+            $table->timestamp('email_verified_at')->nullable()->index();
             $table->string('website')->nullable();
             $table->boolean('status')->default(true);
             $table->json('settings')->nullable();
+
             $table->timestamps();
         });
     }

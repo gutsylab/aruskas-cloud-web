@@ -51,6 +51,27 @@ window.AdminApp = {
     },
 
     bindGlobalEvents() {
+        // Fix dropdown positioning in tables
+        $(document).on('show.bs.dropdown', '.dropdown', function() {
+            const dropdown = $(this);
+            const dropdownMenu = dropdown.find('.dropdown-menu');
+            const tableContainer = dropdown.closest('.table-responsive');
+            
+            if (tableContainer.length) {
+                const dropdownOffset = dropdown.offset();
+                const tableOffset = tableContainer.offset();
+                const tableHeight = tableContainer.height();
+                const windowHeight = $(window).height();
+                
+                // Check if dropdown is in bottom half of table or close to bottom of screen
+                if ((dropdownOffset.top - tableOffset.top) > (tableHeight / 2) || 
+                    (dropdownOffset.top + 200) > windowHeight) {
+                    dropdown.addClass('dropup');
+                } else {
+                    dropdown.removeClass('dropup');
+                }
+            }
+        });
     }
 };
 

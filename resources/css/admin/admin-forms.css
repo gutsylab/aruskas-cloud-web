@@ -22,6 +22,20 @@
     transition: all 0.2s ease;
 }
 
+/* Consistent sizing for form-control-sm and form-select-sm */
+.form-control-sm,
+.form-select-sm {
+    height: 31px !important;
+    padding: 0.25rem 0.5rem !important;
+    font-size: 0.875rem !important;
+    line-height: 1.5 !important;
+    border-radius: 0.25rem !important;
+}
+
+.form-select-sm {
+    padding-right: 1.75rem !important;
+}
+
 .content-with-sidebar .form-control:focus {
     border-color: var(--color-primary);
     box-shadow: 0 0 0 2px rgba(21, 101, 192, 0.2);
@@ -117,7 +131,8 @@
     color: #fff;
 }
 
-.daterangepicker td.active, .daterangepicker td.active:hover {
+.daterangepicker td.active,
+.daterangepicker td.active:hover {
     background-color: #007bff;
     border-color: #007bff;
 }

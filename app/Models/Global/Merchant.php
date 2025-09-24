@@ -30,6 +30,7 @@ class Merchant extends Model
         'address',
         'phone',
         'email',
+        'email_verified_at',
         'website',
         'status',
         'settings',
@@ -41,6 +42,7 @@ class Merchant extends Model
     protected $casts = [
         'settings' => 'array',
         'status' => 'boolean',
+        'email_verified_at' => 'datetime',
     ];
 
     /**
