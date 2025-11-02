@@ -3,6 +3,9 @@
 @section('title', 'Kategori Kas - ' . $tenant->name)
 @section('page-title', 'Kategori Kas')
 
+@push('styles')
+@endpush
+
 @section('breadcrumb')
     <li class="breadcrumb-item"><a href="{{ route('dashboard', ['tenant_id' => $tenant->tenant_id]) }}">Dashboard</a></li>
     <li class="breadcrumb-item">Kas</li>
@@ -36,16 +39,15 @@
         <div class="row">
             <div class="col-xl-12">
                 <div class="card shadow-sm border-0">
-                    <div class="card-body p-2">
+                    <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table mb-0" id="categories-table">
+                            <table class="table mb-0" id="datatable">
                                 <thead class="table-lightx">
                                     <tr>
                                         <th width="50">#</th>
                                         <th>Nama</th>
-                                        <th>Type</th>
+                                        <th>Jenis</th>
                                         <th>Deskripsi</th>
-                                        <th>Status</th>
                                         <th>Dibuat</th>
                                         <th width="120">Aksi</th>
                                     </tr>
@@ -61,21 +63,41 @@
     </div>
 @endsection
 
-@push('scripts')
+@section('scripts')
     <script>
         $(document).ready(function() {
             // Initialize DataTable if needed
-            if (typeof dataTable !== 'undefined') {
-                dataTable.init('#categories-table', {
-                    pageLength: 25,
-                    order: [
-                        [5, 'desc']
-                    ], // Sort by created date
-                    columnDefs: [{
-                        orderable: false,
-                        targets: [6] // Disable sorting on actions
-                    }]
-                });
+            if ($('#datatable').length > 0) {
+                initDatatables('#datatable',
+                    '{{ route('cash.categories.datatables', ['tenant_id' => $tenant->tenant_id]) }}', [{
+                            data: 'DT_RowIndex',
+                            name: 'DT_RowIndex',
+                            orderable: false,
+                            searchable: false
+                        },
+                        {
+                            data: 'name',
+                            name: 'name'
+                        },
+                        {
+                            data: 'type',
+                            name: 'type'
+                        },
+                        {
+                            data: 'description',
+                            name: 'description'
+                        },
+                        {
+                            data: 'created_at_since',
+                            name: 'created_at_since'
+                        },
+                        {
+                            data: 'action',
+                            name: 'action',
+                            orderable: false,
+                            searchable: false
+                        }
+                    ]);
             }
 
             // Search functionality
@@ -92,4 +114,4 @@
             });
         });
     </script>
-@endpush
+@endsection

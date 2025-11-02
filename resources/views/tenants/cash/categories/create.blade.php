@@ -13,24 +13,6 @@
 
 @section('content')
     <div class="container-fluid">
-        <!-- Header Section -->
-        <div class="row mb-4">
-            <div class="col-xl-12">
-                <div class="row align-items-center">
-                    <div class="col-sm-6">
-                        <h4 class="card-title mb-0">
-                            <a href="{{ route('cash.categories.index', $tenant->tenant_id) }}"
-                                class="btn btn-sm btn-outline-primary">
-                                <i class="fas fa-arrow-left"></i>
-                            </a>
-                            &nbsp;
-                            <span>Tambah Kategori Kas</span>
-                        </h4>
-                    </div>
-
-                </div>
-            </div>
-        </div>
 
         <!-- Table Section -->
         <div class="row">
@@ -39,8 +21,17 @@
                     action="{{ route('cash.categories.store', ['tenant_id' => $tenant->tenant_id]) }}" method="POST">
                     @csrf
 
-                    <div class="card shadow-sm border-0">
-
+                    <div class="card shadow">
+                        <div class="card-header">
+                            <h4 class="card-title mb-0">
+                                <a href="{{ route('cash.categories.index', $tenant->tenant_id) }}"
+                                    class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-arrow-left"></i>
+                                </a>
+                                &nbsp;
+                                <span>Tambah Kategori Kas</span>
+                            </h4>
+                        </div>
                         <div class="card-body p2">
                             <div class="form-group row ">
                                 <label for="name" class="form-label col-form-label col-sm-3">Nama</label>
@@ -54,8 +45,8 @@
                                 <div class="col-sm-9">
                                     <select class="form-select form-select-sm" id="type" name="type">
                                         <option value="">Pilih Jenis Kategori</option>
-                                        @foreach ($categories as $category)
-                                            <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                        @foreach ($types as $type => $type_label)
+                                            <option value="{{ $type }}">{{ $type_label }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -66,7 +57,15 @@
                                     <textarea class="form-control" id="description" name="description" rows="3"></textarea>
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-success">Simpan</button>
+                        </div>
+
+                        <div class="card-footer">
+                            <div class="form-group row ">
+                                <div class="col-sm-3"></div>
+                                <div class="col-sm-9">
+                                    <button type="submit" class="btn btn-success">Simpan</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </form>

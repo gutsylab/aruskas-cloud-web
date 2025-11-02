@@ -72,12 +72,13 @@ Route::prefix('{tenant_id}')->middleware(['tenant'])->group(function () {
             Route::prefix('categories')->name('categories.')->group(function () {
                 Route::get('/', [CashCategoryController::class, 'index'])->name('index');
                 Route::get('/create', [CashCategoryController::class, 'create'])->name('create');
+                Route::get('/datatables', [CashCategoryController::class, 'datatables'])->name('datatables');
                 Route::post('/', [CashCategoryController::class, 'store'])->name('store');
-                Route::get('/{cashCategory}', [CashCategoryController::class, 'show'])->name('show');
-                Route::get('/{cashCategory}/edit', [CashCategoryController::class, 'edit'])->name('edit');
-                Route::put('/{cashCategory}', [CashCategoryController::class, 'update'])->name('update');
-                Route::delete('/{cashCategory}', [CashCategoryController::class, 'destroy'])->name('destroy');
-                
+                Route::get('/{id}', [CashCategoryController::class, 'show'])->name('show');
+                Route::get('/{id}/edit', [CashCategoryController::class, 'edit'])->name('edit');
+                Route::put('/{id}', [CashCategoryController::class, 'update'])->name('update');
+                Route::delete('/{id}', [CashCategoryController::class, 'destroy'])->name('destroy');
+
                 // Additional routes for soft deletes and filtering
                 Route::get('/type/{type}', [CashCategoryController::class, 'getByType'])->name('by-type');
                 Route::get('/trashed/list', [CashCategoryController::class, 'trashed'])->name('trashed');

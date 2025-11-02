@@ -66,6 +66,12 @@ php artisan migrate:global-rollback --step=3
 
 # Reset semua migration global (rollback all)
 php artisan migrate:global-reset
+
+# Seed database global dengan default seeder (SubscriptionPlanSeeder)
+php artisan db:seed:global
+
+# Seed dengan seeder class tertentu
+php artisan db:seed:global --class=SubscriptionPlanSeeder
 ```
 
 ### 5. Buat Subscription Plans
@@ -266,6 +272,23 @@ public function index(Request $request)
 | `tenant:migrate-rollback TENANT_ID` | Rollback satu tenant | `php artisan tenant:migrate-rollback 2B1GWBXL` |
 | `tenant:migrate-rollback --all` | Rollback semua tenant | `php artisan tenant:migrate-rollback --all` |
 
+### 🎯 **Database Seeding**
+
+| Command | Deskripsi | Contoh |
+|---------|-----------|---------|
+| `db:seed:global` | Seed database global | `php artisan db:seed:global` |
+| `db:seed:global --class=SeederClass` | Seed dengan seeder tertentu | `php artisan db:seed:global --class=SubscriptionPlanSeeder` |
+| `db:seed:tenant TENANT_ID` | Seed satu tenant | `php artisan db:seed:tenant 2B1GWBXL` |
+| `db:seed:tenant --all` | Seed semua tenant | `php artisan db:seed:tenant --all` |
+| `db:seed:tenant TENANT_ID --class=SeederClass` | Seed tenant dengan seeder tertentu | `php artisan db:seed:tenant 2B1GWBXL --class=ProductSeeder` |
+
+### 🎯 **Membuat Seeder**
+
+| Command | Deskripsi | Contoh |
+|---------|-----------|---------|
+| `make:seeder:global SeederName` | Buat seeder global | `php artisan make:seeder:global SubscriptionPlanSeeder` |
+| `make:seeder:tenant SeederName` | Buat seeder tenant | `php artisan make:seeder:tenant ProductSeeder` |
+
 ### 🚀 **Workflow Development**
 
 #### Membuat Model & Migration Global
@@ -281,6 +304,9 @@ php artisan make:model-global Config --all
 
 # Jalankan migration global
 php artisan migrate:global
+
+# Seed database global
+php artisan db:seed:global
 ```
 
 #### Membuat Model & Migration Tenant
@@ -296,6 +322,28 @@ php artisan make:model-tenant Invoice --all
 
 # Jalankan migration untuk semua tenant
 php artisan tenant:migrate --all
+
+# Seed semua tenant
+php artisan db:seed:tenant --all
+```
+
+#### Membuat Seeder
+```bash
+# Buat seeder untuk database global
+php artisan make:seeder:global SubscriptionPlanSeeder
+
+# Buat seeder untuk database tenant
+php artisan make:seeder:tenant ProductSeeder
+php artisan make:seeder:tenant CategorySeeder
+
+# Jalankan seeder global
+php artisan db:seed:global --class=SubscriptionPlanSeeder
+
+# Jalankan seeder tenant untuk satu tenant
+php artisan db:seed:tenant 2B1GWBXL --class=ProductSeeder
+
+# Jalankan seeder tenant untuk semua tenant
+php artisan db:seed:tenant --all --class=ProductSeeder
 ```
 
 #### Fitur Otomatis
@@ -368,7 +416,13 @@ database/
 │   ├── global/          # Migrations untuk database global
 │   └── tenant/          # Migrations untuk database tenant
 └── seeders/
-    └── SubscriptionPlanSeeder.php
+    ├── DatabaseSeeder.php
+    ├── SubscriptionPlanSeeder.php
+    ├── Global/          # Seeders untuk database global
+    │   └── SubscriptionPlanSeeder.php
+    └── Tenant/          # Seeders untuk database tenant
+        ├── ProductSeeder.php
+        └── CategorySeeder.php
 
 routes/
 ├── admin.php           # Routes untuk admin global
@@ -440,6 +494,24 @@ php artisan tenant:migrate-rollback TENANT_ID   # Rollback tenant migration
 php artisan tenant:migrate-rollback --all       # Rollback semua tenant
 ```
 
+### Database Seeding
+```bash
+# Global Database
+php artisan db:seed:global                         # Seed dengan default seeder
+php artisan db:seed:global --class=SubscriptionPlanSeeder  # Seed dengan seeder tertentu
+php artisan db:seed:global --force                 # Force seed di production
+
+# Tenant Database
+php artisan db:seed:tenant TENANT_ID               # Seed satu tenant
+php artisan db:seed:tenant --all                   # Seed semua tenant
+php artisan db:seed:tenant TENANT_ID --class=ProductSeeder  # Seed dengan seeder tertentu
+php artisan db:seed:tenant --all --class=ProductSeeder --force  # Seed semua dengan force
+
+# Membuat Seeder
+php artisan make:seeder:global SubscriptionPlanSeeder  # Buat seeder global
+php artisan make:seeder:tenant ProductSeeder       # Buat seeder tenant
+```
+
 ### Subscription Plans
 ```bash
 php artisan plan:create "Plan Name" 29.99 --cycle=monthly --trial=14
@@ -485,6 +557,25 @@ php artisan tenant:migrate TENANT_ID
 
 # Migrate semua tenant sekaligus
 php artisan tenant:migrate --all
+
+# Seed tenant setelah migration
+php artisan db:seed:tenant TENANT_ID
+php artisan db:seed:tenant --all
+```
+
+#### Seeding Issues
+```bash
+# Jika seeder tidak berjalan, pastikan seeder class sudah dibuat
+php artisan make:seeder:global SubscriptionPlanSeeder
+php artisan make:seeder:tenant ProductSeeder
+
+# Jalankan seeder dengan class tertentu
+php artisan db:seed:global --class=SubscriptionPlanSeeder
+php artisan db:seed:tenant TENANT_ID --class=ProductSeeder
+
+# Force seeding di production
+php artisan db:seed:global --force
+php artisan db:seed:tenant --all --force
 ```
 
 #### Error: "Database does not exist"
