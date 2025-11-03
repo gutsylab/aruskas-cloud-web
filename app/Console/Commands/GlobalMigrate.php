@@ -5,7 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 
-class MigrateGlobal extends Command
+class GlobalMigrate extends Command
 {
     /**
      * The name and signature of the console command.
@@ -23,7 +23,7 @@ class MigrateGlobal extends Command
     public function handle(): int
     {
         $globalConnection = config('database.global');
-        
+
         if (!$globalConnection) {
             $this->error('Global database connection not configured');
             return 1;

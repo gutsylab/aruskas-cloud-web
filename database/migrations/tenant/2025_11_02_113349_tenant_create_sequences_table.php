@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('sequences', function (Blueprint $table) {
+        Schema::create('sequences', function (Blueprint $table) {
             $table->id();
             $table->string('code'); // e.g. cash_flow, sales, purchase
             $table->string('name'); // Nama sequence, e.g. "Kas Masuk", "Penjualan"

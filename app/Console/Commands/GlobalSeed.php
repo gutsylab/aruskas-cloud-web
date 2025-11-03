@@ -41,12 +41,19 @@ class GlobalSeed extends Command
 
             // If class is specified, use it
             if ($this->option('class')) {
-                $options['--class'] = $this->option('class');
-                $this->info("Using seeder class: {$this->option('class')}");
+                $seederClass = $this->option('class');
+
+                // If the class doesn't have a namespace, prepend Database\Seeders\Global\
+                if (!str_contains($seederClass, '\\')) {
+                    $seederClass = 'Database\\Seeders\\Global\\' . $seederClass;
+                }
+
+                $options['--class'] = $seederClass;
+                $this->info("Using seeder class: {$seederClass}");
             } else {
-                // Default to SubscriptionPlanSeeder for global database
-                $options['--class'] = 'SubscriptionPlanSeeder';
-                $this->info('Using default seeder: SubscriptionPlanSeeder');
+                // Default to GlobalSeeder for global database
+                $options['--class'] = 'Database\\Seeders\\Global\\GlobalSeeder';
+                $this->info('Using default seeder: Database\\Seeders\\Global\\GlobalSeeder');
             }
 
             Artisan::call('db:seed', $options);

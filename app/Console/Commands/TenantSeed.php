@@ -109,9 +109,22 @@ class TenantSeed extends Command
 
             // If class is specified, use it
             if ($this->option('class')) {
-                $options['--class'] = $this->option('class');
+                $seederClass = $this->option('class');
+
+                // If the class doesn't have a namespace, prepend Database\Seeders\Tenant\
+                if (!str_contains($seederClass, '\\')) {
+                    $seederClass = 'Database\\Seeders\\Tenant\\' . $seederClass;
+                }
+
+                $options['--class'] = $seederClass;
                 if ($showInfo) {
-                    $this->info("Using seeder class: {$this->option('class')}");
+                    $this->info("Using seeder class: {$seederClass}");
+                }
+            } else {
+                // Default to TenantSeeder for tenant database
+                $options['--class'] = 'Database\\Seeders\\Tenant\\TenantSeeder';
+                if ($showInfo) {
+                    $this->info('Using default seeder: Database\\Seeders\\Tenant\\TenantSeeder');
                 }
             }
 

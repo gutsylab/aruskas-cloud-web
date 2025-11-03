@@ -256,6 +256,8 @@ public function index(Request $request)
 |---------|-----------|---------|
 | `migrate:global` | Jalankan migration global | `php artisan migrate:global` |
 | `migrate:global --fresh` | Drop tables + migrate global | `php artisan migrate:global --fresh` |
+| `migrate:global-fresh` | Drop tables + migrate global | `php artisan migrate:global-fresh` |
+| `migrate:global-fresh --seed` | Fresh migrate + seed | `php artisan migrate:global-fresh --seed` |
 | `migrate:global-status` | Status migration global | `php artisan migrate:global-status` |
 | `migrate:global-rollback` | Rollback migration global | `php artisan migrate:global-rollback` |
 | `migrate:global-rollback --step=N` | Rollback N migration | `php artisan migrate:global-rollback --step=3` |
@@ -267,6 +269,9 @@ public function index(Request $request)
 |---------|-----------|---------|
 | `tenant:migrate TENANT_ID` | Migrate satu tenant | `php artisan tenant:migrate 2B1GWBXL` |
 | `tenant:migrate --all` | Migrate semua tenant | `php artisan tenant:migrate --all` |
+| `tenant:migrate-fresh TENANT_ID` | Fresh migrate satu tenant | `php artisan tenant:migrate-fresh 2B1GWBXL` |
+| `tenant:migrate-fresh --all` | Fresh migrate semua tenant | `php artisan tenant:migrate-fresh --all` |
+| `tenant:migrate-fresh --all --seed` | Fresh migrate + seed | `php artisan tenant:migrate-fresh --all --seed` |
 | `tenant:migrate-status TENANT_ID` | Status satu tenant | `php artisan tenant:migrate-status 2B1GWBXL` |
 | `tenant:migrate-status --all` | Status semua tenant | `php artisan tenant:migrate-status --all` |
 | `tenant:migrate-rollback TENANT_ID` | Rollback satu tenant | `php artisan tenant:migrate-rollback 2B1GWBXL` |

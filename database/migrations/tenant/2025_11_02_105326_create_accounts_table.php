@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
 
             $table->string('code')->unique();
+            $table->integer('sort')->default(1);
             $table->string('name');
             $table->enum('type', ['asset', 'liability', 'equity', 'revenue', 'expense']);
             $table->boolean('is_cash')->default(false);
