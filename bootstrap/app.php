@@ -20,6 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'tenant' => \App\Http\Middleware\TenantResolver::class,
             'tenant.auth' => \App\Http\Middleware\TenantAuth::class,
+            'tenant.sanctum' => \App\Http\Middleware\SanctumTenantMiddleware::class,
         ]);
 
         // Don't apply tenant middleware globally to web routes

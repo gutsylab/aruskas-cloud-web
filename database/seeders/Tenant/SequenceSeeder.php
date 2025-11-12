@@ -18,14 +18,14 @@ class SequenceSeeder extends Seeder
             ['code' => 'cash_flow_in'],
             [
                 'name' => 'Cash Flow In',
-                'prefix' => 'CI-',
+                'prefix' => 'CI',
             ]
         );
         Sequence::firstOrCreate(
             ['code' => 'cash_flow_out'],
             [
                 'name' => 'Cash Flow Out',
-                'prefix' => 'CO-',
+                'prefix' => 'CO',
             ]
         );
     }

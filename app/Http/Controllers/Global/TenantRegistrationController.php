@@ -13,6 +13,8 @@ use App\Mail\TenantEmailVerification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Log;
 
 class TenantRegistrationController extends Controller
 {
@@ -91,7 +93,7 @@ class TenantRegistrationController extends Controller
             // Create admin user in tenant database (for actual application login)
             // Set connection to tenant database
             $this->tenantService->setTenantConnection($merchant);
-            
+
             // Create user in tenant database (email not verified yet)
             $tenantUser = \App\Models\Tenant\User::create([
                 'name' => $request->admin_name,
@@ -102,6 +104,17 @@ class TenantRegistrationController extends Controller
 
             // Reset to global connection
             $this->tenantService->resetToGlobalConnection();
+
+            // Seed tenant database with initial data
+            try {
+                Artisan::call('db:seed:tenant', [
+                    'tenant_id' => $tenantId,
+                    '--force' => true,
+                ]);
+            } catch (\Exception $e) {
+                // Log seeding error but don't fail the registration
+                Log::warning("Tenant seeding failed for {$tenantId}: " . $e->getMessage());
+            }
 
             // Send email verification
             Mail::to($merchant->email)->send(new TenantEmailVerification($merchant));

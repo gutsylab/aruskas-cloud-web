@@ -16,8 +16,6 @@ class AuthServiceProvider extends ServiceProvider
     }
 
     protected $policies = [
-        \App\Models\Tenant\CashCategory::class => \App\Policies\Tenant\CashCategoryPolicy::class,
-        \App\Models\Tenant\CashAccount::class => \App\Policies\Tenant\CashAccountPolicy::class,
     ];
 
     /**

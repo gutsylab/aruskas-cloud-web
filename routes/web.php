@@ -34,11 +34,11 @@ Route::prefix('{tenant_id}')->middleware(['tenant'])->group(function () {
     Route::get('/', function () {
         $tenant = request()->attributes->get('tenant');
         $tenantId = $tenant ? $tenant->tenant_id : request()->route('tenant_id');
-        
+
         if (!$tenantId) {
             abort(404, 'Tenant not found');
         }
-        
+
         if (Auth::check()) {
             return redirect()->route('dashboard', ['tenant_id' => $tenantId]);
         }
@@ -58,7 +58,7 @@ Route::prefix('{tenant_id}')->middleware(['tenant'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->middleware('tenant.auth')
         ->name('dashboard');
-    
+
     // Authenticated routes using tenant-aware auth
     Route::middleware('tenant.auth')->group(function () {
         Route::get('/profile', [DashboardController::class, 'profile'])->name('profile');
@@ -70,20 +70,20 @@ Route::prefix('{tenant_id}')->middleware(['tenant'])->group(function () {
         Route::prefix('cash')->name('cash.')->group(function () {
             // Cash Categories
             Route::prefix('categories')->name('categories.')->group(function () {
-                Route::get('/', [CashCategoryController::class, 'index'])->name('index');
-                Route::get('/create', [CashCategoryController::class, 'create'])->name('create');
-                Route::get('/datatables', [CashCategoryController::class, 'datatables'])->name('datatables');
-                Route::post('/', [CashCategoryController::class, 'store'])->name('store');
-                Route::get('/{id}', [CashCategoryController::class, 'show'])->name('show');
-                Route::get('/{id}/edit', [CashCategoryController::class, 'edit'])->name('edit');
-                Route::put('/{id}', [CashCategoryController::class, 'update'])->name('update');
-                Route::delete('/{id}', [CashCategoryController::class, 'destroy'])->name('destroy');
+                // Route::get('/', [CashCategoryController::class, 'index'])->name('index');
+                // Route::get('/create', [CashCategoryController::class, 'create'])->name('create');
+                // Route::get('/datatables', [CashCategoryController::class, 'datatables'])->name('datatables');
+                // Route::post('/', [CashCategoryController::class, 'store'])->name('store');
+                // Route::get('/{id}', [CashCategoryController::class, 'show'])->name('show');
+                // Route::get('/{id}/edit', [CashCategoryController::class, 'edit'])->name('edit');
+                // Route::put('/{id}', [CashCategoryController::class, 'update'])->name('update');
+                // Route::delete('/{id}', [CashCategoryController::class, 'destroy'])->name('destroy');
 
-                // Additional routes for soft deletes and filtering
-                Route::get('/type/{type}', [CashCategoryController::class, 'getByType'])->name('by-type');
-                Route::get('/trashed/list', [CashCategoryController::class, 'trashed'])->name('trashed');
-                Route::post('/{id}/restore', [CashCategoryController::class, 'restore'])->name('restore');
-                Route::delete('/{id}/force', [CashCategoryController::class, 'forceDelete'])->name('force-delete');
+                // // Additional routes for soft deletes and filtering
+                // Route::get('/type/{type}', [CashCategoryController::class, 'getByType'])->name('by-type');
+                // Route::get('/trashed/list', [CashCategoryController::class, 'trashed'])->name('trashed');
+                // Route::post('/{id}/restore', [CashCategoryController::class, 'restore'])->name('restore');
+                // Route::delete('/{id}/force', [CashCategoryController::class, 'forceDelete'])->name('force-delete');
             });
         });
 
@@ -91,7 +91,7 @@ Route::prefix('{tenant_id}')->middleware(['tenant'])->group(function () {
         Route::get('/users', function () {
             return \App\Models\Tenant\User::all();
         });
-        
+
         // Debug route - remove in production
         Route::get('/debug-auth', function () {
             $tenant = request()->attributes->get('tenant');
@@ -112,11 +112,11 @@ Route::prefix('{tenant_id}')->middleware(['tenant'])->group(function () {
             ]);
         });
     });
-    
+
     // Test route for debugging
     Route::get('/test', function () {
         $tenant = request()->attributes->get('tenant');
-        
+
         return response()->json([
             'status' => 'tenant_test_accessed',
             'tenant_path_param' => request()->route('tenant_id'),
@@ -160,19 +160,19 @@ Route::prefix('{tenant_id}')->middleware(['tenant'])->group(function () {
 //     Route::get('/users', function () {
 //         return view('admin.users');
 //     })->name('users');
-    
+
 //     Route::get('/products', function () {
 //         return view('admin.dashboard'); // Sementara gunakan dashboard view
 //     })->name('products');
-    
+
 //     Route::get('/orders', function () {
 //         return view('admin.dashboard'); // Sementara gunakan dashboard view
 //     })->name('orders');
-    
+
 //     Route::get('/reports', function () {
 //         return view('admin.dashboard'); // Sementara gunakan dashboard view
 //     })->name('reports');
-    
+
 //     Route::get('/settings', function () {
 //         return view('admin.dashboard'); // Sementara gunakan dashboard view
 //     })->name('settings');

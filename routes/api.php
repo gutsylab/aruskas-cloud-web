@@ -2,23 +2,54 @@
 
 use App\Http\Middleware\ApiKeyAuth;
 use Illuminate\Support\Facades\Route;
-// use App\Http\Controllers\Tenant\EmailSendController; // Temporarily disabled
-use App\Http\Controllers\Auth\RegisteredUserController;
-use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Api\Tenant\AuthController;
 use App\Http\Controllers\Tenant\DashboardController;
+use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\Api\Global\RegistrationController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Api\Tenant\Report\AccountingController;
+use App\Http\Controllers\Api\Tenant\AccountController as ApiAccountController;
+use App\Http\Controllers\Api\Tenant\CashFlowController as ApiCashFlowController;
+
+// Global API routes (no tenant middleware required)
+// Laravel automatically adds 'api/' prefix, so we only need 'v1'
+// Convert JSON response keys to camelCase for all API responses in this group
+Route::prefix('v1')->middleware(\App\Http\Middleware\ConvertResponseKeysToCamelCase::class)->group(function () {
+    // Tenant Registration API
+    Route::prefix('tenant')->group(function () {
+        Route::get('/plans', [RegistrationController::class, 'getPlans']);
+        Route::post('/register', [RegistrationController::class, 'register']);
+        Route::post('/info', [RegistrationController::class, 'tenantInfo']);
+    });
+});
 
 // Tenant-specific API routes (with tenant middleware)
-Route::middleware(['tenant'])->group(function () {
-    
-    // Auth API endpoints (no CSRF required for API)
+// Pattern: /api/{tenant_id}/v1/... (Laravel adds 'api/' prefix automatically)
+// Add response key conversion middleware in addition to tenant resolver
+Route::prefix('{tenant_id}/v1')->middleware(['tenant', \App\Http\Middleware\ConvertResponseKeysToCamelCase::class])->group(function () {
+
+    // Tenant Auth API endpoints (no CSRF required for API)
+    Route::prefix('auth')->group(function () {
+        Route::post('/login', [AuthController::class, 'login']);
+
+        // Protected auth routes
+        Route::middleware('tenant.sanctum')->group(function () {
+            Route::get('/me', [AuthController::class, 'me']);
+            Route::post('/logout', [AuthController::class, 'logout']);
+            Route::post('/logout-all', [AuthController::class, 'logoutAll']);
+            Route::post('/refresh', [AuthController::class, 'refresh']);
+        });
+    });
+
+    // Legacy Auth API endpoints (backward compatibility)
     Route::prefix('auth')->group(function () {
         Route::post('/register', [RegisteredUserController::class, 'store']);
-        Route::post('/login', [AuthenticatedSessionController::class, 'store']);
-        Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->middleware('auth:sanctum');
+        Route::post('/login-legacy', [AuthenticatedSessionController::class, 'store']);
+        Route::post('/logout-legacy', [AuthenticatedSessionController::class, 'destroy'])->middleware('tenant.sanctum');
     });
 
     // Protected API routes (require authentication)
-    Route::middleware('auth:sanctum')->group(function () {
+    Route::middleware('tenant.sanctum')->group(function () {
         Route::get('/user', function () {
             $tenant = request()->attributes->get('tenant');
             return response()->json([
@@ -26,7 +57,35 @@ Route::middleware(['tenant'])->group(function () {
                 'tenant' => $tenant,
             ]);
         });
-        
+
+        Route::prefix('account')->group(function () {
+            Route::get('/', [ApiAccountController::class, 'index']);
+            Route::get('/{id}', [ApiAccountController::class, 'show']);
+            Route::post('/', [ApiAccountController::class, 'store']);
+            Route::put('/{id}', [ApiAccountController::class, 'update']);
+            Route::delete('/{id}', [ApiAccountController::class, 'destroy']);
+        });
+
+        Route::prefix('cash-flow')->group(function () {
+            Route::get('/show/{id}', [ApiCashFlowController::class, 'show']);
+            Route::get('/{type}', [ApiCashFlowController::class, 'index'])->defaults('type', 'in');
+
+            Route::post('/', [ApiCashFlowController::class, 'store']);
+            Route::put('/{id}', [ApiCashFlowController::class, 'update']);
+            Route::delete('/{id}', [ApiCashFlowController::class, 'destroy']);
+            Route::patch('/{id}/set-draft', [ApiCashFlowController::class, 'set_draft']);
+            Route::patch('/{id}/set-posted', [ApiCashFlowController::class, 'set_posted']);
+            Route::delete('/{id}', [ApiCashFlowController::class, 'destroy']);
+        });
+
+        Route::prefix('report')->group(function () {
+            Route::prefix('accounting')->group(function () {
+                Route::get('/profit-loss', [AccountingController::class, 'report_profit_loss']);
+                Route::get('/bank-statement', [AccountingController::class, 'report_bank_statement']);
+                Route::get('/cash-summary', [AccountingController::class, 'report_cash_summary']);
+            });
+        });
+
         Route::get('/dashboard', [DashboardController::class, 'index']);
         Route::get('/profile', [DashboardController::class, 'profile']);
         Route::put('/profile', [DashboardController::class, 'updateProfile']);

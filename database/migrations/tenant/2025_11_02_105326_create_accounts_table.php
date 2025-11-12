@@ -17,7 +17,16 @@ return new class extends Migration
             $table->string('code')->unique();
             $table->integer('sort')->default(1);
             $table->string('name');
-            $table->enum('type', ['asset', 'liability', 'equity', 'revenue', 'expense']);
+            $table->enum('type', [
+                'asset',
+                'liability',
+                'equity',
+                'revenue',
+                'cost_of_goods_sold', // ✅ ditambahkan di sini
+                'expense',
+                'other_income',
+                'other_expense',
+            ]);
             $table->boolean('is_cash')->default(false);
             $table->enum('cash_flow_type', ['in', 'out', 'both'])->default('both');
 

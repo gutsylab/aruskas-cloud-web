@@ -18,7 +18,7 @@ class TenantService
     {
         $prefix = config('database.tenant.prefix', 'tenant_');
         $separator = config('database.tenant.separator', '_');
-        
+
         return $prefix . $separator . $tenantId;
     }
 
@@ -35,7 +35,7 @@ class TenantService
     public function setTenantConnection(Merchant $merchant): void
     {
         $connectionName = $this->getTenantConnectionName($merchant);
-        
+
         // Configure the tenant database connection
         Config::set("database.connections.{$connectionName}", [
             'driver' => 'mysql',
@@ -56,7 +56,7 @@ class TenantService
 
         // Set as default connection
         Config::set('database.default', $connectionName);
-        
+
         // Purge the connection to force reconnection
         DB::purge($connectionName);
     }
@@ -69,13 +69,13 @@ class TenantService
         try {
             // Create database
             $this->createTenantDatabase($merchant->database_name);
-            
+
             // Set tenant connection
             $this->setTenantConnection($merchant);
-            
+
             // Run migrations for tenant
             $this->runTenantMigrations($merchant);
-            
+
             return true;
         } catch (Exception $e) {
             throw new Exception("Failed to create tenant: " . $e->getMessage());
@@ -89,7 +89,7 @@ class TenantService
     {
         // Use the global connection to create the database
         $globalConnection = config('database.global');
-        
+
         DB::connection($globalConnection)->statement(
             "CREATE DATABASE IF NOT EXISTS `{$databaseName}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
         );
@@ -101,7 +101,7 @@ class TenantService
     private function runTenantMigrations(Merchant $merchant): void
     {
         $connectionName = $this->getTenantConnectionName($merchant);
-        
+
         // Run tenant-specific migrations
         Artisan::call('migrate', [
             '--database' => $connectionName,
@@ -117,11 +117,11 @@ class TenantService
     {
         try {
             $globalConnection = config('database.global');
-            
+
             DB::connection($globalConnection)->statement(
                 "DROP DATABASE IF EXISTS `{$merchant->database_name}`"
             );
-            
+
             return true;
         } catch (Exception $e) {
             throw new Exception("Failed to drop tenant database: " . $e->getMessage());
@@ -134,7 +134,7 @@ class TenantService
     public function getCurrentTenant(): ?Merchant
     {
         $tenantId = $this->getTenantIdFromPath();
-        
+
         if (!$tenantId) {
             return null;
         }
@@ -161,12 +161,19 @@ class TenantService
     {
         $path = request()->path();
         $segments = explode('/', $path);
-        
+
+        // For API routes: api/{tenant_id}/v1/...
+        // Check if path starts with 'api' and second segment is tenant ID
+        if (!empty($segments[0]) && $segments[0] === 'api' && !empty($segments[1]) && $this->isValidTenantId($segments[1])) {
+            return $segments[1];
+        }
+
+        // For web routes: {tenant_id}/...
         // Check if first segment looks like a tenant ID
         if (!empty($segments[0]) && $this->isValidTenantId($segments[0])) {
             return $segments[0];
         }
-        
+
         return null;
     }
 
@@ -186,10 +193,10 @@ class TenantService
     {
         try {
             $globalConnection = config('database.global');
-            
+
             $result = DB::connection($globalConnection)
                 ->select("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?", [$databaseName]);
-            
+
             return !empty($result);
         } catch (Exception $e) {
             return false;

@@ -2,24 +2,14 @@
 
 namespace App\Models\Tenant;
 
-use Illuminate\Database\Eloquent\Model;
+use Exception;
 use App\Traits\BelongsToTenant;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Model;
 
 class Sequence extends Model
 {
     use BelongsToTenant;
 
     //
-
-    protected $fillable = [
-        'code',
-        'name',
-        'prefix',
-        'pattern',
-        'reset_period',
-        'number',
-        'year',
-        'month',
-        'day',
-    ];
 }

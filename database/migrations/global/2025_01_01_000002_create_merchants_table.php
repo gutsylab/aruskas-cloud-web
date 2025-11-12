@@ -30,11 +30,15 @@ return new class extends Migration
             $table->string('logo')->nullable();
             $table->text('address')->nullable();
             $table->string('phone')->nullable();
-            $table->string('email')->nullable();
+            $table->string('email')->nullable()->unique();
             $table->timestamp('email_verified_at')->nullable()->index();
             $table->string('website')->nullable();
             $table->boolean('status')->default(true);
             $table->json('settings')->nullable();
+
+            $table->string('currency', 3)->default('IDR');
+            $table->string('locale', 5)->default('id_ID');
+            $table->string('timezone')->default('Asia/Jakarta');
 
             $table->timestamps();
         });
