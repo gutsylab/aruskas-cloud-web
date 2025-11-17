@@ -20,7 +20,7 @@ class AccountSeeder extends Seeder
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
         $sort = 1;
         Account::firstOrCreate(
-            ['code' => '1100'],
+            ['code' => '1101'],
             ['name' => 'Kas Tunai', 'type' => 'asset', 'is_cash' => true, 'sort' => $sort]
         );
         Account::firstOrCreate(
@@ -49,11 +49,11 @@ class AccountSeeder extends Seeder
         $sort = 2;
         // Account Payable
         Account::firstOrCreate(
-            ['code' => '2100'],
+            ['code' => '2101'],
             ['name' => 'Hutang Usaha', 'type' => 'liability', 'is_cash' => false, 'sort' => $sort, 'cash_flow_type' => 'out']
         );
         Account::firstOrCreate(
-            ['code' => '2101'],
+            ['code' => '2102'],
             ['name' => 'Hutang Pajak', 'type' => 'liability', 'is_cash' => false, 'sort' => $sort, 'cash_flow_type' => 'out']
         );
 
@@ -61,59 +61,178 @@ class AccountSeeder extends Seeder
         // 3xx - Equity Accounts
         $sort = 3;
         Account::firstOrCreate(
-            ['code' => '3100'],
+            ['code' => '3101'],
             ['name' => 'Modal Pemilik', 'type' => 'equity', 'is_cash' => false, 'sort' => $sort]
         );
         Account::firstOrCreate(
-            ['code' => '3101'],
+            ['code' => '3102'],
             ['name' => 'Prive / Pengembalian Pemilik', 'type' => 'equity', 'is_cash' => false, 'sort' => $sort]
         );
         Account::firstOrCreate(
-            ['code' => '3102'],
+            ['code' => '3103'],
             ['name' => 'Laba Ditahan', 'type' => 'equity', 'is_cash' => false, 'sort' => $sort]
         );
 
         // 4xx - Revenue Accounts
         $sort = 4;
         Account::firstOrCreate(
-            ['code' => '4100'],
+            ['code' => '4101'],
             ['name' => 'Pendapatan Tunai', 'type' => 'revenue', 'sort' => $sort, 'cash_flow_type' => 'in']
         );
         Account::firstOrCreate(
-            ['code' => '4101'],
+            ['code' => '4102'],
             ['name' => 'Pendapatan Jasa', 'type' => 'revenue', 'sort' => $sort, 'cash_flow_type' => 'in']
         );
         Account::firstOrCreate(
-            ['code' => '4102'],
+            ['code' => '4103'],
             ['name' => 'Pendapatan Produk', 'type' => 'revenue', 'sort' => $sort, 'cash_flow_type' => 'in']
         );
 
         // 6xx - Expense Accounts
         $sort = 6;
         Account::firstOrCreate(
-            ['code' => '6100'],
-            ['name' => 'Pembelian Tunai', 'type' => 'expense', 'sort' => $sort, 'cash_flow_type' => 'out']
-        );
-        Account::firstOrCreate(
             ['code' => '6101'],
-            ['name' => 'Pembayaran Gaji dan Upah', 'type' => 'expense', 'sort' => $sort, 'cash_flow_type' => 'out']
+            [
+                'name' => 'Makanan dan Minuman',
+                'type' => 'expense',
+                'sort' => $sort,
+                'cash_flow_type' => 'out',
+            ]
         );
         Account::firstOrCreate(
             ['code' => '6102'],
-            ['name' => 'Biaya Operasional', 'type' => 'expense', 'sort' => $sort, 'cash_flow_type' => 'out']
+            [
+                'name' => 'Transportasi',
+                'type' => 'expense',
+                'sort' => $sort,
+                'cash_flow_type' => 'out',
+            ]
         );
         Account::firstOrCreate(
             ['code' => '6103'],
-            ['name' => 'Biaya Sewa', 'type' => 'expense', 'sort' => $sort, 'cash_flow_type' => 'out']
+            [
+                'name' => 'BBM',
+                'type' => 'expense',
+                'sort' => $sort,
+                'cash_flow_type' => 'out',
+            ]
         );
         Account::firstOrCreate(
             ['code' => '6104'],
             [
-                'name' => 'Biaya Utilitas',
+                'name' => 'Hiburan',
                 'type' => 'expense',
                 'sort' => $sort,
                 'cash_flow_type' => 'out',
-                'description' => 'Listrik, Air, Internet'
+            ]
+        );
+        Account::firstOrCreate(
+            ['code' => '6105'],
+            [
+                'name' => 'Kesehatan',
+                'type' => 'expense',
+                'sort' => $sort,
+                'cash_flow_type' => 'out',
+            ]
+        );
+        Account::firstOrCreate(
+            ['code' => '6106'],
+            [
+                'name' => 'Alat Kerja / Sekolah',
+                'type' => 'expense',
+                'sort' => $sort,
+                'cash_flow_type' => 'out',
+            ]
+        );
+        Account::firstOrCreate(
+            ['code' => '6107'],
+            ['name' => 'Pembelian Tunai Lainnya', 'type' => 'expense', 'sort' => $sort, 'cash_flow_type' => 'out']
+        );
+        //
+        Account::firstOrCreate(
+            ['code' => '6201'],
+            ['name' => 'Biaya Gaji dan Upah', 'type' => 'expense', 'sort' => $sort, 'cash_flow_type' => 'out']
+        );
+        //
+        Account::firstOrCreate(
+            ['code' => '6301'],
+            ['name' => 'Biaya Operasional', 'type' => 'expense', 'sort' => $sort, 'cash_flow_type' => 'out']
+        );
+        //
+        Account::firstOrCreate(
+            ['code' => '6401'],
+            ['name' => 'Biaya Sewa Rumah', 'type' => 'expense', 'sort' => $sort, 'cash_flow_type' => 'out']
+        );
+        Account::firstOrCreate(
+            ['code' => '6402'],
+            ['name' => 'Biaya Sewa Kos', 'type' => 'expense', 'sort' => $sort, 'cash_flow_type' => 'out']
+        );
+        Account::firstOrCreate(
+            ['code' => '6403'],
+            ['name' => 'Biaya Sewa Tenant / Booth', 'type' => 'expense', 'sort' => $sort, 'cash_flow_type' => 'out']
+        );
+        //
+        Account::firstOrCreate(
+            ['code' => '6501'],
+            [
+                'name' => 'Tagihan Listrik',
+                'type' => 'expense',
+                'sort' => $sort,
+                'cash_flow_type' => 'out',
+            ]
+        );
+        Account::firstOrCreate(
+            ['code' => '6502'],
+            [
+                'name' => 'Tagihan Air',
+                'type' => 'expense',
+                'sort' => $sort,
+                'cash_flow_type' => 'out',
+            ]
+        );
+        Account::firstOrCreate(
+            ['code' => '6503'],
+            [
+                'name' => 'Tagihan Internet',
+                'type' => 'expense',
+                'sort' => $sort,
+                'cash_flow_type' => 'out',
+            ]
+        );
+        Account::firstOrCreate(
+            ['code' => '6504'],
+            [
+                'name' => 'Tagihan Streaming',
+                'type' => 'expense',
+                'sort' => $sort,
+                'cash_flow_type' => 'out',
+            ]
+        );
+        Account::firstOrCreate(
+            ['code' => '6505'],
+            [
+                'name' => 'Tagihan Layanan Cloud',
+                'type' => 'expense',
+                'sort' => $sort,
+                'cash_flow_type' => 'out',
+            ]
+        );
+        Account::firstOrCreate(
+            ['code' => '6506'],
+            [
+                'name' => 'Tagihan Layanan AI',
+                'type' => 'expense',
+                'sort' => $sort,
+                'cash_flow_type' => 'out',
+            ]
+        );
+        Account::firstOrCreate(
+            ['code' => '6507'],
+            [
+                'name' => 'Tagihan Domain, Hosting dan VPS',
+                'type' => 'expense',
+                'sort' => $sort,
+                'cash_flow_type' => 'out',
             ]
         );
     }

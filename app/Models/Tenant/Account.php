@@ -19,6 +19,8 @@ class Account extends Model
         'created_by',
         'updated_by',
         'deleted_by',
+        'parent_id',
+        'sort',
     ];
 
     protected $casts = [
@@ -53,5 +55,20 @@ class Account extends Model
     public function journalLines()
     {
         return $this->hasMany(JournalLine::class, 'account_id');
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(Account::class, 'parent_id');
+    }
+
+    public function children()
+    {
+        return $this->hasMany(Account::class, 'parent_id');
+    }
+
+    public function childrenRecursive()
+    {
+        return $this->children()->with('childrenRecursive');
     }
 }
