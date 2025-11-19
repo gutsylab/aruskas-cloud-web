@@ -21,6 +21,8 @@ return new class extends Migration
 
             $table->string('reference')->nullable();
 
+            $table->enum('type', ['general', 'cash_in', 'cash_out', 'cash_transfer'])->default('cash_in');
+
             $table->enum('status', ['draft', 'posted', 'cancelled'])->default('draft');
             $table->timestamp('posted_at')->nullable();
 

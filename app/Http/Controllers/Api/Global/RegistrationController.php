@@ -114,7 +114,7 @@ class RegistrationController extends ApiController
             $databaseName = Merchant::generateDatabaseName($tenantId);
 
             // Get free trial plan
-            $plan = SubscriptionPlan::where('slug', '=', 'free-trial')->first();
+            $plan = SubscriptionPlan::where('slug', '=', 'free')->first();
             if (!$plan) {
                 return response()->json([
                     'success' => false,

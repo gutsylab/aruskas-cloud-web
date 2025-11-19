@@ -10,6 +10,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Api\Tenant\Report\AccountingController;
 use App\Http\Controllers\Api\Tenant\AccountController as ApiAccountController;
 use App\Http\Controllers\Api\Tenant\CashFlowController as ApiCashFlowController;
+use App\Http\Controllers\Api\Tenant\CashTransferController as ApiCashTransferController;
 
 // Global API routes (no tenant middleware required)
 // Laravel automatically adds 'api/' prefix, so we only need 'v1'
@@ -76,6 +77,18 @@ Route::prefix('{tenant_id}/v1')->middleware(['tenant', \App\Http\Middleware\Conv
             Route::patch('/{id}/set-draft', [ApiCashFlowController::class, 'set_draft']);
             Route::patch('/{id}/set-posted', [ApiCashFlowController::class, 'set_posted']);
             Route::delete('/{id}', [ApiCashFlowController::class, 'destroy']);
+        });
+
+        Route::prefix('cash-transfer')->group(function () {
+            Route::get('/', [ApiCashTransferController::class, 'index']);
+            Route::get('/show/{id}', [ApiCashTransferController::class, 'show']);
+
+            Route::post('/', [ApiCashTransferController::class, 'store']);
+            Route::put('/{id}', [ApiCashTransferController::class, 'update']);
+            Route::delete('/{id}', [ApiCashTransferController::class, 'destroy']);
+            Route::patch('/{id}/set-draft', [ApiCashTransferController::class, 'set_draft']);
+            Route::patch('/{id}/set-posted', [ApiCashTransferController::class, 'set_posted']);
+            Route::delete('/{id}', [ApiCashTransferController::class, 'destroy']);
         });
 
         Route::prefix('report')->group(function () {

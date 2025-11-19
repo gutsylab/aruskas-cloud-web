@@ -214,6 +214,7 @@ class CashFlowController extends ApiController
             // create journal
             $journal = Journal::create([
                 'code' => $code,
+                'type' => 'cash_' . $cash_flow_type,
                 'date' => $validatedData['date'],
                 'description' => $validatedData['description'] ?? null,
                 'reference' => $validatedData['reference'] ?? null,
@@ -359,6 +360,7 @@ class CashFlowController extends ApiController
 
             // update journal header
             $journal->update([
+                'type' => 'cash_' . $cash_flow_type,
                 'date' => $validatedData['date'],
                 'description' => $validatedData['description'] ?? null,
                 'reference' => $validatedData['reference'] ?? null,

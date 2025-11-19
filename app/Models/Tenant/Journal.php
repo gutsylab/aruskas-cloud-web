@@ -15,6 +15,8 @@ class Journal extends Model
         'date',
         'description',
 
+        'type',
+
         'reference',
 
         'created_by',
@@ -28,7 +30,7 @@ class Journal extends Model
     }
     public function updatedBy()
     {
-        return $this->belongsTo(User::class, 'updated_by');
+        return $this->belongsTo(User::class, 'updated_by')->select('id', 'name', 'email');
     }
     public function deletedBy()
     {
@@ -43,16 +45,17 @@ class Journal extends Model
     public function scopeCashFlowIn($query)
     {
         // Filter journals that have at least one line whose related account has cash_flow_type = 'in'
-        return $query->whereHas('lines.account', function ($q) {
-            $q->where('cash_flow_type', '=', 'in');
-        });
+        return $query->where('type', '=', 'cash_in');
     }
 
     public function scopeCashFlowOut($query)
     {
         // Filter journals that have at least one line whose related account has cash_flow_type = 'out'
-        return $query->whereHas('lines.account', function ($q) {
-            $q->where('cash_flow_type', '=', 'out');
-        });
+        return $query->where('type', '=', 'cash_out');
+    }
+
+    public function scopeCashTransfer($query)
+    {
+        return $query->where('type', '=', 'cash_transfer');
     }
 }

@@ -28,5 +28,12 @@ class SequenceSeeder extends Seeder
                 'prefix' => 'CO',
             ]
         );
+        Sequence::firstOrCreate(
+            ['code' => 'cash_transfer'],
+            [
+                'name' => 'Cash Transfer',
+                'prefix' => 'TF',
+            ]
+        );
     }
 }
