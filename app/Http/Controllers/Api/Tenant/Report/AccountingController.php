@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use App\Services\CashSummaryService;
 use App\Services\BankStatementService;
 use App\Http\Controllers\ApiController;
+use App\Services\CashFlowService;
 
 class AccountingController extends ApiController
 {
@@ -89,7 +90,7 @@ class AccountingController extends ApiController
         }
     }
 
-    public function report_cash_summary()
+    public function report_cash_flow_summary()
     {
         $end_date = date("Y-m-t");
 
@@ -103,7 +104,43 @@ class AccountingController extends ApiController
 
 
         try {
-            $result = CashSummaryService::generateAsOf($end_date);
+            $result = CashFlowService::generateSummary($end_date);
+            return $this->responseSuccess($result);
+        } catch (Exception $e) {
+            return $this->responseError($e->getMessage(), 500);
+        }
+    }
+    public function report_cash_flow_detail()
+    {
+        $start_date = date("Y-m-01");
+        $end_date = date("Y-m-t");
+
+
+
+        if (request()->has('start_date')) {
+            // check if start date is valid format
+            if (!strtotime(request()->get('start_date'))) {
+                return $this->responseError('Invalid start date format', 400);
+            }
+            $start_date = request()->get('start_date');
+        }
+
+        if (request()->has('end_date')) {
+            // check if end date is valid format
+            if (!strtotime(request()->get('end_date'))) {
+                return $this->responseError('Invalid end date format', 400);
+            }
+            $end_date = request()->get('end_date');
+        }
+
+        // end date must be greater than start date
+        if (strtotime($end_date) < strtotime($start_date)) {
+            return $this->responseError('Start date must be less than End date');
+        }
+
+
+        try {
+            $result = CashFlowService::generateDetail($start_date, $end_date);
             return $this->responseSuccess($result);
         } catch (Exception $e) {
             return $this->responseError($e->getMessage(), 500);

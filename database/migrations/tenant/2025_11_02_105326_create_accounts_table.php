@@ -30,7 +30,7 @@ return new class extends Migration
             $table->boolean('is_cash')->default(false);
             $table->enum('cash_flow_type', ['in', 'out', 'both'])->default('both');
 
-            $table->integer('parent_id')->nullable()->index();
+            $table->unsignedBigInteger('parent_id')->nullable()->index();
             $table->foreign('parent_id')->references('id')->on('accounts')->onDelete('set null');
 
             $table->timestamps();

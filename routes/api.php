@@ -82,7 +82,8 @@ Route::prefix('{tenant_id}/v1')->middleware(['tenant', \App\Http\Middleware\Conv
             Route::prefix('accounting')->group(function () {
                 Route::get('/profit-loss', [AccountingController::class, 'report_profit_loss']);
                 Route::get('/bank-statement', [AccountingController::class, 'report_bank_statement']);
-                Route::get('/cash-summary', [AccountingController::class, 'report_cash_summary']);
+                Route::get('/cash-flow-summary', [AccountingController::class, 'report_cash_flow_summary']);
+                Route::get('/cash-flow-detail', [AccountingController::class, 'report_cash_flow_detail']);
             });
         });
 

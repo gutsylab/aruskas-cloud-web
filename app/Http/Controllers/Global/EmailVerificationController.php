@@ -33,11 +33,11 @@ class EmailVerificationController extends Controller
 
         // Check if email is already verified
         if ($merchant->email_verified_at) {
-            return view('tenant-email-verified', [
-                'merchant' => $merchant,
-                'message' => 'Email sudah terverifikasi sebelumnya.',
-                'status' => 'already_verified'
-            ]);
+            // return view('tenant-email-verified', [
+            //     'merchant' => $merchant,
+            //     'message' => 'Email sudah terverifikasi sebelumnya.',
+            //     'status' => 'already_verified'
+            // ]);
         }
 
         // Verify the signature
@@ -52,12 +52,11 @@ class EmailVerificationController extends Controller
 
         // Also verify the tenant user's email
         $this->tenantService->setTenantConnection($merchant);
-        
+
         $tenantUser = \App\Models\Tenant\User::where('email', $merchant->email)->first();
         if ($tenantUser && !$tenantUser->email_verified_at) {
-            $tenantUser->update([
-                'email_verified_at' => now(),
-            ]);
+            $tenantUser->email_verified_at = now();
+            $tenantUser->save();
         }
 
         $this->tenantService->resetToGlobalConnection();

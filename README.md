@@ -287,6 +287,17 @@ public function index(Request $request)
 | `db:seed:tenant --all` | Seed semua tenant | `php artisan db:seed:tenant --all` |
 | `db:seed:tenant TENANT_ID --class=SeederClass` | Seed tenant dengan seeder tertentu | `php artisan db:seed:tenant 2B1GWBXL --class=ProductSeeder` |
 
+### 🎯 **Queue Worker Commands**
+
+| Command | Deskripsi | Contoh |
+|---------|-----------|---------|
+| `queue:work-global` | Process queue jobs di global database | `php artisan queue:work-global` |
+| `queue:work-global --once` | Process 1 job lalu stop | `php artisan queue:work-global --once` |
+| `queue:work-global --stop-when-empty` | Stop ketika queue kosong | `php artisan queue:work-global --stop-when-empty` |
+| `queue:work-tenant TENANT_ID` | Process queue untuk satu tenant | `php artisan queue:work-tenant 2B1GWBXL` |
+| `queue:work-tenant --all` | Process queue semua tenant | `php artisan queue:work-tenant --all` |
+| `queue:work-tenant --all --once` | Process 1 job per tenant | `php artisan queue:work-tenant --all --once` |
+
 ### 🎯 **Membuat Seeder**
 
 | Command | Deskripsi | Contoh |
@@ -517,9 +528,67 @@ php artisan make:seeder:global SubscriptionPlanSeeder  # Buat seeder global
 php artisan make:seeder:tenant ProductSeeder       # Buat seeder tenant
 ```
 
-### Subscription Plans
+### Queue Worker Commands
+
+#### Global Queue Worker
+Process queue jobs untuk database global:
 ```bash
-php artisan plan:create "Plan Name" 29.99 --cycle=monthly --trial=14
+# Process queue jobs di global database
+php artisan queue:work-global
+
+# Process hanya 1 job lalu stop
+php artisan queue:work-global --once
+
+# Stop ketika queue kosong
+php artisan queue:work-global --stop-when-empty
+
+# Limit jumlah jobs yang diproses
+php artisan queue:work-global --max-jobs=100
+
+# Limit waktu running (dalam detik)
+php artisan queue:work-global --max-time=3600
+
+# Custom sleep time (detik)
+php artisan queue:work-global --sleep=5
+
+# Custom timeout per job (detik)
+php artisan queue:work-global --timeout=120
+
+# Jumlah retry attempts
+php artisan queue:work-global --tries=3
+```
+
+#### Tenant Queue Worker
+Process queue jobs untuk database tenant:
+```bash
+# Process queue jobs untuk satu tenant
+php artisan queue:work-tenant TENANT_ID
+
+# Process queue jobs untuk semua tenant
+php artisan queue:work-tenant --all
+
+# Process 1 job per tenant lalu stop
+php artisan queue:work-tenant TENANT_ID --once
+php artisan queue:work-tenant --all --once
+
+# Stop ketika queue kosong
+php artisan queue:work-tenant TENANT_ID --stop-when-empty
+
+# Dengan opsi tambahan
+php artisan queue:work-tenant TENANT_ID --max-jobs=50 --sleep=3 --tries=3
+php artisan queue:work-tenant --all --stop-when-empty --timeout=120
+```
+
+**Contoh Penggunaan:**
+```bash
+# Development: Process queue untuk tenant tertentu
+php artisan queue:work-tenant 2B1GWBXL --once
+
+# Production: Process semua tenant queues
+php artisan queue:work-tenant --all --sleep=3 --tries=3
+
+# Process global queue (untuk email verifikasi, dll)
+php artisan queue:work-global --stop-when-empty
 ```
 
 ### Development Utilities

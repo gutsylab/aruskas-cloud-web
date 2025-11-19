@@ -43,6 +43,7 @@
             border-radius: 5px;
             font-weight: bold;
             margin: 20px 0;
+            text-decoration: none;
         }
         .button:hover {
             background-color: #218838;
@@ -75,16 +76,16 @@
         <div class="header">
             <h1>Verifikasi Email Anda</h1>
         </div>
-        
+
         <div class="content">
             <h2>Halo, {{ $merchant->name }}!</h2>
-            
+
             <p>Terima kasih telah mendaftar di {{ config('app.name') }}. Untuk melengkapi proses registrasi, silakan verifikasi alamat email Anda dengan mengklik tombol di bawah ini:</p>
-            
+
             <div style="text-align: center;">
                 <a href="{{ $verificationUrl }}" class="button">Verifikasi Email</a>
             </div>
-            
+
             <div class="info-box">
                 <h3>Detail Akun Anda:</h3>
                 <ul>
@@ -94,7 +95,7 @@
                     <li><strong>URL Akses:</strong> <a href="{{ url('/' . $merchant->tenant_id) }}">{{ url('/' . $merchant->tenant_id) }}</a></li>
                 </ul>
             </div>
-            
+
             <div class="warning">
                 <strong>Penting:</strong>
                 <ul>
@@ -103,20 +104,20 @@
                 </ul>
                 <p style="word-break: break-all; font-size: 12px; color: #666;">{{ $verificationUrl }}</p>
             </div>
-            
+
             <p>Setelah email terverifikasi, Anda dapat login ke aplikasi menggunakan:</p>
             <ul>
                 <li><strong>URL:</strong> <a href="{{ url('/' . $merchant->tenant_id) }}">{{ url('/' . $merchant->tenant_id) }}</a></li>
                 <li><strong>Email:</strong> {{ $merchant->email }}</li>
                 <li><strong>Password:</strong> Password yang Anda buat saat registrasi</li>
             </ul>
-            
+
             <p>Jika Anda tidak melakukan registrasi ini, silakan abaikan email ini.</p>
-            
+
             <p>Terima kasih,<br>
             Tim {{ config('app.name') }}</p>
         </div>
-        
+
         <div class="footer">
             <p>Email ini dikirim secara otomatis, mohon jangan balas email ini.</p>
             <p>&copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.</p>

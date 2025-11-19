@@ -23,7 +23,7 @@ return [
     | Global Database Connection
     |--------------------------------------------------------------------------
     |
-    | This connection is used for global data such as merchants, 
+    | This connection is used for global data such as merchants,
     | subscription plans, and merchant subscriptions.
     |
     */
@@ -40,7 +40,7 @@ return [
     */
 
     'tenant' => [
-        'prefix' => env('DB_TENANT_PREFIX', 'tenant_'),
+        'prefix' => env('DB_TENANT_PREFIX', 'gutsypos'),
         'separator' => env('DB_TENANT_SEPARATOR', '_'),
     ],
 

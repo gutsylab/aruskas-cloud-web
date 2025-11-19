@@ -14,76 +14,94 @@ class SubscriptionPlanSeeder extends Seeder
     {
         $plans = [
             [
-                'name' => 'Free Trial',
-                'slug' => 'free-trial',
-                'description' => 'Try our platform for free',
+                'name' => 'Free',
+                'slug' => 'free',
+                'description' => 'Coba gratis!',
                 'price' => 0,
-                'billing_cycle' => 'monthly',
-                'trial_days' => 30,
+                'billing_cycle' => 'lifetime',
+                'trial_days' => 0,
                 'status' => true,
                 'features' => [
-                    'up_to_2_users' => true,
-                    'basic_email_support' => true,
-                    'basic_analytics' => true,
-                    'api_access' => false,
-                    'custom_branding' => false,
+                    'multi_users' => false,
+                    'cash_account_management' => false,
+                    'cash_category_management' => false,
+                    //
+                    'contacts' => true,
+                    'payable_receivables' => false,
+                    //
+                    'export' => false,
+                    'attachments' => false,
+                    //
+                    'support' => true,
                 ],
                 'limits' => [
-                    'max_users' => 2,
-                    'max_storage' => 512, // 512MB
-                    'max_emails' => 100,
-                    'max_api_calls' => 0,
+                    'max_users' => 1,
+                    'max_contacts' => 10,
+                    'max_transaction_per_month' => 100,
                 ],
             ],
             [
                 'name' => 'Basic',
                 'slug' => 'basic',
-                'description' => 'Perfect for small businesses getting started',
-                'price' => 24900,
+                'description' => 'Gunakan fitur dasar untuk usaha kecil Anda.',
+                'price' => 19900,
                 'billing_cycle' => 'monthly',
                 'trial_days' => 14,
                 'status' => true,
                 'features' => [
-                    'up_to_5_users' => true,
-                    'basic_email_support' => true,
-                    'basic_analytics' => true,
-                    'api_access' => false,
-                    'custom_branding' => false,
+                    'multi_users' => true,
+                    'cash_account_management' => true,
+                    'cash_category_management' => true,
+                    //
+                    'contacts' => true,
+                    'payable_receivables' => false,
+                    //
+                    'export' => true,
+                    'attachments' => true,
+                    //
+                    'support' => true,
                 ],
                 'limits' => [
                     'max_users' => 5,
-                    'max_storage' => 1024, // 1GB in MB
-                    'max_emails' => 1000,
-                    'max_api_calls' => 0,
+                    'max_contacts' => 50,
+                    'max_transaction_per_month' => 2500,
                 ],
             ],
             [
-                'name' => 'Professional',
-                'slug' => 'professional',
-                'description' => 'Ideal for growing businesses with advanced needs',
-                'price' => 44900,
+                'name' => 'Pro',
+                'slug' => 'pro',
+                'description' => 'Menjalankan bisnis secara profesional dengan fitur yang lebih lengkap.',
+                'price' => 39900,
                 'billing_cycle' => 'monthly',
                 'trial_days' => 14,
                 'status' => true,
                 'features' => [
-                    'up_to_25_users' => true,
-                    'priority_email_support' => true,
-                    'advanced_analytics' => true,
-                    'api_access' => true,
-                    'custom_branding' => true,
-                    'integrations' => true,
+                    'multi_users' => true,
+                    'cash_account_management' => true,
+                    'cash_category_management' => true,
+                    //
+                    'contacts' => true,
+                    'payable_receivables' => true,
+                    //
+                    'export' => true,
+                    'attachments' => true,
+                    //
+                    'support' => true,
                 ],
                 'limits' => [
-                    'max_users' => 25,
-                    'max_storage' => 5120, // 5GB in MB
-                    'max_emails' => 10000,
-                    'max_api_calls' => 10000,
+                    'max_users' => 10,
+                    'max_contacts' => 100,
+                    'max_transaction_per_month' => 5000,
                 ],
             ],
         ];
 
         foreach ($plans as $plan) {
-            SubscriptionPlan::create($plan);
+            $slug = $plan['slug'];
+            SubscriptionPlan::updateOrCreate(
+                ['slug' => $slug],
+                $plan
+            );
         }
     }
 }

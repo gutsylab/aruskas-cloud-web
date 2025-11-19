@@ -8,8 +8,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Global\MerchantUser;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\TenantEmailVerification;
+use App\Jobs\SendTenantEmailVerification;
 use App\Models\Global\SubscriptionPlan;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\ApiController;
@@ -188,8 +187,8 @@ class RegistrationController extends ApiController
                 Log::warning("Tenant seeding failed for {$tenantId}: " . $e->getMessage());
             }
 
-            // Send email verification
-            Mail::to($merchant->email)->send(new TenantEmailVerification($merchant));
+            // Dispatch email verification job to tenant queue
+            SendTenantEmailVerification::dispatch($merchant);
 
             DB::commit();
 

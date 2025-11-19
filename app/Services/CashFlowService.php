@@ -6,9 +6,9 @@ use App\Models\Tenant\Account;
 use App\Models\Tenant\JournalLine;
 use Illuminate\Support\Facades\DB;
 
-class CashSummaryService
+class CashFlowService
 {
-    public static function generateAsOf(string $endDate)
+    public static function generateSummary(string $endDate)
     {
         DB::statement("SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))");
 
@@ -77,6 +77,57 @@ class CashSummaryService
         return [
             "as_of_date" => $endDate,
             "accounts" => $finalAccounts
+        ];
+    }
+
+    public static function generateDetail(string $startDate, string $endDate)
+    {
+        DB::statement("SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))");
+
+        // check if dates are valid
+        if (!strtotime($startDate) || !strtotime($endDate)) {
+            if (!strtotime($startDate)) {
+                $startDate = date("Y-m-01");
+            }
+            if (!strtotime($endDate)) {
+                $endDate = date("Y-m-t");
+            }
+        }
+
+        // only cash accounts
+        $accounts = Account::where('is_cash', '=', 1)
+            ->whereIn(DB::raw('LEFT(code,1)'), ['1', '4', '5'])
+            ->orderBy('code', 'asc')
+            ->get();
+
+        $transactions = JournalLine::select(
+            [
+                'j.id',
+                'j.date',
+                'j.code as journal_code',
+                'a.id as account_id',
+                'a.code as account_code',
+                'a.name as account_name',
+                DB::raw('CASE WHEN jl.debit > 0 THEN jl.debit ELSE 0 END as cash_in'),
+                DB::raw('CASE WHEN jl.credit > 0 THEN jl.credit ELSE 0 END as cash_out')
+            ]
+        )
+            ->from('journal_lines as jl')
+            ->join('journals as j', 'j.id', '=', 'jl.journal_id')
+            ->join('accounts as a', 'a.id', '=', 'jl.account_id')
+            ->whereBetween('j.date', [$startDate, $endDate])
+            ->where('j.status', '=', 'posted')
+            ->orderBy('j.date', 'asc')
+            ->get()->map(function ($item) {
+                $item->cash_in = (float) $item->cash_in;
+                $item->cash_out = (float) $item->cash_out;
+                return $item;
+            });
+
+        return [
+            "start_date" => $startDate,
+            "end_date" => $endDate,
+            "transactions" => $transactions
         ];
     }
 }
