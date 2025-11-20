@@ -1,13 +1,13 @@
-# GutsyPOS Cloud - Documentation
+# ArusKAS Cloud - Documentation
 
-![GutsyPOS](https://img.shields.io/badge/GutsyPOS-Cloud-blue)
+![ArusKAS](https://img.shields.io/badge/ArusKAS-Cloud-blue)
 ![Laravel](https://img.shields.io/badge/Laravel-11.x-red)
 ![PHP](https://img.shields.io/badge/PHP-8.2+-purple)
 ![Multi-Tenant](https://img.shields.io/badge/Architecture-Multi--Tenant-green)
 
 ## 📖 Documentation Overview
 
-Dokumentasi GutsyPOS Cloud dirancang untuk membantu developer memahami dan menggunakan sistem dengan efektif.
+Dokumentasi ArusKAS Cloud dirancang untuk membantu developer memahami dan menggunakan sistem dengan efektif.
 
 ### 📚 Available Documentation
 
@@ -51,7 +51,7 @@ Panduan development mendalam tentang:
 
 ---
 
-#### 3. [GutsyPOS_Tenant_Auth_API.postman_collection.json](./GutsyPOS_Tenant_Auth_API.postman_collection.json)
+#### 3. [ArusKAS_Tenant_Auth_API.postman_collection.json](./ArusKAS_Tenant_Auth_API.postman_collection.json)
 **Untuk:** API Testing, Integration Testing
 
 Postman collection dengan:
@@ -81,7 +81,7 @@ Postman collection dengan:
 
 2. **Import Postman Collection**
    ```bash
-   File: docs/GutsyPOS_Tenant_Auth_API.postman_collection.json
+   File: docs/ArusKAS_Tenant_Auth_API.postman_collection.json
    ```
 
 3. **Test Registration & Login**
@@ -128,7 +128,7 @@ Postman collection dengan:
 ## 📂 Project Structure
 
 ```
-gutsypos-cloud/
+aruskas-cloud/
 ├── app/
 │   ├── Http/
 │   │   ├── Controllers/
@@ -168,7 +168,7 @@ gutsypos-cloud/
     ├── README.md (this file)
     ├── API.md
     ├── DEVELOPMENT.md
-    └── GutsyPOS_Tenant_Auth_API.postman_collection.json
+    └── ArusKAS_Tenant_Auth_API.postman_collection.json
 ```
 
 ---
@@ -177,7 +177,7 @@ gutsypos-cloud/
 
 ### Multi-Tenant Architecture
 
-GutsyPOS menggunakan **database-per-tenant** approach:
+ArusKAS menggunakan **database-per-tenant** approach:
 
 ```
 Global Database          Tenant Databases
@@ -261,7 +261,7 @@ See complete examples in: [API.md - Testing Guide](./API.md#testing-guide)
 
 ### Automated Testing with Postman
 
-1. Import: `GutsyPOS_Tenant_Auth_API.postman_collection.json`
+1. Import: `ArusKAS_Tenant_Auth_API.postman_collection.json`
 2. Setup environment variables
 3. Run collection
 
@@ -414,7 +414,7 @@ Developed with ❤️ by GutsyLab Team
 | Architecture | [DEVELOPMENT.md](./DEVELOPMENT.md#architecture-overview) |
 | Testing | [API.md](./API.md#testing-guide) |
 | Troubleshooting | [DEVELOPMENT.md](./DEVELOPMENT.md#troubleshooting) |
-| Postman | [Postman Collection](./GutsyPOS_Tenant_Auth_API.postman_collection.json) |
+| Postman | [Postman Collection](./ArusKAS_Tenant_Auth_API.postman_collection.json) |
 
 ---
 

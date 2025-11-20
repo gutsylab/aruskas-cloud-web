@@ -1,8 +1,8 @@
-# GutsyPOS API Documentation
+# ArusKAS API Documentation
 
 ## 📋 Overview
 
-GutsyPOS Cloud menggunakan RESTful API architecture dengan multi-tenant support. Setiap tenant memiliki URL dan database tersendiri untuk isolasi data yang aman.
+ArusKAS Cloud menggunakan RESTful API architecture dengan multi-tenant support. Setiap tenant memiliki URL dan database tersendiri untuk isolasi data yang aman.
 
 ## 🌐 Base URLs
 
@@ -1563,7 +1563,7 @@ curl -X POST http://localhost:8000/INVALID999/api/v1/auth/login \
 ### Testing dengan Postman
 
 #### Setup
-1. Import Postman Collection: `docs/GutsyPOS_Tenant_Auth_API.postman_collection.json`
+1. Import Postman Collection: `docs/ArusKAS_Tenant_Auth_API.postman_collection.json`
 2. Create environment variables:
    - `base_url`: `http://localhost:8000`
    - `tenant_id`: Akan auto-save setelah register
@@ -1571,7 +1571,7 @@ curl -X POST http://localhost:8000/INVALID999/api/v1/auth/login \
 
 #### Collection Structure
 ```
-GutsyPOS API
+ArusKAS API
 ├── Global
 │   ├── Get Plans
 │   └── Register Tenant
@@ -1759,7 +1759,7 @@ token: 1|abc123...
 
 - `DEVELOPMENT.md` - Development guide dan implementation details
 - `README.md` - Project overview dan setup instructions
-- Postman Collection - `GutsyPOS_Tenant_Auth_API.postman_collection.json`
+- Postman Collection - `ArusKAS_Tenant_Auth_API.postman_collection.json`
 
 ---
 

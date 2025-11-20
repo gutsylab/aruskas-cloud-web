@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registration Successful - GutsyPOS Cloud</title>
+    <title>Registration Successful - ArusKAS Cloud</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-50 min-h-screen flex items-center justify-center">
@@ -17,9 +17,9 @@
             </div>
 
             <!-- Success Message -->
-            <h1 class="text-3xl font-bold text-gray-900 mb-4">Welcome to GutsyPOS Cloud!</h1>
+            <h1 class="text-3xl font-bold text-gray-900 mb-4">Welcome to ArusKAS Cloud!</h1>
             <p class="text-lg text-gray-600 mb-4">Your business account has been created successfully.</p>
-            
+
             <!-- Email Verification Notice -->
             <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-8">
                 <div class="flex items-center">
@@ -29,7 +29,7 @@
                     <div>
                         <h3 class="text-sm font-medium text-yellow-800">Email Verification Required</h3>
                         <p class="text-sm text-yellow-700 mt-1">
-                            We've sent a verification email to <strong>{{ $adminEmail }}</strong>. 
+                            We've sent a verification email to <strong>{{ $adminEmail }}</strong>.
                             Please check your inbox and click the verification link to activate your account.
                         </p>
                     </div>
@@ -85,17 +85,17 @@
 
             <!-- Action Buttons -->
             <div class="space-y-4">
-                <a href="{{ route('tenant.email.resend.form') }}" 
+                <a href="{{ route('tenant.email.resend.form') }}"
                    class="inline-block w-full bg-blue-600 text-white py-3 px-6 rounded-md font-semibold hover:bg-blue-700 transition duration-200">
                     Didn't receive email? Resend Verification
                 </a>
-                
-                <a href="{{ $tenantUrl }}" 
+
+                <a href="{{ $tenantUrl }}"
                    class="inline-block w-full border border-gray-300 text-gray-700 py-3 px-6 rounded-md font-semibold hover:bg-gray-50 transition duration-200">
                     Go to Store (after verification)
                 </a>
-                
-                <a href="/" 
+
+                <a href="/"
                    class="inline-block w-full border border-gray-300 text-gray-700 py-3 px-6 rounded-md font-semibold hover:bg-gray-50 transition duration-200">
                     Back to Homepage
                 </a>
@@ -104,8 +104,8 @@
             <!-- Support Info -->
             <div class="mt-8 pt-6 border-t border-gray-200">
                 <p class="text-sm text-gray-600">
-                    Need help getting started? 
-                    <a href="mailto:support@gutsypos.com" class="text-blue-600 hover:underline">Contact our support team</a>
+                    Need help getting started?
+                    <a href="mailto:support@aruskas.com" class="text-blue-600 hover:underline">Contact our support team</a>
                 </p>
             </div>
         </div>

@@ -1,4 +1,4 @@
-# GutsyPOS Development Guide
+# ArusKAS Development Guide
 
 ## 📋 Table of Contents
 
@@ -20,7 +20,7 @@
 
 ### Multi-Tenant Architecture
 
-GutsyPOS menggunakan **database-per-tenant** approach untuk isolasi data yang maksimal:
+ArusKAS menggunakan **database-per-tenant** approach untuk isolasi data yang maksimal:
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -193,7 +193,7 @@ Setiap tenant memiliki:
 1. **Clone Repository**
 ```bash
 git clone <repository-url>
-cd gutsypos-cloud
+cd aruskas-cloud
 ```
 
 2. **Install Dependencies**
@@ -213,7 +213,7 @@ php artisan key:generate
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=gutsypos_cloud_global
+DB_DATABASE=aruskas_cloud_global
 DB_USERNAME=your_username
 DB_PASSWORD=your_password
 ```
@@ -811,7 +811,7 @@ curl -X POST http://localhost:8000/api/v1/tenant/register \
   -d '{"company_name":"Test","admin_name":"Admin","admin_email":"test@example.com","password":"password123","password_confirmation":"password123","terms":true}'
 
 # 2. Verify email manually
-mysql -u root -p -e "UPDATE gutsypos_cloud_global.merchants SET email_verified_at = NOW() WHERE email = 'test@example.com'"
+mysql -u root -p -e "UPDATE aruskas_cloud_global.merchants SET email_verified_at = NOW() WHERE email = 'test@example.com'"
 mysql -u root -p -e "USE tenant_XXXXX; UPDATE users SET email_verified_at = NOW() WHERE email = 'test@example.com'"
 
 # 3. Login
@@ -925,7 +925,7 @@ return response()->json([
 
 - **API Documentation**: `API.md` - Complete API reference
 - **Project README**: `../README.md` - Project overview and setup
-- **Postman Collection**: `GutsyPOS_Tenant_Auth_API.postman_collection.json`
+- **Postman Collection**: `ArusKAS_Tenant_Auth_API.postman_collection.json`
 
 ---
 
