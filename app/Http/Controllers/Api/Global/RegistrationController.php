@@ -9,6 +9,7 @@ use App\Models\Global\MerchantUser;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use App\Jobs\SendTenantEmailVerification;
+use App\Jobs\SetupTenantDatabase;
 use App\Models\Global\SubscriptionPlan;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\ApiController;
@@ -140,9 +141,6 @@ class RegistrationController extends ApiController
                 'settings' => $setings,
             ]);
 
-            // Create tenant database and run migrations
-            $this->tenantService->createTenant($merchant);
-
             // Create subscription
             $subscription = MerchantSubscription::create([
                 'merchant_id' => $merchant->id,
@@ -163,29 +161,8 @@ class RegistrationController extends ApiController
                 'is_active' => true,
             ]);
 
-            // Create admin user in tenant database
-            $this->tenantService->setTenantConnection($merchant);
-
-            $tenantUser = \App\Models\Tenant\User::create([
-                'name' => $request->admin_name,
-                'email' => $request->admin_email,
-                'password' => Hash::make($request->password),
-                'email_verified_at' => null,
-            ]);
-
-            // Reset to global connection
-            $this->tenantService->resetToGlobalConnection();
-
-            // Seed tenant database with initial data
-            try {
-                Artisan::call('db:seed:tenant', [
-                    'tenant_id' => $tenantId,
-                    '--force' => true,
-                ]);
-            } catch (\Exception $e) {
-                // Log seeding error but don't fail the registration
-                Log::warning("Tenant seeding failed for {$tenantId}: " . $e->getMessage());
-            }
+            // Dispatch tenant setup job to background (migrations & seeding)
+            SetupTenantDatabase::dispatch($merchant);
 
             // Dispatch email verification job to tenant queue
             SendTenantEmailVerification::dispatch($merchant);
@@ -194,7 +171,7 @@ class RegistrationController extends ApiController
 
             return response()->json([
                 'success' => true,
-                'message' => 'Tenant registered successfully. Please check your email to verify your account.',
+                'message' => 'Tenant registered successfully. Your account is being set up. Please check your email to verify your account.',
                 'data' => [
                     'merchant' => [
                         'id' => $merchant->id,
@@ -211,6 +188,8 @@ class RegistrationController extends ApiController
                     ],
                     'tenant_url' => url("/{$tenantId}"),
                     'admin_email' => $request->admin_email,
+                    'setup_status' => 'processing',
+                    'note' => 'Your tenant database is being configured. You can try logging in after a few moments.'
                 ]
             ], 201);
         } catch (\Exception $e) {
