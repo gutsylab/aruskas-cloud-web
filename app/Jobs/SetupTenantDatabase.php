@@ -11,6 +11,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Hash;
 
 class SetupTenantDatabase implements ShouldQueue
 {
@@ -20,13 +21,19 @@ class SetupTenantDatabase implements ShouldQueue
     public $tries = 3;
 
     protected Merchant $merchant;
+    protected string $adminName;
+    protected string $adminEmail;
+    protected string $adminPassword;
 
     /**
      * Create a new job instance.
      */
-    public function __construct(Merchant $merchant)
+    public function __construct(Merchant $merchant, string $adminName, string $adminEmail, string $adminPassword)
     {
         $this->merchant = $merchant;
+        $this->adminName = $adminName;
+        $this->adminEmail = $adminEmail;
+        $this->adminPassword = $adminPassword;
     }
 
     /**
@@ -39,6 +46,18 @@ class SetupTenantDatabase implements ShouldQueue
 
             // Create tenant database and run migrations
             $tenantService->createTenant($this->merchant);
+
+            // Create admin user in tenant database
+            $tenantService->setTenantConnection($this->merchant);
+
+            \App\Models\Tenant\User::create([
+                'name' => $this->adminName,
+                'email' => $this->adminEmail,
+                'password' => $this->adminPassword, // Already hashed from controller
+                'email_verified_at' => null,
+            ]);
+
+            $tenantService->resetToGlobalConnection();
 
             // Seed tenant database with initial data
             Artisan::call('db:seed:tenant', [
@@ -59,7 +78,7 @@ class SetupTenantDatabase implements ShouldQueue
     public function failed(\Throwable $exception): void
     {
         Log::error("SetupTenantDatabase job failed for merchant {$this->merchant->id}: " . $exception->getMessage());
-        
+
         // Optionally update merchant status
         $this->merchant->update(['status' => false]);
     }

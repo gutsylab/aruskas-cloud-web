@@ -100,7 +100,12 @@ class TenantRegistrationController extends Controller
             ]);
 
             // Dispatch tenant setup job to background (migrations & seeding)
-            SetupTenantDatabase::dispatch($merchant);
+            SetupTenantDatabase::dispatch(
+                $merchant,
+                $request->admin_name,
+                $request->admin_email,
+                Hash::make($request->password)
+            );
 
             // Dispatch email verification job to tenant queue
             SendTenantEmailVerification::dispatch($merchant);
