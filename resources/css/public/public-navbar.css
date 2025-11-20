@@ -1,0 +1,147 @@
+/**
+ * Public Navbar Components
+ * Landing page and public-facing navbar styles
+ */
+
+/* Main public navbar */
+.navbar-public {
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+    padding: 1rem 0;
+    transition: all 0.3s ease;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+
+.navbar-public.scrolled {
+    background-color: rgba(255, 255, 255, 0.98);
+    box-shadow: 0 2px 30px rgba(0, 0, 0, 0.15);
+    padding: 0.5rem 0;
+}
+
+/* Brand styling */
+.navbar-public .navbar-brand {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--color-primary) !important;
+    text-decoration: none;
+}
+
+.navbar-public .navbar-brand:hover {
+    color: var(--color-primary-dark) !important;
+}
+
+/* Navigation links */
+.navbar-public .navbar-nav .nav-link {
+    color: var(--color-text-primary) !important;
+    font-weight: 500;
+    padding: 0.5rem 1rem !important;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    margin: 0 0.25rem;
+}
+
+.navbar-public .navbar-nav .nav-link:hover {
+    color: var(--color-primary) !important;
+    background-color: rgba(21, 101, 192, 0.1);
+}
+
+.navbar-public .navbar-nav .nav-link.active {
+    color: var(--color-primary) !important;
+    font-weight: 600;
+}
+
+/* CTA button in navbar */
+.navbar-public .btn-cta {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+    border: none;
+    color: white;
+    padding: 0.5rem 1.5rem;
+    border-radius: 25px;
+    font-weight: 600;
+    margin-left: 1rem;
+    transition: all 0.2s ease;
+}
+
+.navbar-public .btn-cta:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(21, 101, 192, 0.4);
+    color: white;
+}
+
+/* Mobile toggle */
+.navbar-toggler {
+    border: none;
+    padding: 0.25rem 0.5rem;
+    background-color: transparent;
+}
+
+.navbar-toggler:focus {
+    box-shadow: none;
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2833, 37, 41, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+/* Hero navbar variant */
+.navbar-hero {
+    background-color: transparent;
+    border-bottom: none;
+    box-shadow: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+}
+
+.navbar-hero .navbar-brand,
+.navbar-hero .navbar-nav .nav-link {
+    color: white !important;
+}
+
+.navbar-hero .navbar-nav .nav-link:hover {
+    color: rgba(255, 255, 255, 0.8) !important;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Footer navbar */
+.navbar-footer {
+    background-color: var(--color-bg-dark);
+    border-top: 1px solid #444;
+    padding: 2rem 0;
+    position: relative;
+}
+
+.navbar-footer .navbar-nav .nav-link {
+    color: #ccc !important;
+    padding: 0.25rem 0 !important;
+    margin: 0.25rem 0;
+}
+
+.navbar-footer .navbar-nav .nav-link:hover {
+    color: white !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 991px) {
+    .navbar-public .navbar-collapse {
+        background-color: rgba(255, 255, 255, 0.98);
+        border-radius: 10px;
+        margin-top: 1rem;
+        padding: 1rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .navbar-public .btn-cta {
+        margin-left: 0;
+        margin-top: 1rem;
+        display: block;
+        text-align: center;
+    }
+}

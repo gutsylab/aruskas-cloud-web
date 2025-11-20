@@ -1,0 +1,127 @@
+/**
+ * Responsive Design and Media Queries
+ * Contains all responsive breakpoints and mobile-specific styles
+ */
+
+/* Mobile responsive for sidebar and main content */
+@media (max-width: 768px) {
+    .sidebar {
+        top: 80px;
+        left: -240px; /* Hide off-screen - updated for new width */
+        height: calc(100vh - 100px);
+        border-radius: 12px; /* Same radius on all corners for mobile */
+    }
+
+    .sidebar.show {
+        left: 15px; /* Same floating position as desktop */
+    }
+
+    .content-with-sidebar {
+        margin-left: 0; /* Full width on mobile */
+        padding-top: 70px;
+    }
+    
+    .content-with-sidebar.sidebar-collapsed {
+        margin-left: 0; /* Full width on mobile even when collapsed */
+    }
+    
+    .sidebar-toggle-btn {
+        position: relative !important;
+        margin-left: 0 !important;
+        order: -1; /* Move before brand on mobile */
+        margin-right: 1rem;
+    }
+}
+
+@media (min-width: 769px) {
+    /* Toggle button is now always visible */
+}
+
+/* Responsive DataTables */
+@media (max-width: 768px) {
+    .dataTables_wrapper .dataTables_length,
+    .dataTables_wrapper .dataTables_filter {
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+    
+    .dataTables_wrapper .dataTables_info,
+    .dataTables_wrapper .dataTables_paginate {
+        text-align: center;
+        margin-top: 1rem;
+    }
+}
+
+/* Responsive navbar styles */
+@media (max-width: 991px) {
+    .navbar .container-fluid {
+        flex-wrap: nowrap;
+        align-items: center;
+    }
+    
+    .navbar .navbar-brand {
+        font-size: 18px;
+        margin-right: 1rem;
+        flex-shrink: 0;
+    }
+    
+    .navbar .navbar-brand h5 {
+        font-size: 16px;
+    }
+    
+    .navbar .navbar-text {
+        font-size: 16px;
+        font-weight: 500;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 150px;
+    }
+    
+    .navbar .nav-link {
+        padding: 6px 8px !important;
+    }
+    
+    .navbar .dropdown-menu {
+        position: absolute;
+        right: 0;
+        min-width: 200px;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar .navbar-brand h5 {
+        display: none !important;
+    }
+    
+    .navbar .navbar-text {
+        font-size: 14px;
+        max-width: 120px;
+    }
+    
+    .navbar .nav-link {
+        padding: 4px 6px !important;
+    }
+    
+    .navbar .navbar-brand {
+        margin-right: 0.5rem;
+        margin-left: 0; /* Reset margin on mobile */
+    }
+}
+
+@media (max-width: 576px) {
+    .navbar .navbar-text {
+        font-size: 12px;
+        max-width: 100px;
+    }
+    
+    .navbar .navbar-brand svg {
+        width: 24px;
+        height: 20px;
+        margin-right: 0.5rem;
+    }
+    
+    .navbar .nav-link {
+        padding: 4px !important;
+    }
+}

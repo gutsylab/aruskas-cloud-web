@@ -1,0 +1,44 @@
+/**
+ * Laravel Admin Panel CSS
+ * This file imports all admin-specific CSS components
+ */
+
+/* Import Bootstrap CSS */
+@import 'bootstrap';
+
+/* Import shared variables */
+@import './shared/variables.css';
+
+/* Import admin-specific components */
+@import './admin/admin-buttons.css';
+@import './admin/admin-alerts.css';
+@import './admin/admin-badges.css';
+@import './admin/admin-cards.css';
+@import './admin/admin-sidebar.css';
+@import './admin/admin-navbar.css';
+@import './admin/admin-forms.css';
+@import './admin/admin-typography.css';
+@import './admin/admin-layout.css';
+@import './admin/admin-responsive.css';
+
+/* Import admin custom components */
+@import './admin/filemanager.css';
+@import './admin/ajax-demo.css';
+
+/* Custom table and dropdown fixes */
+/* Fix dropdown being cut off in table-responsive */
+.table-responsive {
+    overflow: visible !important;
+}
+
+/* Alternative fix: ensure dropdown shows above other elements */
+.dropdown-menu {
+    z-index: 1050 !important;
+}
+
+/* For dropdowns in the last few rows, position them upward */
+.dropdown.dropup .dropdown-menu {
+    bottom: 100%;
+    top: auto;
+    margin-bottom: 2px;
+}
