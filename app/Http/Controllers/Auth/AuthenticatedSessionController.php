@@ -16,7 +16,6 @@ class AuthenticatedSessionController extends Controller
      */
     public function create()
     {
-        dd('a');
         $tenant = request()->attributes->get('tenant');
 
         if (!$tenant) {

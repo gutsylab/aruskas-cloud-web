@@ -52,10 +52,7 @@ Route::prefix('{tenant_id}')->middleware(['tenant'])->group(function () {
         Route::get('/register', [RegisteredUserController::class, 'create'])->name('tenant.user.register');
         Route::post('/register', [RegisteredUserController::class, 'store']);
 
-        Route::get('/login', function (){
-            dd('a');
-        })->name('login');
-        // Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
+        Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
         Route::post('/login', [AuthenticatedSessionController::class, 'store']);
     });
 
