@@ -14,7 +14,7 @@ class TenantAuth
     {
         // Get tenant from request (should be set by TenantResolver middleware)
         $tenant = $request->attributes->get('tenant');
-        
+
         if (!$tenant) {
             return redirect('/');
         }
@@ -26,7 +26,7 @@ class TenantAuth
             if ($userId) {
                 $tenantService = app(TenantService::class);
                 $connectionName = $tenantService->getTenantConnectionName($tenant);
-                
+
                 // Get user from tenant database
                 $user = User::on($connectionName)->find($userId);
                 if ($user) {
@@ -35,10 +35,10 @@ class TenantAuth
                 } else {
                     // Clear invalid session
                     session()->forget('auth.user_id');
-                    return redirect()->route('login', ['tenant_id' => $tenant->tenant_id]);
+                    return redirect("/{$tenant->tenant_id}/login");
                 }
             } else {
-                return redirect()->route('login', ['tenant_id' => $tenant->tenant_id]);
+                return redirect("/{$tenant->tenant_id}/login");
             }
         }
 

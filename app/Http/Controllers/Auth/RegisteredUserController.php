@@ -67,6 +67,6 @@ class RegisteredUserController extends Controller
             ], 201);
         }
 
-        return redirect()->route('dashboard', ['tenant_id' => $tenant->tenant_id])->with('success', 'Registration successful!');
+        return redirect("/{$tenant->tenant_id}/dashboard")->with('success', 'Registration successful!');
     }
 }

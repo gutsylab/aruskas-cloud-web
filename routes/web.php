@@ -30,19 +30,21 @@ Route::post('/resend-verification', [EmailVerificationController::class, 'resend
 // Tenant-specific routes with tenant ID in path: /{tenant_id}/...
 Route::prefix('{tenant_id}')->middleware(['tenant'])->group(function () {
 
+    // get first segment of the url
+    $firstSegment = request()->segment(1);
+
     // Root tenant route - redirect to dashboard if authenticated
     Route::get('/', function () {
-        $tenant = request()->attributes->get('tenant');
-        $tenantId = $tenant ? $tenant->tenant_id : request()->route('tenant_id');
+        $tenantId = request()->route('tenant_id');
 
         if (!$tenantId) {
             abort(404, 'Tenant not found');
         }
 
         if (Auth::check()) {
-            return redirect()->route('dashboard', ['tenant_id' => $tenantId]);
+            return redirect("/{$tenantId}/dashboard");
         }
-        return redirect()->route('login', ['tenant_id' => $tenantId]);
+        return redirect("/{$tenantId}/login");
     })->name('tenant.home');
 
     // Guest routes (not authenticated)
@@ -50,7 +52,10 @@ Route::prefix('{tenant_id}')->middleware(['tenant'])->group(function () {
         Route::get('/register', [RegisteredUserController::class, 'create'])->name('tenant.user.register');
         Route::post('/register', [RegisteredUserController::class, 'store']);
 
-        Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
+        Route::get('/login', function (){
+            dd('a');
+        })->name('login');
+        // Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
         Route::post('/login', [AuthenticatedSessionController::class, 'store']);
     });
 

@@ -25,7 +25,7 @@ class TenantResolver
     {
         // Get tenant_id from route parameter first
         $tenantId = $request->route('tenant_id');
-        
+
         // Try to resolve tenant from path
         $tenant = $this->tenantService->getCurrentTenant();
 
@@ -39,21 +39,28 @@ class TenantResolver
 
         // Set tenant connection
         $this->tenantService->setTenantConnection($tenant);
-        
+
         // Store tenant connection info in session for auth
         session([
             'tenant_id' => $tenant->tenant_id,
             'tenant_connection' => "tenant_{$tenant->tenant_id}",
         ]);
-        
+
         // Make tenant available in the request
         $request->attributes->set('tenant', $tenant);
-        
+
         // Ensure tenant_id is available in route parameters for URL generation
-        if (!$tenantId) {
+        if (!$tenantId && $request->route()) {
             $request->route()->setParameter('tenant_id', $tenant->tenant_id);
         }
-        
+
+        // Share tenant globally for all views and URL generation
+        app()->instance('tenant', $tenant);
+        view()->share('tenant', $tenant);
+
+        // Set default route parameter for URL generation
+        \Illuminate\Support\Facades\URL::defaults(['tenant_id' => $tenant->tenant_id]);
+
         return $next($request);
     }
 
