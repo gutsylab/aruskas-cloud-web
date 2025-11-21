@@ -42,9 +42,9 @@ Route::prefix('{tenant_id}')->middleware(['tenant'])->group(function () {
         }
 
         if (Auth::check()) {
-            return redirect("/{$tenantId}/dashboard");
+            return redirect()->route('dashboard', ['tenant_id' => $tenantId]);
         }
-        return redirect("/{$tenantId}/login");
+        return redirect()->route('login', ['tenant_id' => $tenantId]);
     })->name('tenant.home');
 
     // Guest routes (not authenticated)

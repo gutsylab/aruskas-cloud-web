@@ -91,7 +91,7 @@ class AuthenticatedSessionController extends Controller
             ]);
         }
 
-        return redirect("/{$tenant->tenant_id}/dashboard")
+        return redirect()->route('dashboard', ['tenant_id' => $tenant->tenant_id])
             ->with('success', 'Login successful!');
     }
 
@@ -116,11 +116,12 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        // Redirect to tenant-specific login
-        $redirectUrl = $tenant ?
-            "/{$tenant->tenant_id}/login" :
-            '/';
+        // Redirect to tenant-specific login or home
+        if ($tenant) {
+            return redirect()->route('login', ['tenant_id' => $tenant->tenant_id])
+                ->with('success', 'Logout successful!');
+        }
 
-        return redirect($redirectUrl)->with('success', 'Logout successful!');
+        return redirect('/')->with('success', 'Logout successful!');
     }
 }

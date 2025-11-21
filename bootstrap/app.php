@@ -4,6 +4,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Session\TokenMismatchException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -27,5 +28,22 @@ return Application::configure(basePath: dirname(__DIR__))
         // We'll apply it selectively in routes/web.php
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        // Handle CSRF token expired - show custom 419 page with redirect
+        $exceptions->respond(function (\Symfony\Component\HttpFoundation\Response $response, \Throwable $exception, $request) {
+            if ($exception instanceof TokenMismatchException && $response->getStatusCode() === 419) {
+                // Extract tenant ID from URL path
+                $path = $request->path();
+                preg_match('/^([A-Z0-9]+)\//', $path, $matches);
+
+                $loginUrl = !empty($matches[1])
+                    ? "/{$matches[1]}/login"
+                    : '/';
+
+                return response()
+                    ->view('errors.419', ['loginUrl' => $loginUrl], 419)
+                    ->withCookie(cookie()->forever('_csrf_expired', '1'));
+            }
+
+            return $response;
+        });
     })->create();

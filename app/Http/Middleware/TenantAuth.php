@@ -35,10 +35,10 @@ class TenantAuth
                 } else {
                     // Clear invalid session
                     session()->forget('auth.user_id');
-                    return redirect("/{$tenant->tenant_id}/login");
+                    return redirect()->route('login', ['tenant_id' => $tenant->tenant_id]);
                 }
             } else {
-                return redirect("/{$tenant->tenant_id}/login");
+                return redirect()->route('login', ['tenant_id' => $tenant->tenant_id]);
             }
         }
 
