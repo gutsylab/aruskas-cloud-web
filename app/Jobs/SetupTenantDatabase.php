@@ -12,6 +12,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
+use App\Jobs\SendTenantAccountSetupComplete;
 
 class SetupTenantDatabase implements ShouldQueue
 {
@@ -66,6 +67,9 @@ class SetupTenantDatabase implements ShouldQueue
             ]);
 
             Log::info("Completed tenant database setup for {$this->merchant->tenant_id}");
+
+            // Send account setup complete email with verification link
+            SendTenantAccountSetupComplete::dispatch($this->merchant);
         } catch (\Exception $e) {
             Log::error("Failed to setup tenant database for {$this->merchant->tenant_id}: " . $e->getMessage());
             throw $e;

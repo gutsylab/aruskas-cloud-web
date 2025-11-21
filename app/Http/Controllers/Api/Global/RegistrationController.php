@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Global\MerchantUser;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
-use App\Jobs\SendTenantEmailVerification;
 use App\Jobs\SetupTenantDatabase;
 use App\Models\Global\SubscriptionPlan;
 use Illuminate\Support\Facades\Artisan;
@@ -168,9 +167,6 @@ class RegistrationController extends ApiController
                 $request->admin_email,
                 Hash::make($request->password)
             );
-
-            // Dispatch email verification job to tenant queue
-            SendTenantEmailVerification::dispatch($merchant);
 
             DB::commit();
 

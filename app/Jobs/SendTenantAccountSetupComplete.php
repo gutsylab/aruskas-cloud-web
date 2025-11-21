@@ -2,17 +2,17 @@
 
 namespace App\Jobs;
 
-use App\Mail\TenantEmailVerification;
+use App\Mail\TenantAccountSetupComplete;
 use App\Models\Global\Merchant;
-use App\Services\TenantService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 
-class SendTenantEmailVerification implements ShouldQueue
+class SendTenantAccountSetupComplete implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -37,24 +37,19 @@ class SendTenantEmailVerification implements ShouldQueue
     public function __construct(Merchant $merchant)
     {
         $this->merchant = $merchant;
-
-        // Job will be queued in global database (default connection)
-        // The job itself will switch to tenant connection when executed
     }
 
     /**
      * Execute the job.
+     *
+     * Send account setup completion email with login info and email verification link.
      */
-    public function handle(TenantService $tenantService): void
+    public function handle(): void
     {
-        // Switch to tenant connection to ensure email is sent from tenant context
-        // $tenantService->setTenantConnection($this->merchant);
+        // Send the account setup complete email with verification link
+        Mail::to($this->merchant->email)->send(new TenantAccountSetupComplete($this->merchant));
 
-        // Send the email verification
-        Mail::to($this->merchant->email)->send(new TenantEmailVerification($this->merchant));
-
-        // Reset to global connection
-        // $tenantService->resetToGlobalConnection();
+        Log::info("Sent account setup complete email to {$this->merchant->email} for tenant {$this->merchant->tenant_id}");
     }
 
     /**
@@ -62,8 +57,7 @@ class SendTenantEmailVerification implements ShouldQueue
      */
     public function failed(\Throwable $exception): void
     {
-        // Log the failure or notify administrators
-        \Log::error('Failed to send tenant email verification', [
+        Log::error('Failed to send tenant account setup complete email', [
             'merchant_id' => $this->merchant->id,
             'tenant_id' => $this->merchant->tenant_id,
             'email' => $this->merchant->email,

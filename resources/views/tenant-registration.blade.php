@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register Your Business - ArusKAS Cloud</title>
+    <title>Daftar Bisnis Anda - ArusKAS Cloud</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-50 min-h-screen flex items-center justify-center">
@@ -11,8 +11,8 @@
         <div class="bg-white rounded-lg shadow-lg p-8">
             <!-- Header -->
             <div class="text-center mb-8">
-                <h1 class="text-3xl font-bold text-gray-900 mb-2">Register Your Business</h1>
-                <p class="text-gray-600">Get started with ArusKAS Cloud in minutes</p>
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">Daftar Bisnis Anda</h1>
+                <p class="text-gray-600">Mulai dengan ArusKAS Cloud dalam hitungan menit</p>
             </div>
 
             <!-- Form -->
@@ -22,13 +22,13 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Company Information -->
                     <div class="md:col-span-2">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Company Information</h3>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Informasi Perusahaan</h3>
                     </div>
 
                     <!-- Company Name -->
                     <div class="md:col-span-2">
                         <label for="company_name" class="block text-sm font-medium text-gray-700 mb-2">
-                            Company Name *
+                            Nama Perusahaan *
                         </label>
                         <input type="text"
                                id="company_name"
@@ -43,13 +43,13 @@
 
                     <!-- Admin Information -->
                     <div class="md:col-span-2 mt-6">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Administrator Information</h3>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Informasi Administrator</h3>
                     </div>
 
                     <!-- Admin Name -->
                     <div>
                         <label for="admin_name" class="block text-sm font-medium text-gray-700 mb-2">
-                            Full Name *
+                            Nama Lengkap *
                         </label>
                         <input type="text"
                                id="admin_name"
@@ -65,7 +65,7 @@
                     <!-- Admin Email -->
                     <div>
                         <label for="admin_email" class="block text-sm font-medium text-gray-700 mb-2">
-                            Email Address *
+                            Alamat Email *
                         </label>
                         <input type="email"
                                id="admin_email"
@@ -96,7 +96,7 @@
                     <!-- Confirm Password -->
                     <div>
                         <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-2">
-                            Confirm Password *
+                            Konfirmasi Password *
                         </label>
                         <input type="password"
                                id="password_confirmation"
@@ -115,8 +115,8 @@
                                    class="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                                    {{ old('terms') ? 'checked' : '' }}>
                             <label for="terms" class="ml-2 text-sm text-gray-700">
-                                I agree to the <a href="#" class="text-blue-600 hover:underline">Terms of Service</a>
-                                and <a href="#" class="text-blue-600 hover:underline">Privacy Policy</a> *
+                                Saya menyetujui <a href="#" class="text-blue-600 hover:underline">Syarat dan Ketentuan</a>
+                                serta <a href="#" class="text-blue-600 hover:underline">Kebijakan Privasi</a> *
                             </label>
                         </div>
                         @error('terms')
@@ -135,7 +135,7 @@
                     <div class="md:col-span-2 mt-6">
                         <button type="submit"
                                 class="w-full bg-blue-600 text-white py-3 px-4 rounded-md font-semibold hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200">
-                            Create My Business Account
+                            Buat Akun Bisnis Saya
                         </button>
                     </div>
                 </div>
@@ -144,7 +144,7 @@
             <!-- Login Link -->
             <div class="mt-6 text-center">
                 <p class="text-sm text-gray-600">
-                    Already have a business account? Contact support to access your tenant.
+                    Sudah memiliki akun bisnis? Hubungi support untuk mengakses tenant Anda.
                 </p>
             </div>
         </div>

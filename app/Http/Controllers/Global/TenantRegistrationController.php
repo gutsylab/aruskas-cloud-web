@@ -10,7 +10,6 @@ use App\Models\Global\MerchantSubscription;
 use App\Models\Global\MerchantUser;
 use App\Services\TenantService;
 use App\Mail\TenantEmailVerification;
-use App\Jobs\SendTenantEmailVerification;
 use App\Jobs\SetupTenantDatabase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -106,9 +105,6 @@ class TenantRegistrationController extends Controller
                 $request->admin_email,
                 Hash::make($request->password)
             );
-
-            // Dispatch email verification job to tenant queue
-            SendTenantEmailVerification::dispatch($merchant);
 
             DB::commit();
 
