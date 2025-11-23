@@ -26,4 +26,19 @@ class BaseController extends Controller
 
         return view($view, $data);
     }
+
+    protected function view(string $view,  string $title = '', array $groupMenu = [], array $data = [], array $breadcrumbs = [])
+    {
+        return view(
+            $view,
+            [
+                'scrollspy' => 0,
+                'simplePage' => 0,
+                'title' => $title,
+                ...$data,
+                ...$groupMenu,
+                'breadcrumbs' => $breadcrumbs,
+            ]
+        );
+    }
 }

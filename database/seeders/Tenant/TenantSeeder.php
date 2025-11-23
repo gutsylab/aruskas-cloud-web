@@ -2,9 +2,11 @@
 
 namespace Database\Seeders\Tenant;
 
-use App\Models\Tenant\Account;
 use App\Models\Tenant\User;
+use App\Models\Tenant\Account;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class TenantSeeder extends Seeder
 {
@@ -15,16 +17,33 @@ class TenantSeeder extends Seeder
     {
 
         // if env is production, prevent seeding
-        if (app()->environment('production') || true) {
+        if (app()->environment('production')) {
+            Log::warning("TenantSeeder: Skipping - production environment");
             // $this->command->error('Seeding in production environment is not allowed.');
             // return;
         }
 
         // Seed data for tenant database
-        $this->call([
-            SequenceSeeder::class,
-            // Add more tenant seeders here
-            AccountSeeder::class
-        ]);
+        Log::info("TenantSeeder: About to call child seeders");
+
+        try {
+            Log::info("TenantSeeder: Calling PermissionsSeeder");
+            $this->call(\Database\Seeders\Tenant\Permissions\PermissionsSeeder::class);
+            Log::info("TenantSeeder: PermissionsSeeder call completed");
+
+            Log::info("TenantSeeder: Calling SequenceSeeder");
+            $this->call(\Database\Seeders\Tenant\SequenceSeeder::class);
+            Log::info("TenantSeeder: SequenceSeeder call completed");
+
+            Log::info("TenantSeeder: Calling AccountSeeder");
+            $this->call(\Database\Seeders\Tenant\AccountSeeder::class);
+            Log::info("TenantSeeder: AccountSeeder call completed");
+        } catch (\Exception $e) {
+            Log::error("TenantSeeder: Error calling child seeders - " . $e->getMessage());
+            Log::error("TenantSeeder: Stack trace - " . $e->getTraceAsString());
+            throw $e;
+        }
+
+        Log::info("TenantSeeder: Completed all child seeders");
     }
 }

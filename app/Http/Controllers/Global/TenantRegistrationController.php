@@ -10,7 +10,9 @@ use App\Models\Global\MerchantSubscription;
 use App\Models\Global\MerchantUser;
 use App\Services\TenantService;
 use App\Mail\TenantEmailVerification;
+use App\Jobs\SetupTenantDatabase;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Artisan;
@@ -42,19 +44,27 @@ class TenantRegistrationController extends Controller
      */
     public function store(TenantRegistrationRequest $request)
     {
-        try {
+        DB::beginTransaction();
 
+        try {
             // Generate unique identifiers
             $slug = Merchant::generateSlug($request->company_name);
             $tenantId = Merchant::generateTenantId();
             $databaseName = Merchant::generateDatabaseName($tenantId);
 
-            $plan = SubscriptionPlan::where('slug', '=', 'free-trial')->first();
-            if(!$plan) {
+            // Get free trial plan
+            $plan = SubscriptionPlan::where('slug', '=', 'free')->first();
+            if (!$plan) {
                 return back()->withErrors([
                     'general' => 'Default subscription plan not found. Please contact support.'
                 ])->withInput();
             }
+
+            $settings = [
+                'currency' => 'IDR',
+                'locale' => 'id_ID',
+                'timezone' => 'Asia/Jakarta',
+            ];
 
             // Create merchant (email not verified yet)
             $merchant = Merchant::create([
@@ -63,12 +73,10 @@ class TenantRegistrationController extends Controller
                 'tenant_id' => $tenantId,
                 'database_name' => $databaseName,
                 'email' => $request->admin_email,
-                'email_verified_at' => null, // Not verified yet
+                'email_verified_at' => null,
                 'status' => true,
+                'settings' => $settings,
             ]);
-
-            // Create tenant database and run migrations
-            $this->tenantService->createTenant($merchant);
 
             // Create subscription
             $subscription = MerchantSubscription::create([
@@ -80,7 +88,7 @@ class TenantRegistrationController extends Controller
                 'trial_ends_at' => $plan->trial_days > 0 ? now()->addDays($plan->trial_days) : null,
             ]);
 
-            // Create admin user in global database (for merchant management)
+            // Create admin user in global database
             $adminUser = MerchantUser::create([
                 'merchant_id' => $merchant->id,
                 'name' => $request->admin_name,
@@ -90,34 +98,15 @@ class TenantRegistrationController extends Controller
                 'is_active' => true,
             ]);
 
-            // Create admin user in tenant database (for actual application login)
-            // Set connection to tenant database
-            $this->tenantService->setTenantConnection($merchant);
+            // Dispatch tenant setup job to background (migrations & seeding)
+            SetupTenantDatabase::dispatch(
+                $merchant,
+                $request->admin_name,
+                $request->admin_email,
+                Hash::make($request->password)
+            );
 
-            // Create user in tenant database (email not verified yet)
-            $tenantUser = \App\Models\Tenant\User::create([
-                'name' => $request->admin_name,
-                'email' => $request->admin_email,
-                'password' => Hash::make($request->password),
-                'email_verified_at' => null, // Not verified yet
-            ]);
-
-            // Reset to global connection
-            $this->tenantService->resetToGlobalConnection();
-
-            // Seed tenant database with initial data
-            try {
-                Artisan::call('db:seed:tenant', [
-                    'tenant_id' => $tenantId,
-                    '--force' => true,
-                ]);
-            } catch (\Exception $e) {
-                // Log seeding error but don't fail the registration
-                Log::warning("Tenant seeding failed for {$tenantId}: " . $e->getMessage());
-            }
-
-            // Send email verification
-            Mail::to($merchant->email)->send(new TenantEmailVerification($merchant));
+            DB::commit();
 
             // Redirect to success page with tenant info
             return view('tenant-registration-success', [
@@ -125,8 +114,12 @@ class TenantRegistrationController extends Controller
                 'plan' => $plan,
                 'adminEmail' => $request->admin_email,
                 'tenantUrl' => url("/{$tenantId}"),
+                'setupStatus' => 'processing',
+                'note' => 'Your tenant database is being configured. You can try logging in after a few moments.'
             ]);
         } catch (\Exception $e) {
+            DB::rollBack();
+
             return back()->withErrors([
                 'general' => 'Failed to create tenant: ' . $e->getMessage()
             ])->withInput();

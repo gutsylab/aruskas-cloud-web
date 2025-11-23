@@ -13,7 +13,12 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => env('APP_NAME', 'ArusKAS Cloud'),
+    'organization_name' => env('APP_ORGANIZATION_NAME', 'CV. Gutsylab Teknologi Indonesia'),
+    'website' => env('APP_WEBSITE', 'https://gutsylab.com'),
+    'phone' => env('APP_PHONE', ''),
+    'mail' => env('APP_MAIL', 'gutsylab@gmail.com'),
+    'mail_support' => env('APP_MAIL_SUPPORT', 'gutsylab@gmail.com'),
 
     /*
     |--------------------------------------------------------------------------

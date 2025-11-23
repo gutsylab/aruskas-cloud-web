@@ -60,7 +60,7 @@
         var dt;
 
         $(document).ready(function() {
-            // Initialize tooltips            
+            // Initialize tooltips
         });
 
         function refreshList(url) {
@@ -107,7 +107,7 @@
                 ],
                 "columns": columns
             }
-            new DataTable(selector, options);
+            return new DataTable(selector, options);
         }
     </script>
 

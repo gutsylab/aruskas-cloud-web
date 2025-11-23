@@ -19,7 +19,7 @@ class RegisteredUserController extends Controller
     public function create()
     {
         $tenant = request()->attributes->get('tenant');
-        
+
         if (!$tenant) {
             abort(404, 'Tenant not found');
         }
@@ -35,7 +35,7 @@ class RegisteredUserController extends Controller
     public function store(Request $request)
     {
         $tenant = request()->attributes->get('tenant');
-        
+
         if (!$tenant) {
             return response()->json(['error' => 'Tenant not found'], 404);
         }
@@ -58,7 +58,7 @@ class RegisteredUserController extends Controller
 
         if ($request->expectsJson()) {
             $token = $user->createToken('auth-token')->plainTextToken;
-            
+
             return response()->json([
                 'message' => 'Registration successful',
                 'user' => $user,

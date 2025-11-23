@@ -14,7 +14,7 @@ class TenantAuth
     {
         // Get tenant from request (should be set by TenantResolver middleware)
         $tenant = $request->attributes->get('tenant');
-        
+
         if (!$tenant) {
             return redirect('/');
         }
@@ -26,7 +26,7 @@ class TenantAuth
             if ($userId) {
                 $tenantService = app(TenantService::class);
                 $connectionName = $tenantService->getTenantConnectionName($tenant);
-                
+
                 // Get user from tenant database
                 $user = User::on($connectionName)->find($userId);
                 if ($user) {

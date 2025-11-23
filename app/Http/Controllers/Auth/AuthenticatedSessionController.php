@@ -17,7 +17,7 @@ class AuthenticatedSessionController extends Controller
     public function create()
     {
         $tenant = request()->attributes->get('tenant');
-        
+
         if (!$tenant) {
             abort(404, 'Tenant not found');
         }
@@ -31,7 +31,7 @@ class AuthenticatedSessionController extends Controller
     public function store(Request $request)
     {
         $tenant = request()->attributes->get('tenant');
-        
+
         if (!$tenant) {
             return response()->json(['error' => 'Tenant not found'], 404);
         }
@@ -44,7 +44,7 @@ class AuthenticatedSessionController extends Controller
 
         // Manual authentication with tenant-specific user lookup
         $connectionName = "tenant_{$tenant->tenant_id}";
-        
+
         // Find user in tenant database
         $user = \App\Models\Tenant\User::on($connectionName)
             ->where('email', $request->email)
@@ -58,12 +58,12 @@ class AuthenticatedSessionController extends Controller
 
         // IMPORTANT: Set the connection before login
         $user->setConnection($connectionName);
-        
+
         // Log the user in with custom session data
         Auth::login($user, $request->boolean('remember'));
-        
+
         $request->session()->regenerate();
-        
+
         // Store additional debug info
         session([
             'debug_user_id' => $user->id,
@@ -82,7 +82,7 @@ class AuthenticatedSessionController extends Controller
 
         if ($request->expectsJson()) {
             $token = $user->createToken('auth-token')->plainTextToken;
-            
+
             return response()->json([
                 'message' => 'Login successful',
                 'user' => $user,
@@ -101,11 +101,11 @@ class AuthenticatedSessionController extends Controller
     public function destroy(Request $request)
     {
         $tenant = request()->attributes->get('tenant');
-        
+
         if ($request->expectsJson()) {
             // For API requests, revoke the current token
             $request->user()->currentAccessToken()->delete();
-            
+
             return response()->json(['message' => 'Logout successful']);
         }
 
@@ -116,11 +116,12 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        // Redirect to tenant-specific login
-        $redirectUrl = $tenant ? 
-            route('login', ['tenant_id' => $tenant->tenant_id]) : 
-            '/';
-            
-        return redirect($redirectUrl)->with('success', 'Logout successful!');
+        // Redirect to tenant-specific login or home
+        if ($tenant) {
+            return redirect()->route('login', ['tenant_id' => $tenant->tenant_id])
+                ->with('success', 'Logout successful!');
+        }
+
+        return redirect('/')->with('success', 'Logout successful!');
     }
 }

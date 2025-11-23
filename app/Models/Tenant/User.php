@@ -48,4 +48,64 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class);
+    }
+
+    public function hasRole(string $roleName): bool
+    {
+        return $this->roles()->where('name', '=', $roleName)->exists();
+    }
+
+    public function assignRole(string $roleName): void
+    {
+        $role = Role::where('name', $roleName)->first();
+        if ($role) {
+            $this->roles()->syncWithoutDetaching([$role->id]);
+        } else {
+            Log::warning("Role '{$roleName}' not found when assigning to user ID {$this->id}");
+        }
+    }
+
+    public function hasPermission(string $permissionName): bool
+    {
+        return $this->roles()
+            ->whereHas('permissions', function ($query) use ($permissionName) {
+                $query->where('name', '=', $permissionName);
+            })->exists();
+    }
+
+    public function hasPermissionApplication(string $applicationName): bool
+    {
+        return $this->roles()
+            ->whereHas('permissions', function ($query) use ($applicationName) {
+                $query->where('application', '=', $applicationName);
+            })->exists();
+    }
+
+    public function hasPermissionGroup(string $groupName): bool
+    {
+        return $this->roles()
+            ->whereHas('permissions', function ($query) use ($groupName) {
+                $query->where('group', '=', $groupName);
+            })->exists();
+    }
+
+    public function hasPermissionSubGroup(string $subGroupName): bool
+    {
+        return $this->roles()
+            ->whereHas('permissions', function ($query) use ($subGroupName) {
+                $query->where('sub_group', '=', $subGroupName);
+            })->exists();
+    }
+
+    public function hasPermissionModule(string $moduleName): bool
+    {
+        return $this->roles()
+            ->whereHas('permissions', function ($query) use ($moduleName) {
+                $query->where('module', '=', $moduleName);
+            })->exists();
+    }
 }

@@ -5,6 +5,7 @@ namespace Database\Seeders\Tenant;
 use App\Models\Tenant\Account;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class AccountSeeder extends Seeder
 {
@@ -13,11 +14,20 @@ class AccountSeeder extends Seeder
      */
     public function run(): void
     {
+        Log::info('AccountSeeder: Started');
+
         // 1xx - Cash and Bank Accounts
 
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        Account::truncate();
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        try {
+            DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+            Account::truncate();
+            DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+            Log::info('AccountSeeder: Table truncated successfully');
+        } catch (\Exception $e) {
+            Log::error('AccountSeeder: Truncate failed - ' . $e->getMessage());
+            // Continue without truncating
+        }
+
         $sort = 1;
         Account::firstOrCreate(
             ['code' => '1101'],
@@ -235,5 +245,7 @@ class AccountSeeder extends Seeder
                 'cash_flow_type' => 'out',
             ]
         );
+
+        Log::info('AccountSeeder: Completed');
     }
 }

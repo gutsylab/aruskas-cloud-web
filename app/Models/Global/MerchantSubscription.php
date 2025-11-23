@@ -66,7 +66,7 @@ class MerchantSubscription extends Model
      */
     public function isActive(): bool
     {
-        return $this->status === 'active' && 
+        return $this->status === 'active' &&
                $this->ends_at->isFuture();
     }
 
@@ -75,7 +75,7 @@ class MerchantSubscription extends Model
      */
     public function onTrial(): bool
     {
-        return $this->trial_ends_at && 
+        return $this->trial_ends_at &&
                $this->trial_ends_at->isFuture();
     }
 
@@ -92,7 +92,7 @@ class MerchantSubscription extends Model
      */
     public function isCanceled(): bool
     {
-        return $this->status === 'canceled' || 
+        return $this->status === 'canceled' ||
                $this->canceled_at !== null;
     }
 
@@ -122,7 +122,7 @@ class MerchantSubscription extends Model
     /**
      * Renew the subscription.
      */
-    public function renew(int $days = null): void
+    public function renew(int $days = 30): void
     {
         $days = $days ?? 30; // Default to 30 days
 

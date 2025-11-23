@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Global\MerchantUser;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
-use App\Jobs\SendTenantEmailVerification;
+use App\Jobs\SetupTenantDatabase;
 use App\Models\Global\SubscriptionPlan;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\ApiController;
@@ -57,52 +57,6 @@ class RegistrationController extends ApiController
         return null;
     }
 
-    /**
-     * Handle tenant registration via API.
-     *
-     * @group Tenant Management
-     * @bodyParam company_name string required The company/merchant name. Example: ABC Company
-     * @bodyParam admin_name string required The administrator's full name. Example: John Doe
-     * @bodyParam admin_email string required The administrator's email address. Example: admin@example.com
-     * @bodyParam password string required The password (minimum 8 characters). Example: password123
-     * @bodyParam password_confirmation string required Password confirmation. Example: password123
-     * @bodyParam terms boolean required Accept terms and conditions. Example: true
-     *
-     * @response 201 {
-     *   "success": true,
-     *   "message": "Tenant registered successfully. Please check your email to verify your account.",
-     *   "data": {
-     *     "merchant": {
-     *       "id": 1,
-     *       "name": "ABC Company",
-     *       "slug": "abc-company",
-     *       "tenant_id": "TNT123456",
-     *       "email": "admin@example.com",
-     *       "status": true
-     *     },
-     *     "subscription": {
-     *       "plan": "Free Trial",
-     *       "status": "active",
-     *       "trial_ends_at": "2025-12-03T00:00:00.000000Z"
-     *     },
-     *     "tenant_url": "http://localhost/{tenant_id}",
-     *     "admin_email": "admin@example.com"
-     *   }
-     * }
-     *
-     * @response 422 {
-     *   "success": false,
-     *   "message": "Validation failed",
-     *   "errors": {
-     *     "admin_email": ["This email address is already registered."]
-     *   }
-     * }
-     *
-     * @response 500 {
-     *   "success": false,
-     *   "message": "Failed to create tenant: Error details"
-     * }
-     */
     public function register(TenantRegistrationRequest $request)
     {
         DB::beginTransaction();
@@ -118,7 +72,7 @@ class RegistrationController extends ApiController
             if (!$plan) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Default subscription plan not found. Please contact support.'
+                    'message' => 'Paket berlangganan gratis tidak ditemukan. Silakan hubungi tim support kami.'
                 ], 500);
             }
 
@@ -140,9 +94,6 @@ class RegistrationController extends ApiController
                 'settings' => $setings,
             ]);
 
-            // Create tenant database and run migrations
-            $this->tenantService->createTenant($merchant);
-
             // Create subscription
             $subscription = MerchantSubscription::create([
                 'merchant_id' => $merchant->id,
@@ -163,38 +114,19 @@ class RegistrationController extends ApiController
                 'is_active' => true,
             ]);
 
-            // Create admin user in tenant database
-            $this->tenantService->setTenantConnection($merchant);
-
-            $tenantUser = \App\Models\Tenant\User::create([
-                'name' => $request->admin_name,
-                'email' => $request->admin_email,
-                'password' => Hash::make($request->password),
-                'email_verified_at' => null,
-            ]);
-
-            // Reset to global connection
-            $this->tenantService->resetToGlobalConnection();
-
-            // Seed tenant database with initial data
-            try {
-                Artisan::call('db:seed:tenant', [
-                    'tenant_id' => $tenantId,
-                    '--force' => true,
-                ]);
-            } catch (\Exception $e) {
-                // Log seeding error but don't fail the registration
-                Log::warning("Tenant seeding failed for {$tenantId}: " . $e->getMessage());
-            }
-
-            // Dispatch email verification job to tenant queue
-            SendTenantEmailVerification::dispatch($merchant);
+            // Dispatch tenant setup job to background (migrations & seeding)
+            SetupTenantDatabase::dispatch(
+                $merchant,
+                $request->admin_name,
+                $request->admin_email,
+                Hash::make($request->password)
+            );
 
             DB::commit();
 
             return response()->json([
                 'success' => true,
-                'message' => 'Tenant registered successfully. Please check your email to verify your account.',
+                'message' => 'Akun telah terdaftar dengan sukses. Akun Anda sedang disiapkan. Silakan periksa email Anda untuk memverifikasi akun.',
                 'data' => [
                     'merchant' => [
                         'id' => $merchant->id,
@@ -211,6 +143,8 @@ class RegistrationController extends ApiController
                     ],
                     'tenant_url' => url("/{$tenantId}"),
                     'admin_email' => $request->admin_email,
+                    'setup_status' => 'processing',
+                    'note' => 'Akun Anda sedang disiapkan. Silakan periksa email Anda untuk memverifikasi akun.'
                 ]
             ], 201);
         } catch (\Exception $e) {
@@ -218,32 +152,11 @@ class RegistrationController extends ApiController
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to create tenant: ' . $e->getMessage()
+                'message' => 'Gagal membuat tenant: ' . $e->getMessage()
             ], 500);
         }
     }
 
-    /**
-     * Get available subscription plans.
-     *
-     * @group Tenant Management
-     *
-     * @response 200 {
-     *   "success": true,
-     *   "data": {
-     *     "plans": [
-     *       {
-     *         "id": 1,
-     *         "name": "Free Trial",
-     *         "slug": "free-trial",
-     *         "price": 0,
-     *         "trial_days": 30,
-     *         "features": "Basic features"
-     *       }
-     *     ]
-     *   }
-     * }
-     */
     public function getPlans()
     {
         $plans = SubscriptionPlan::where('status', true)

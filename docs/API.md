@@ -143,6 +143,39 @@ Mendaftarkan tenant/merchant baru dengan free trial subscription.
 
 ---
 
+#### 3. Get Tenant Info
+Mendapatkan informasi tenant berdasarkan criteria tertentu.
+
+**Endpoint:** `POST /api/v1/tenant/info`
+
+**Request Body:**
+```json
+{
+  "tenant_id": "TNT123456",
+  // atau
+  "slug": "abc-company",
+  // atau
+  "email": "admin@example.com"
+}
+```
+
+**Success Response (200):**
+```json
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "name": "ABC Company",
+    "slug": "abc-company",
+    "tenant_id": "TNT123456",
+    "email": "admin@example.com",
+    "status": true
+  }
+}
+```
+
+---
+
 ### Tenant Authentication Endpoints
 
 Base URL: `http://your-domain.com/{tenant_id}/api/v1`
@@ -551,6 +584,873 @@ Permanently delete category.
 
 ---
 
+### Account (Chart of Accounts) Endpoints
+
+Base URL: `/{tenant_id}/v1/account`
+
+#### 17. List All Accounts
+Get daftar semua accounts dalam chart of accounts.
+
+**Endpoint:** `GET /{tenant_id}/v1/account`
+
+**Headers:**
+```
+Authorization: Bearer {your_token}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "code": "1-10100",
+      "name": "Cash on Hand",
+      "type": "asset",
+      "category": "current_asset",
+      "parent_id": null,
+      "is_active": true,
+      "balance": 10000000
+    }
+  ]
+}
+```
+
+---
+
+#### 18. Show Account
+Get detail satu account.
+
+**Endpoint:** `GET /{tenant_id}/v1/account/{id}`
+
+**Headers:**
+```
+Authorization: Bearer {your_token}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "code": "1-10100",
+    "name": "Cash on Hand",
+    "type": "asset",
+    "category": "current_asset",
+    "parent_id": null,
+    "is_active": true,
+    "balance": 10000000,
+    "created_at": "2025-11-20T10:00:00.000000Z",
+    "updated_at": "2025-11-20T10:00:00.000000Z"
+  }
+}
+```
+
+---
+
+#### 19. Create Account
+Membuat account baru.
+
+**Endpoint:** `POST /{tenant_id}/v1/account`
+
+**Headers:**
+```
+Authorization: Bearer {your_token}
+```
+
+**Request Body:**
+```json
+{
+  "code": "1-10500",
+  "name": "Petty Cash",
+  "type": "asset",
+  "category": "current_asset",
+  "parent_id": null,
+  "is_active": true
+}
+```
+
+**Success Response (201):**
+```json
+{
+  "success": true,
+  "message": "Account created successfully",
+  "data": {
+    "id": 2,
+    "code": "1-10500",
+    "name": "Petty Cash",
+    "type": "asset",
+    "category": "current_asset"
+  }
+}
+```
+
+---
+
+#### 20. Update Account
+Update account yang ada.
+
+**Endpoint:** `PUT /{tenant_id}/v1/account/{id}`
+
+**Headers:**
+```
+Authorization: Bearer {your_token}
+```
+
+**Request Body:**
+```json
+{
+  "name": "Updated Account Name",
+  "is_active": true
+}
+```
+
+**Success Response (200):**
+```json
+{
+  "success": true,
+  "message": "Account updated successfully",
+  "data": {
+    "id": 2,
+    "name": "Updated Account Name"
+  }
+}
+```
+
+---
+
+#### 21. Delete Account
+Delete account.
+
+**Endpoint:** `DELETE /{tenant_id}/v1/account/{id}`
+
+**Headers:**
+```
+Authorization: Bearer {your_token}
+```
+
+**Success Response (200):**
+```json
+{
+  "success": true,
+  "message": "Account deleted successfully"
+}
+```
+
+---
+
+### Cash Flow Endpoints
+
+Base URL: `/{tenant_id}/v1/cash-flow`
+
+#### 22. List Cash Flows
+Get daftar cash flows (in/out).
+
+**Endpoint:** `GET /{tenant_id}/v1/cash-flow/{type}`
+
+**Parameters:**
+- `type`: `in` atau `out` (default: `in`)
+
+**Headers:**
+```
+Authorization: Bearer {your_token}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "code": "CF-IN-001",
+      "type": "in",
+      "date": "2025-11-20",
+      "account_id": 1,
+      "account_name": "Cash on Hand",
+      "category_id": 1,
+      "category_name": "Sales",
+      "amount": 1000000,
+      "description": "Sales payment",
+      "status": "posted"
+    }
+  ]
+}
+```
+
+---
+
+#### 23. Show Cash Flow
+Get detail satu cash flow.
+
+**Endpoint:** `GET /{tenant_id}/v1/cash-flow/show/{id}`
+
+**Headers:**
+```
+Authorization: Bearer {your_token}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "code": "CF-IN-001",
+    "type": "in",
+    "date": "2025-11-20",
+    "account": {
+      "id": 1,
+      "name": "Cash on Hand"
+    },
+    "category": {
+      "id": 1,
+      "name": "Sales"
+    },
+    "amount": 1000000,
+    "description": "Sales payment",
+    "status": "posted",
+    "posted_at": "2025-11-20T10:00:00.000000Z"
+  }
+}
+```
+
+---
+
+#### 24. Create Cash Flow
+Membuat cash flow baru (in/out).
+
+**Endpoint:** `POST /{tenant_id}/v1/cash-flow`
+
+**Headers:**
+```
+Authorization: Bearer {your_token}
+```
+
+**Request Body:**
+```json
+{
+  "type": "in",
+  "date": "2025-11-20",
+  "account_id": 1,
+  "category_id": 1,
+  "amount": 1000000,
+  "description": "Sales payment",
+  "reference": "INV-001"
+}
+```
+
+**Success Response (201):**
+```json
+{
+  "success": true,
+  "message": "Cash flow created successfully",
+  "data": {
+    "id": 1,
+    "code": "CF-IN-001",
+    "type": "in",
+    "amount": 1000000,
+    "status": "draft"
+  }
+}
+```
+
+---
+
+#### 25. Update Cash Flow
+Update cash flow yang ada.
+
+**Endpoint:** `PUT /{tenant_id}/v1/cash-flow/{id}`
+
+**Headers:**
+```
+Authorization: Bearer {your_token}
+```
+
+**Request Body:**
+```json
+{
+  "amount": 1500000,
+  "description": "Updated description"
+}
+```
+
+**Success Response (200):**
+```json
+{
+  "success": true,
+  "message": "Cash flow updated successfully"
+}
+```
+
+---
+
+#### 26. Set Cash Flow to Draft
+Mengubah status cash flow menjadi draft.
+
+**Endpoint:** `PATCH /{tenant_id}/v1/cash-flow/{id}/set-draft`
+
+**Headers:**
+```
+Authorization: Bearer {your_token}
+```
+
+**Success Response (200):**
+```json
+{
+  "success": true,
+  "message": "Cash flow set to draft"
+}
+```
+
+---
+
+#### 27. Set Cash Flow to Posted
+Memposting cash flow (final).
+
+**Endpoint:** `PATCH /{tenant_id}/v1/cash-flow/{id}/set-posted`
+
+**Headers:**
+```
+Authorization: Bearer {your_token}
+```
+
+**Success Response (200):**
+```json
+{
+  "success": true,
+  "message": "Cash flow posted successfully"
+}
+```
+
+---
+
+#### 28. Delete Cash Flow
+Delete cash flow.
+
+**Endpoint:** `DELETE /{tenant_id}/v1/cash-flow/{id}`
+
+**Headers:**
+```
+Authorization: Bearer {your_token}
+```
+
+**Success Response (200):**
+```json
+{
+  "success": true,
+  "message": "Cash flow deleted successfully"
+}
+```
+
+---
+
+### Cash Transfer Endpoints
+
+Base URL: `/{tenant_id}/v1/cash-transfer`
+
+#### 29. List Cash Transfers
+Get daftar cash transfers.
+
+**Endpoint:** `GET /{tenant_id}/v1/cash-transfer`
+
+**Headers:**
+```
+Authorization: Bearer {your_token}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "code": "CT-001",
+      "date": "2025-11-20",
+      "from_account_id": 1,
+      "from_account_name": "Cash on Hand",
+      "to_account_id": 2,
+      "to_account_name": "Bank Account",
+      "amount": 5000000,
+      "description": "Transfer to bank",
+      "status": "posted"
+    }
+  ]
+}
+```
+
+---
+
+#### 30. Show Cash Transfer
+Get detail satu cash transfer.
+
+**Endpoint:** `GET /{tenant_id}/v1/cash-transfer/show/{id}`
+
+**Headers:**
+```
+Authorization: Bearer {your_token}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "code": "CT-001",
+    "date": "2025-11-20",
+    "from_account": {
+      "id": 1,
+      "name": "Cash on Hand"
+    },
+    "to_account": {
+      "id": 2,
+      "name": "Bank Account"
+    },
+    "amount": 5000000,
+    "description": "Transfer to bank",
+    "status": "posted",
+    "posted_at": "2025-11-20T10:00:00.000000Z"
+  }
+}
+```
+
+---
+
+#### 31. Create Cash Transfer
+Membuat cash transfer baru.
+
+**Endpoint:** `POST /{tenant_id}/v1/cash-transfer`
+
+**Headers:**
+```
+Authorization: Bearer {your_token}
+```
+
+**Request Body:**
+```json
+{
+  "date": "2025-11-20",
+  "from_account_id": 1,
+  "to_account_id": 2,
+  "amount": 5000000,
+  "description": "Transfer to bank"
+}
+```
+
+**Success Response (201):**
+```json
+{
+  "success": true,
+  "message": "Cash transfer created successfully",
+  "data": {
+    "id": 1,
+    "code": "CT-001",
+    "amount": 5000000,
+    "status": "draft"
+  }
+}
+```
+
+---
+
+#### 32. Update Cash Transfer
+Update cash transfer yang ada.
+
+**Endpoint:** `PUT /{tenant_id}/v1/cash-transfer/{id}`
+
+**Headers:**
+```
+Authorization: Bearer {your_token}
+```
+
+**Request Body:**
+```json
+{
+  "amount": 6000000,
+  "description": "Updated description"
+}
+```
+
+**Success Response (200):**
+```json
+{
+  "success": true,
+  "message": "Cash transfer updated successfully"
+}
+```
+
+---
+
+#### 33. Set Cash Transfer to Draft
+Mengubah status cash transfer menjadi draft.
+
+**Endpoint:** `PATCH /{tenant_id}/v1/cash-transfer/{id}/set-draft`
+
+**Headers:**
+```
+Authorization: Bearer {your_token}
+```
+
+**Success Response (200):**
+```json
+{
+  "success": true,
+  "message": "Cash transfer set to draft"
+}
+```
+
+---
+
+#### 34. Set Cash Transfer to Posted
+Memposting cash transfer (final).
+
+**Endpoint:** `PATCH /{tenant_id}/v1/cash-transfer/{id}/set-posted`
+
+**Headers:**
+```
+Authorization: Bearer {your_token}
+```
+
+**Success Response (200):**
+```json
+{
+  "success": true,
+  "message": "Cash transfer posted successfully"
+}
+```
+
+---
+
+#### 35. Delete Cash Transfer
+Delete cash transfer.
+
+**Endpoint:** `DELETE /{tenant_id}/v1/cash-transfer/{id}`
+
+**Headers:**
+```
+Authorization: Bearer {your_token}
+```
+
+**Success Response (200):**
+```json
+{
+  "success": true,
+  "message": "Cash transfer deleted successfully"
+}
+```
+
+---
+
+### Accounting Report Endpoints
+
+Base URL: `/{tenant_id}/v1/report/accounting`
+
+#### 36. Profit & Loss Report
+Mendapatkan laporan laba rugi.
+
+**Endpoint:** `GET /{tenant_id}/v1/report/accounting/profit-loss`
+
+**Headers:**
+```
+Authorization: Bearer {your_token}
+```
+
+**Query Parameters:**
+- `start_date`: YYYY-MM-DD (required)
+- `end_date`: YYYY-MM-DD (required)
+
+**Example:**
+```
+GET /{tenant_id}/v1/report/accounting/profit-loss?start_date=2025-01-01&end_date=2025-12-31
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "period": {
+      "start_date": "2025-01-01",
+      "end_date": "2025-12-31"
+    },
+    "revenue": {
+      "total": 50000000,
+      "details": [
+        {
+          "account_code": "4-10100",
+          "account_name": "Sales Revenue",
+          "amount": 50000000
+        }
+      ]
+    },
+    "expenses": {
+      "total": 30000000,
+      "details": [
+        {
+          "account_code": "5-10100",
+          "account_name": "Operating Expenses",
+          "amount": 30000000
+        }
+      ]
+    },
+    "net_income": 20000000
+  }
+}
+```
+
+---
+
+#### 37. Bank Statement Report
+Mendapatkan laporan mutasi bank/kas.
+
+**Endpoint:** `GET /{tenant_id}/v1/report/accounting/bank-statement`
+
+**Headers:**
+```
+Authorization: Bearer {your_token}
+```
+
+**Query Parameters:**
+- `account_id`: ID akun (required)
+- `start_date`: YYYY-MM-DD (required)
+- `end_date`: YYYY-MM-DD (required)
+
+**Example:**
+```
+GET /{tenant_id}/v1/report/accounting/bank-statement?account_id=1&start_date=2025-01-01&end_date=2025-12-31
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "account": {
+      "id": 1,
+      "code": "1-10100",
+      "name": "Cash on Hand"
+    },
+    "period": {
+      "start_date": "2025-01-01",
+      "end_date": "2025-12-31"
+    },
+    "opening_balance": 10000000,
+    "transactions": [
+      {
+        "date": "2025-01-15",
+        "description": "Sales payment",
+        "reference": "CF-IN-001",
+        "debit": 5000000,
+        "credit": 0,
+        "balance": 15000000
+      }
+    ],
+    "closing_balance": 15000000
+  }
+}
+```
+
+---
+
+#### 38. Cash Flow Summary Report
+Mendapatkan ringkasan arus kas.
+
+**Endpoint:** `GET /{tenant_id}/v1/report/accounting/cash-flow-summary`
+
+**Headers:**
+```
+Authorization: Bearer {your_token}
+```
+
+**Query Parameters:**
+- `start_date`: YYYY-MM-DD (required)
+- `end_date`: YYYY-MM-DD (required)
+
+**Example:**
+```
+GET /{tenant_id}/v1/report/accounting/cash-flow-summary?start_date=2025-01-01&end_date=2025-12-31
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "period": {
+      "start_date": "2025-01-01",
+      "end_date": "2025-12-31"
+    },
+    "cash_in": {
+      "total": 50000000,
+      "by_category": [
+        {
+          "category_name": "Sales",
+          "amount": 50000000
+        }
+      ]
+    },
+    "cash_out": {
+      "total": 30000000,
+      "by_category": [
+        {
+          "category_name": "Operating Expenses",
+          "amount": 30000000
+        }
+      ]
+    },
+    "net_cash_flow": 20000000
+  }
+}
+```
+
+---
+
+#### 39. Cash Flow Detail Report
+Mendapatkan detail arus kas per transaksi.
+
+**Endpoint:** `GET /{tenant_id}/v1/report/accounting/cash-flow-detail`
+
+**Headers:**
+```
+Authorization: Bearer {your_token}
+```
+
+**Query Parameters:**
+- `start_date`: YYYY-MM-DD (required)
+- `end_date`: YYYY-MM-DD (required)
+- `type`: `in` atau `out` (optional)
+
+**Example:**
+```
+GET /{tenant_id}/v1/report/accounting/cash-flow-detail?start_date=2025-01-01&end_date=2025-12-31&type=in
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "period": {
+      "start_date": "2025-01-01",
+      "end_date": "2025-12-31"
+    },
+    "transactions": [
+      {
+        "date": "2025-01-15",
+        "code": "CF-IN-001",
+        "type": "in",
+        "account_name": "Cash on Hand",
+        "category_name": "Sales",
+        "amount": 5000000,
+        "description": "Sales payment",
+        "status": "posted"
+      }
+    ],
+    "total": 5000000
+  }
+}
+```
+
+---
+
+### Dashboard & Profile Endpoints
+
+#### 40. Get Dashboard Data
+Mendapatkan data untuk dashboard.
+
+**Endpoint:** `GET /{tenant_id}/v1/dashboard`
+
+**Headers:**
+```
+Authorization: Bearer {your_token}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "summary": {
+      "total_cash_in": 50000000,
+      "total_cash_out": 30000000,
+      "net_cash_flow": 20000000
+    },
+    "recent_transactions": [
+      {
+        "date": "2025-11-20",
+        "description": "Sales payment",
+        "amount": 1000000,
+        "type": "in"
+      }
+    ]
+  }
+}
+```
+
+---
+
+#### 41. Get User Profile
+Mendapatkan profile user yang sedang login.
+
+**Endpoint:** `GET /{tenant_id}/v1/profile`
+
+**Headers:**
+```
+Authorization: Bearer {your_token}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "name": "John Doe",
+    "email": "admin@example.com",
+    "email_verified_at": "2025-11-03T10:00:00.000000Z"
+  }
+}
+```
+
+---
+
+#### 42. Update User Profile
+Update profile user.
+
+**Endpoint:** `PUT /{tenant_id}/v1/profile`
+
+**Headers:**
+```
+Authorization: Bearer {your_token}
+```
+
+**Request Body:**
+```json
+{
+  "name": "John Updated",
+  "email": "john.updated@example.com"
+}
+```
+
+**Success Response (200):**
+```json
+{
+  "success": true,
+  "message": "Profile updated successfully",
+  "data": {
+    "id": 1,
+    "name": "John Updated",
+    "email": "john.updated@example.com"
+  }
+}
+```
+
+---
+
 ## 🧪 Testing Guide
 
 ### Quick Start Testing
@@ -681,16 +1581,43 @@ GutsyPOS API
 │   ├── Logout
 │   ├── Logout All
 │   └── Refresh Token
-└── Cash Categories
-    ├── List Categories
-    ├── Create Category
-    ├── Show Category
-    ├── Update Category
-    ├── Delete Category
-    ├── Get by Type
-    ├── List Trashed
-    ├── Restore Category
-    └── Force Delete
+├── Cash Categories
+│   ├── List Categories
+│   ├── Create Category
+│   ├── Show Category
+│   ├── Update Category
+│   └── Delete Category
+├── Accounts
+│   ├── List Accounts
+│   ├── Create Account
+│   ├── Show Account
+│   ├── Update Account
+│   └── Delete Account
+├── Cash Flow
+│   ├── List Cash Flows
+│   ├── Create Cash Flow
+│   ├── Show Cash Flow
+│   ├── Update Cash Flow
+│   ├── Set to Draft
+│   ├── Set to Posted
+│   └── Delete Cash Flow
+├── Cash Transfer
+│   ├── List Cash Transfers
+│   ├── Create Cash Transfer
+│   ├── Show Cash Transfer
+│   ├── Update Cash Transfer
+│   ├── Set to Draft
+│   ├── Set to Posted
+│   └── Delete Cash Transfer
+├── Reports
+│   ├── Profit & Loss
+│   ├── Bank Statement
+│   ├── Cash Flow Summary
+│   └── Cash Flow Detail
+└── Dashboard & Profile
+    ├── Get Dashboard
+    ├── Get Profile
+    └── Update Profile
 ```
 
 ---
@@ -842,6 +1769,25 @@ Untuk pertanyaan atau issue terkait API, silakan hubungi development team atau b
 
 ---
 
-**Last Updated:** November 2025  
+## 📊 API Response Format
+
+**Note:** Semua response keys menggunakan camelCase format (bukan snake_case).
+
+Contoh:
+```json
+{
+  "success": true,
+  "data": {
+    "userId": 1,
+    "userName": "John Doe",
+    "emailVerifiedAt": "2025-11-03T10:00:00.000000Z",
+    "createdAt": "2025-11-01T10:00:00.000000Z"
+  }
+}
+```
+
+---
+
+**Last Updated:** November 20, 2025  
 **API Version:** v1  
 **Laravel Version:** 11.x

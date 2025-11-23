@@ -16,7 +16,8 @@
             <!-- Level 1: Content Management -->
             <div class="nav-item">
                 <a class="nav-link @if ($activeMenu === 'cash') active @endif text-dark px-3 py-2 d-flex align-items-center"
-                    href="#" data-bs-toggle="collapse" data-bs-target="#contentManagement" aria-expanded="@if($activeMenu === 'cash') true @else false @endif">
+                    href="#" data-bs-toggle="collapse" data-bs-target="#contentManagement"
+                    aria-expanded="@if ($activeMenu === 'cash') true @else false @endif">
                     <i class="fas fa-file-alt me-3"></i>
                     <span>KAS</span>
                     <i class="fas fa-chevron-down ms-auto"></i>
@@ -24,13 +25,13 @@
                 <!-- Level 2: Content Management Sub Menu -->
                 <div class="collapse @if ($activeMenu === 'cash') show @endif" id="contentManagement">
                     <div class="nav flex-column ms-3">
-                        <a class="nav-link @if ($activeSubMenu === 'cash.flow') active @endif text-dark px-3 py-2 d-flex align-items-center"
-                            href="#media">
+                        <a class="nav-link @if ($activeSubMenu === 'cash.flows') active @endif text-dark px-3 py-2 d-flex align-items-center"
+                            href="{{ route('cash-flows.index', ['tenant_id' => $tenant->tenant_id]) }}">
                             <i class="fas fa-images me-3"></i>
                             <span>Arus Kas</span>
                         </a>
                         <a class="nav-link @if ($activeSubMenu === 'cash.categories') active @endif text-dark px-3 py-2 d-flex align-items-center"
-                            href="{{ route('cash.categories.index', ['tenant_id' => $tenant->tenant_id]) }}">
+                            href="{{ route('cash-categories.index', ['tenant_id' => $tenant->tenant_id]) }}">
                             <i class="fas fa-images me-3"></i>
                             <span>Kategori</span>
                         </a>
