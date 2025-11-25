@@ -12,25 +12,84 @@
     <div id="layout-wrapper">
         <div class="row">
             <div class="col-md-12">
-                <form method="POST" id="form-create" class="form-horizontal"
-                    action="{{ route('cash-flows.store', ['tenant_id' => $tenant->tenant_id]) }}" autocomplete="off"
-                    onsubmit="return false">
+                <form method="POST" id="form-edit" class="form-horizontal"
+                    action="{{ route('cash-flows.update', [
+                        'tenant_id' => $tenant->tenant_id,
+                        'cash_flow' => $cashFlow->id,
+                    ]) }}"
+                    autocomplete="off" onsubmit="return false">
                     @csrf
+                    @method('PUT')
+                    <input type="hidden" name="id" value="{{ $cashFlow->id }}" />
                     <input type="hidden" name="type" value="{{ $type }}" />
+
+
+
+                    @if ($cashFlow->status == 'posted')
+                        <div class="alert alert-secondary px-4 pb-0 pt-4 mb-4">
+                            <h5><i class="ri-information-line"></i> Info</h5>
+                            <p class="mb-0">Arus kas ini berstatus <strong>Posted</strong>. Untuk melakukan perubahan,
+                                silakan
+                                kembalikan
+                                arus kas ini ke status <strong>Draft</strong> terlebih dahulu.</p>
+
+                            <p>Diposting pada
+                                <strong>{{ \Carbon\Carbon::parse($cashFlow->posted_at)->format('d M Y H:i') }}</strong>
+                            </p>
+                        </div>
+                    @endif
+
+                    @if ($cashFlow->status == 'draft')
+                        <div class="alert alert-secondary px-4 pb-0 pt-4 mb-4">
+                            <h5><i class="ri-information-line"></i> Info</h5>
+                            <p>Arus kas ini berstatus <strong>Draft</strong>. Setelah selesai melakukan perubahan, Anda
+                                dapat
+                                memposting arus kas ini.</p>
+                        </div>
+                    @endif
+
                     <div class="card">
                         <span></span>
                         <!-- Order Details Section -->
-                        <div class="card-header">
+                        <div class="card-header d-flex justify-content-between align-items-center">
                             <h5 class="mb-0">{{ $title }}</h5>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    @if ($cashFlow->status == 'posted')
+                                        <button type="button" onclick="confirmSetDraft('{{ $cashFlow->id }}')"
+                                            class="btn btn-light-info"><i class="ri-draft-line"></i> Draft</button>
+                                    @endif
+
+
+                                    @if ($cashFlow->status == 'draft')
+                                        <button type="button" onclick="confirmSetPosted('{{ $cashFlow->id }}')"
+                                            class="btn btn-secondary"><i class="ri-send-plane-fill"></i> Posting</button>
+
+                                        <button type="button" onclick="confirmDelete('{{ $cashFlow->id }}')"
+                                            class="btn btn-light-danger"><i class="ri-delete-bin-line"></i> Hapus</button>
+                                    @endif
+
+
+                                </div>
+                            </div>
                         </div>
                         <div class="card-body">
+
+                            @error('header')
+                                <div class="alert alert-warning px-4 pb-0 pt-4 mb-4">
+                                    <h5>Oops!</h5>
+                                    <p>{{ $message }}</p>
+                                </div>
+                            @enderror
+
                             <div class="row">
                                 <div class="col-md-3">
                                     <div class="form-group mb-4">
                                         <label class="form-label">Tanggal</label>
                                         <input type="text"
                                             class="form-control single-datepicker @error('date') is-invalid @enderror"
-                                            placeholder="Pilih tanggal" name="date" value="{{ old('date') }}">
+                                            placeholder="Pilih tanggal" name="date"
+                                            value="{{ old('date', $cashFlow->date) }}">
                                         @error('date')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -44,7 +103,7 @@
                                             class="form-select @error('account_id') is-invalid @enderror" required>
                                             @foreach ($accounts as $account)
                                                 <option value="{{ $account->id }}"
-                                                    {{ old('account_id') == $account->id ? 'selected' : '' }}>
+                                                    {{ old('account_id', $selectedAccount->id) == $account->id ? 'selected' : '' }}>
                                                     {{ $account->name }}</option>
                                             @endforeach
                                         </select>
@@ -57,7 +116,8 @@
                                     <div class="form-group mb-4">
                                         <label class="form-label">Referensi</label>
                                         <input type="text" class="form-control @error('reference') is-invalid @enderror"
-                                            placeholder="(Opsional)" name="reference" value="{{ old('reference') }}">
+                                            placeholder="(Opsional)" name="reference"
+                                            value="{{ old('reference', $cashFlow->reference) }}">
                                         @error('reference')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -68,7 +128,7 @@
                                     <div class="form-group mb-4">
                                         <label class="form-label">Deskripsi</label>
                                         <textarea class="form-control @error('description') is-invalid @enderror" rows="2" name="description"
-                                            placeholder="Deskripsi transaksi (opsional)">{{ old('description') }}</textarea>
+                                            placeholder="Deskripsi transaksi (opsional)">{{ old('description', $cashFlow->description) }}</textarea>
                                         @error('description')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -113,13 +173,54 @@
                                         </thead>
 
                                         <tbody>
+                                            @php
+                                                $total = 0;
+                                            @endphp
+                                            @foreach ($lines as $index => $line)
+                                                @php
+                                                    $amount = $type == 'in' ? $line->credit : $line->debit;
+                                                    $total += $amount;
+                                                @endphp
+                                                <tr data-index="{{ $index }}">
+                                                    <td>
 
+                                                        <input type="hidden"
+                                                            name="lines[{{ $index }}][category_id]"
+                                                            value="{{ $line->account_id }}">
+                                                        {{ $line->account->name }}
+                                                    </td>
+                                                    <td>
+
+                                                        <input type="hidden"
+                                                            name="lines[{{ $index }}][description]"
+                                                            value="{{ $line->description }}">
+                                                        {{ $line->description }}
+                                                    </td>
+                                                    <td class="text-end">
+
+                                                        <input type="hidden" name="lines[{{ $index }}][amount]"
+                                                            value="{{ $amount }}" class="line-amount-input">
+                                                        {{ convertCurrency($amount, true, 2) }}
+                                                    </td>
+                                                    <td>
+                                                        <button type="button" class="btn btn-sm btn-warning me-1"
+                                                            onclick="editLine({{ $index }}, {{ $line->account_id }})">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </button>
+                                                        <button type="button" class="btn btn-sm btn-danger"
+                                                            onclick="deleteLine({{ $index }})">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
                                         </tbody>
 
                                         <tfoot>
                                             <tr class="bg-light">
                                                 <th colspan="2" class="text-end">Total:</th>
-                                                <th class="text-end" id="total-amount">0</th>
+                                                <th class="text-end" id="total-amount">
+                                                    {{ convertCurrency($total, true, 2) }}</th>
                                                 <th></th>
                                             </tr>
                                             <tr>
@@ -137,8 +238,8 @@
                                                 </td>
                                                 <td style="width: 250px">
                                                     <input type="text"
-                                                        class="form-control text-end form-control-currency" id="new-amount"
-                                                        placeholder="Jumlah" />
+                                                        class="form-control text-end form-control-currency"
+                                                        id="new-amount" placeholder="Jumlah" />
                                                 </td>
                                                 <td>
                                                     <button type="button" class="btn btn-success" onclick="addNewLine()"
@@ -153,11 +254,11 @@
                     </div>
 
                     <div class="d-flex justify-content-end gap-3 my-5">
-                        <a href="{{ route('cash-flows.index', ['tenant_id' => $tenant->tenant_id]) }}"
+                        <a href="{{ route('cash-flows.show', ['tenant_id' => $tenant->tenant_id, 'cash_flow' => $cashFlow->id]) }}"
                             class="btn btn-light-light text-muted"><i class="ri-close-line"></i> Batalkan</a>
                         <button type="button" onclick="doSubmit()" class="btn btn-primary"><i class="ri-save-line"></i>
-                            Simpan Arus
-                            Kas Baru</button>
+                            Simpan Perubahan Arus
+                            Kas</button>
                     </div>
                 </form>
             </div>
@@ -185,7 +286,7 @@
     <script src="{{ asset('assets/js/app/choices.init.js') }}"></script>
 
     <script>
-        let lineIndex = 0;
+        let lineIndex = {{ count($lines) }};
 
         $(document).ready(function() {
             singleDatePicker('.single-datepicker');
@@ -193,7 +294,7 @@
         });
 
         function doSubmit() {
-            const form = document.getElementById('form-create');
+            const form = document.getElementById('form-edit');
             form.submit();
         }
 
@@ -236,7 +337,7 @@
                     <span class="line-amount">${formatCurrency(amount)}</span>
                 </td>
                 <td class="text-center">
-                    <button type="button" class="btn btn-sm btn-warning me-1" onclick="editLine(${lineIndex})">
+                    <button type="button" class="btn btn-sm btn-warning me-1" onclick="editLine(${lineIndex}, ${categoryId})">
                         <i class="bi bi-pencil"></i>
                     </button>
                     <button type="button" class="btn btn-sm btn-danger" onclick="deleteLine(${lineIndex})">
@@ -257,7 +358,7 @@
             calculateTotal();
         }
 
-        function editLine(index) {
+        function editLine(index, selectedCategoryId = null) {
             const row = document.querySelector(`tr[data-index="${index}"]`);
             const categoryInput = row.querySelector('input[name*="category_id"]');
             const descriptionInput = row.querySelector('input[name*="description"]');
@@ -267,16 +368,14 @@
             const description = descriptionInput.value;
             const amount = amountInput.value;
 
+            // Ambil nama kategori dari text content sebelum di-replace
+            const categoryName = row.querySelector('td:first-child').textContent.trim();
+
             // Ubah baris menjadi form editable
             row.innerHTML = `
                 <td>
-                    <select name="lines[${index}][category_id]" class="form-select edit-category">
-                        @foreach ($categories as $category)
-                            <option value="{{ $category->id }}" ${categoryId == '{{ $category->id }}' ? 'selected' : ''}>
-                                {{ $category->name }}
-                            </option>
-                        @endforeach
-                    </select>
+                    <input type="hidden" name="lines[${index}][category_id]" value="${categoryId}">
+                    ${categoryName}
                 </td>
                 <td>
                     <input type="text" name="lines[${index}][description]" class="form-control edit-description" value="${description}">
@@ -284,27 +383,23 @@
                 <td>
                     <input type="text" name="lines[${index}][amount]" class="form-control text-end edit-amount line-amount-input form-control-currency" value="${amount}">
                 </td>
-                <td class="text-center">
-                    <button type="button" class="btn btn-sm btn-success me-1" onclick="saveLine(${index})">
-                        <i class="bi bi-check-lg"></i>
-                    </button>
-                    <button type="button" class="btn btn-sm btn-secondary" onclick="cancelEdit(${index})">
-                        <i class="bi bi-x-lg"></i>
-                    </button>
+                <td >
+                    <button type="button" class="btn btn-sm btn-success me-1" onclick="saveLine(${index})"><i class="bi bi-check-lg"></i></button>
+                    <button type="button" class="btn btn-sm btn-secondary" onclick="cancelEdit(${index})"><i class="bi bi-x-lg"></i></button>
                 </td>
             `;
 
             // Store original data untuk cancel
             row.dataset.originalCategory = categoryId;
+            row.dataset.originalCategoryName = categoryName;
             row.dataset.originalDescription = description;
             row.dataset.originalAmount = amount;
         }
 
         function saveLine(index) {
             const row = document.querySelector(`tr[data-index="${index}"]`);
-            const categorySelect = row.querySelector('.edit-category');
-            const categoryId = categorySelect.value;
-            const categoryName = categorySelect.options[categorySelect.selectedIndex].text;
+            const categoryId = row.querySelector('input[name*="category_id"]').value;
+            const categoryName = row.dataset.originalCategoryName;
             const description = row.querySelector('.edit-description').value;
             const amount = parseFloat(row.querySelector('.edit-amount').value) || 0;
 
@@ -332,13 +427,9 @@
                     <input type="hidden" name="lines[${index}][amount]" value="${amount}" class="line-amount-input">
                     <span class="line-amount">${formatCurrency(amount)}</span>
                 </td>
-                <td class="text-center">
-                    <button type="button" class="btn btn-sm btn-warning me-1" onclick="editLine(${index})">
-                        <i class="bi bi-pencil"></i>
-                    </button>
-                    <button type="button" class="btn btn-sm btn-danger" onclick="deleteLine(${index})">
-                        <i class="bi bi-trash"></i>
-                    </button>
+                <td >
+                    <button type="button" class="btn btn-sm btn-warning me-1" onclick="editLine(${index}, ${categoryId})"><i class="bi bi-pencil"></i></button>
+                    <button type="button" class="btn btn-sm btn-danger" onclick="deleteLine(${index})"><i class="bi bi-trash"></i></button>
                 </td>
             `;
 
@@ -349,13 +440,9 @@
         function cancelEdit(index) {
             const row = document.querySelector(`tr[data-index="${index}"]`);
             const categoryId = row.dataset.originalCategory;
+            const categoryName = row.dataset.originalCategoryName;
             const description = row.dataset.originalDescription;
             const amount = row.dataset.originalAmount;
-
-            // Cari nama kategori
-            const categorySelect = document.getElementById('new-category');
-            const option = Array.from(categorySelect.options).find(opt => opt.value == categoryId);
-            const categoryName = option ? option.text : '';
 
             // Kembalikan ke tampilan semula
             row.innerHTML = `
@@ -371,23 +458,20 @@
                     <input type="hidden" name="lines[${index}][amount]" value="${amount}" class="line-amount-input">
                     <span class="line-amount">${formatCurrency(amount)}</span>
                 </td>
-                <td class="text-center">
-                    <button type="button" class="btn btn-sm btn-warning me-1" onclick="editLine(${index})">
-                        <i class="bi bi-pencil"></i>
-                    </button>
-                    <button type="button" class="btn btn-sm btn-danger" onclick="deleteLine(${index})">
-                        <i class="bi bi-trash"></i>
+                <td>
+                    <button type="button" class="btn btn-sm btn-warning me-1" onclick="editLine(${index}, ${categoryId})"><i class="bi bi-pencil"></i></button>
+                    <button type="button" class="btn btn-sm btn-danger" onclick="deleteLine(${index})"><i class="bi bi-trash"></i></button>
                     </button>
                 </td>
             `;
         }
 
         function deleteLine(index) {
-            if (confirm('Hapus baris ini?')) {
+            confirmAlert('Konfirmasi', 'Hapus baris ini?', "warning", function() {
                 const row = document.querySelector(`tr[data-index="${index}"]`);
                 row.remove();
                 calculateTotal();
-            }
+            });
         }
 
         function calculateTotal() {
@@ -437,6 +521,53 @@
         function validateForm(event) {
             // Allow form submission only when submit button is clicked
             return true;
+        }
+
+        function confirmSetDraft(cashFlowId) {
+            confirmAlert('Konfirmasi', 'Set arus kas ini ke draft?', "warning", function() {
+                window.location.href =
+                    '{{ route('cash-flows.set-draft', ['tenant_id' => $tenant->tenant_id, 'cash_flow' => ':id']) }}'
+                    .replace(':id', cashFlowId);
+            });
+        }
+
+        function confirmSetPosted(cashFlowId) {
+            confirmAlert('Konfirmasi', 'Posting arus kas ini ?', "warning", function() {
+                window.location.href =
+                    '{{ route('cash-flows.set-posted', ['tenant_id' => $tenant->tenant_id, 'cash_flow' => ':id']) }}'
+                    .replace(':id', cashFlowId);
+            });
+        }
+
+        function confirmDelete(cashFlowId) {
+            confirmAlert('Hapus Arus Kas',
+                'Anda yakin ingin hapus arus kas ini ? Data yang sudah dihapus tidak dapat dikembalikan', "warning",
+                function() {
+                    $.ajax({
+                        url: '{{ route('cash-flows.destroy', ['tenant_id' => $tenant->tenant_id, 'cash_flow' => ':id']) }}'
+                            .replace(':id', cashFlowId),
+                        type: 'POST',
+                        data: {
+                            _method: 'DELETE',
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function(response) {
+
+                            if (response.status == 'error') {
+                                errorAlert(response.message);
+                                return;
+                            }
+
+                            successAlert(response.message, function() {
+                                window.location.href =
+                                    '{{ route('cash-flows.index', ['tenant_id' => $tenant->tenant_id]) }}';
+                            });
+                        },
+                        error: function(xhr) {
+                            errorAlert('Gagal menghapus arus kas.');
+                        }
+                    });
+                });
         }
     </script>
 @endsection

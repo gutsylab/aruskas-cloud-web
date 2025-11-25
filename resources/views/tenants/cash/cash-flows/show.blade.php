@@ -12,14 +12,36 @@
     <div id="layout-wrapper">
         <div class="row">
             <div class="col-md-12">
+
+
+                @if ($cashFlow->status == 'posted')
+                    <div class="alert alert-secondary px-4 pb-0 pt-4 mb-4">
+                        <h5><i class="ri-information-line"></i> Info</h5>
+                        <p>Arus kas ini berstatus <strong>Posted</strong>. Diposting pada
+                            <strong>{{ \Carbon\Carbon::parse($cashFlow->posted_at)->format('d M Y H:i') }}</strong>
+                        </p>
+                    </div>
+                @endif
+
                 <div class="card">
-                    <span></span>
                     <!-- Order Details Section -->
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <div class="d-flex align-items-center">
                             <a href="{{ route('cash-flows.index', ['tenant_id' => $tenant->tenant_id]) }}"
                                 class="btn btn-light-secondary"><i class="ri-arrow-left-line"></i></a>
-                            <h5 class="mb-0 ms-4">{{ $title }}</h5>
+
+                            @php
+                                $status = $cashFlow->status ?? '';
+
+                                if ($status == 'posted') {
+                                    $status = '<span class="badge bg-primary rounded-pill">Diposting</span>';
+                                } elseif ($status == 'draft') {
+                                    $status = '<span class="badge bg-secondary rounded-pill">Draft</span>';
+                                } else {
+                                    $status = '';
+                                }
+                            @endphp
+                            <h5 class="mb-0 ms-4">{{ $title }} {!! $status !!}</h5>
                         </div>
 
                         <a href="{{ route('cash-flows.edit', ['tenant_id' => $tenant->tenant_id, 'cash_flow' => $cashFlow->id]) }}"
@@ -70,9 +92,9 @@
                                 <table class="table table-bordered" id="table-lines">
                                     <thead>
                                         <tr>
-                                            <th class="p-2 bg-info text-light">Kategori</th>
-                                            <th class="p-2 bg-info text-light">Keterangan</th>
-                                            <th class="p-2 text-end bg-info text-light">Jumlah</th>
+                                            <th class="bg-info text-light">Kategori</th>
+                                            <th class="bg-info text-light">Keterangan</th>
+                                            <th class="text-end bg-info text-light">Jumlah</th>
                                         </tr>
                                     </thead>
 
@@ -87,17 +109,17 @@
                                                 $total += $amount;
                                             @endphp
                                             <tr>
-                                                <td class="p-2">{{ $line->account->name }}</td>
-                                                <td class="p-2">{{ $line->description }}</td>
-                                                <td class="p-2 text-end">{{ convertCurrency($amount, true, 2) }}</td>
+                                                <td>{{ $line->account->name }}</td>
+                                                <td>{{ $line->description }}</td>
+                                                <td class="text-end">{{ convertCurrency($amount, true, 2) }}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>
 
                                     <tfoot>
                                         <tr class="bg-light">
-                                            <th colspan="2" class="p-2 text-end">Total:</th>
-                                            <th class="p-2 text-end" id="total-amount">
+                                            <th colspan="2" class="text-end">Total:</th>
+                                            <th class="text-end" id="total-amount">
                                                 {{ convertCurrency($total, true, 2) }}
                                             </th>
                                         </tr>

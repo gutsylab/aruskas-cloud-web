@@ -32,19 +32,22 @@
                             <div class="accordion-body py-5">
                                 <div class="row g-4">
                                     <div class="col-md-4 col-xl">
-                                        <select id="status-status" class="form-select">
+                                        <select id="filter-status" class="form-select form-filter">
+                                            <option value="">Semua Status</option>
                                             <option value="draft">Draft</option>
                                             <option value="posted">Diposting</option>
                                         </select>
                                     </div>
                                     <div class="col-md-4 col-xl">
-                                        <input type="text" class="form-control" id="human-friendly-picker"
+                                        <input type="text" class="form-control form-filter" id="filter-date-range"
                                             placeholder="Pilih Tanggal">
                                     </div>
                                     <div class="col-xl d-flex justify-content-end align-items-center gap-2">
-                                        <button class="btn btn-light-primary" type="button"><i
-                                                class="ri-equalizer-line me-2"></i>Tambah Filter</button>
-                                        <button class="btn btn-light-danger" type="button">Hapus Filter</button>
+                                        <button class="btn btn-light-primary" type="button" onclick="applyFilter()">
+                                            <i class="ri-equalizer-line me-2"></i>Tambah Filter</button>
+                                        <button class="btn btn-light-danger" type="button" onclick="resetFilter()">
+                                            <i class="ri-close-line"></i>
+                                            Hapus Filter</button>
                                     </div>
                                 </div>
                             </div>
@@ -111,10 +114,23 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
 
     <script src="{{ asset('assets/js/table/datatable.init.js') }}"></script>
+
+    <script src="{{ asset('assets/js/app/airpicker.init.js') }}"></script>
+    <script src="{{ asset('assets/js/app/choices.init.js') }}"></script>
+
     <script type="module" src="{{ asset('assets/js/app.js') }}"></script>
 
     <script>
         $(document).ready(function() {
+
+
+            @php
+                $startDate = request('start_date', '');
+                $endDate = request('end_date', '');
+            @endphp
+            singleChoiceSelect('#filter-status', 'Semua Status');
+            rangeDatePicker('#filter-date-range', '{{ $startDate }}', '{{ $endDate }}');
+
             $('#datatable').DataTable({
                 scrollX: false,
                 processing: true,
@@ -126,12 +142,19 @@
                         // d.cost_type_id = $('#cost_type_id').val();
 
                         // // Menambahkan parameter date range
-                        // var dateRange = $('#date_range').val();
-                        // if (dateRange) {
-                        //     var dates = dateRange.split(" to ");
-                        //     d.start_date = dates[0];
-                        //     d.end_date = dates.length > 1 ? dates[1] : dates[0];
-                        // }
+                        var dateRange = $('#filter-date-range').val();
+                        if (dateRange) {
+                            var dates = dateRange.split(" - ");
+                            console.log(dates);
+                            d.start_date = dates[0];
+                            d.end_date = dates.length > 1 ? dates[1] : dates[0];
+                        }
+
+                        var filterStatus = $('#filter-status').val();
+                        console.log(filterStatus);
+                        if (filterStatus) {
+                            d.status = filterStatus;
+                        }
                     }
                 },
                 "dom": "<'dt--top-section'<'row'<'col-12 col-sm-6 d-flex justify-content-sm-start justify-content-center'l><'col-12 col-sm-6 d-flex justify-content-sm-end justify-content-center mt-sm-0 mt-3'f>>>" +
@@ -192,15 +215,17 @@
                 ]
             });
 
-            let status = document.getElementById('status-status');
-            if (status) {
-                const status = new Choices('#status-status', {
-                    placeholderValue: 'Pilih Status',
-                    searchPlaceholderValue: 'Cari...',
-                    removeItemButton: true,
-                    itemSelectText: 'Tekan untuk memilih',
-                });
-            }
         });
+
+        function resetFilter() {
+            $('.form-filter').each(function() {
+                $(this).val(null).trigger('change');
+            });
+            $('#datatable').DataTable().ajax.reload();
+        }
+
+        function applyFilter() {
+            $('#datatable').DataTable().ajax.reload();
+        }
     </script>
 @endsection

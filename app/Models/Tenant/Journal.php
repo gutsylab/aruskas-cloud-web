@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Journal extends Model
 {
-    use BelongsToTenant, SoftDeletes;
+    use BelongsToTenant;
 
     protected $fillable = [
         'code',

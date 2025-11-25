@@ -70,6 +70,8 @@ Route::prefix('{tenant_id}')->middleware(['tenant'])->group(function () {
         Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
         Route::get('/cash-flows/dt', [CashFlowController::class, 'dataTable'])->name('cash-flows.dt');
+        Route::get('/cash-flows/{cash_flow}/set-draft', [CashFlowController::class, 'setDraft'])->name('cash-flows.set-draft');
+        Route::get('/cash-flows/{cash_flow}/set-posted', [CashFlowController::class, 'setPosted'])->name('cash-flows.set-posted');
         Route::resource('/cash-flows', CashFlowController::class);
 
         Route::get('/cash-categories/dt', [CashCategoryController::class, 'dataTable'])->name('cash-categories.dt');

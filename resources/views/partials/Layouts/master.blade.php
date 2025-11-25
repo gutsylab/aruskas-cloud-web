@@ -47,8 +47,39 @@
             @include('partials.vendor-scripts')
 
             @yield('js')
+            {{-- BAGIAN UNTUK MENAMPILKAN NOTIFIKASI --}}
+            @if (session('success'))
+                <script>
+                    try {
+                        if (typeof Swal !== 'undefined') {
+                            successAlert('{{ session('success') }}');
+                        } else {
+                            alert('Success: {{ session('success') }}');
+                        }
+                    } catch (error) {
+                        alert('Success: {{ session('success') }}');
+                    }
+                </script>
+            @endif
+
+            @if (session('error'))
+                <script>
+                    try {
+                        if (typeof Swal !== 'undefined') {
+                            errorAlert('{{ session('error') }}');
+                        } else {
+                            alert('Error: {{ session('error') }}');
+                        }
+                    } catch (error) {
+                        alert('Error: {{ session('error') }}');
+                    }
+                </script>
+            @endif
         </div>
     </main>
+
+
+
 
 </body>
 

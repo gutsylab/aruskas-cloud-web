@@ -11,11 +11,19 @@
 <!-- App Css-->
 <link href="{{ asset('assets/css/app.min.css') }}" id="app-style" rel="stylesheet" type="text/css">
 
+<!-- SweetAlert2 Css -->
+<link href="{{ asset('assets/libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet" type="text/css" />
+
 
 
 <style>
     table.dataTable td,
     table.dataTable th {
+        padding: 6px 8px;
+    }
+
+    .table td,
+    .table th {
         padding: 6px 8px;
     }
 </style>
