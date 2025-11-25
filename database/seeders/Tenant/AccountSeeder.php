@@ -27,28 +27,44 @@ class AccountSeeder extends Seeder
 
         $sort = 1;
         Account::firstOrCreate(
-            ['code' => '1101'],
+            ['code' => '11101'],
             ['name' => 'Kas Tunai', 'type' => 'asset', 'is_cash' => true, 'sort' => $sort]
         );
         Account::firstOrCreate(
-            ['code' => '1110'],
+            ['code' => '11201'],
             ['name' => 'Bank BCA', 'type' => 'asset', 'is_cash' => true, 'sort' => $sort]
         );
         Account::firstOrCreate(
-            ['code' => '1120'],
+            ['code' => '11202'],
             ['name' => 'Bank Mandiri', 'type' => 'asset', 'is_cash' => true, 'sort' => $sort]
         );
         Account::firstOrCreate(
-            ['code' => '1130'],
+            ['code' => '11203'],
             ['name' => 'Bank BNI', 'type' => 'asset', 'is_cash' => true, 'sort' => $sort]
         );
         Account::firstOrCreate(
-            ['code' => '1140'],
+            ['code' => '11204'],
             ['name' => 'Bank BRI', 'type' => 'asset', 'is_cash' => true, 'sort' => $sort]
+        );
+        Account::firstOrCreate(
+            ['code' => '11301'],
+            ['name' => 'DANA', 'type' => 'asset', 'is_cash' => true, 'sort' => $sort]
+        );
+        Account::firstOrCreate(
+            ['code' => '11302'],
+            ['name' => 'OVO', 'type' => 'asset', 'is_cash' => true, 'sort' => $sort]
+        );
+        Account::firstOrCreate(
+            ['code' => '11303'],
+            ['name' => 'GoPay', 'type' => 'asset', 'is_cash' => true, 'sort' => $sort]
+        );
+        Account::firstOrCreate(
+            ['code' => '11304'],
+            ['name' => 'ShopeePay', 'type' => 'asset', 'is_cash' => true, 'sort' => $sort]
         );
         // Account Receivable
         Account::firstOrCreate(
-            ['code' => '1200'],
+            ['code' => '12001'],
             ['name' => 'Piutang Usaha', 'type' => 'asset', 'is_cash' => false, 'sort' => $sort, 'cash_flow_type' => 'in']
         );
 
@@ -56,11 +72,11 @@ class AccountSeeder extends Seeder
         $sort = 2;
         // Account Payable
         Account::firstOrCreate(
-            ['code' => '2101'],
+            ['code' => '21001'],
             ['name' => 'Hutang Usaha', 'type' => 'liability', 'is_cash' => false, 'sort' => $sort, 'cash_flow_type' => 'out']
         );
         Account::firstOrCreate(
-            ['code' => '2102'],
+            ['code' => '21002'],
             ['name' => 'Hutang Pajak', 'type' => 'liability', 'is_cash' => false, 'sort' => $sort, 'cash_flow_type' => 'out']
         );
 
@@ -68,37 +84,37 @@ class AccountSeeder extends Seeder
         // 3xx - Equity Accounts
         $sort = 3;
         Account::firstOrCreate(
-            ['code' => '3101'],
+            ['code' => '31001'],
             ['name' => 'Modal Pemilik', 'type' => 'equity', 'is_cash' => false, 'sort' => $sort]
         );
         Account::firstOrCreate(
-            ['code' => '3102'],
+            ['code' => '31002'],
             ['name' => 'Prive / Pengembalian Pemilik', 'type' => 'equity', 'is_cash' => false, 'sort' => $sort]
         );
         Account::firstOrCreate(
-            ['code' => '3103'],
+            ['code' => '31003'],
             ['name' => 'Laba Ditahan', 'type' => 'equity', 'is_cash' => false, 'sort' => $sort]
         );
 
         // 4xx - Revenue Accounts
         $sort = 4;
         Account::firstOrCreate(
-            ['code' => '4101'],
+            ['code' => '41001'],
             ['name' => 'Pendapatan Tunai', 'type' => 'revenue', 'sort' => $sort, 'cash_flow_type' => 'in']
         );
         Account::firstOrCreate(
-            ['code' => '4102'],
+            ['code' => '41002'],
             ['name' => 'Pendapatan Jasa', 'type' => 'revenue', 'sort' => $sort, 'cash_flow_type' => 'in']
         );
         Account::firstOrCreate(
-            ['code' => '4103'],
+            ['code' => '41003'],
             ['name' => 'Pendapatan Produk', 'type' => 'revenue', 'sort' => $sort, 'cash_flow_type' => 'in']
         );
 
         // 6xx - Expense Accounts
         $sort = 6;
         Account::firstOrCreate(
-            ['code' => '6101'],
+            ['code' => '61001'],
             [
                 'name' => 'Makanan dan Minuman',
                 'type' => 'expense',
@@ -107,7 +123,7 @@ class AccountSeeder extends Seeder
             ]
         );
         Account::firstOrCreate(
-            ['code' => '6102'],
+            ['code' => '61002'],
             [
                 'name' => 'Transportasi',
                 'type' => 'expense',
@@ -116,7 +132,7 @@ class AccountSeeder extends Seeder
             ]
         );
         Account::firstOrCreate(
-            ['code' => '6103'],
+            ['code' => '61003'],
             [
                 'name' => 'BBM',
                 'type' => 'expense',
@@ -125,7 +141,7 @@ class AccountSeeder extends Seeder
             ]
         );
         Account::firstOrCreate(
-            ['code' => '6104'],
+            ['code' => '61004'],
             [
                 'name' => 'Hiburan',
                 'type' => 'expense',
@@ -134,7 +150,7 @@ class AccountSeeder extends Seeder
             ]
         );
         Account::firstOrCreate(
-            ['code' => '6105'],
+            ['code' => '61005'],
             [
                 'name' => 'Kesehatan',
                 'type' => 'expense',
@@ -143,7 +159,7 @@ class AccountSeeder extends Seeder
             ]
         );
         Account::firstOrCreate(
-            ['code' => '6106'],
+            ['code' => '61006'],
             [
                 'name' => 'Alat Kerja / Sekolah',
                 'type' => 'expense',
@@ -152,35 +168,35 @@ class AccountSeeder extends Seeder
             ]
         );
         Account::firstOrCreate(
-            ['code' => '6107'],
+            ['code' => '61007'],
             ['name' => 'Pembelian Tunai Lainnya', 'type' => 'expense', 'sort' => $sort, 'cash_flow_type' => 'out']
         );
         //
         Account::firstOrCreate(
-            ['code' => '6201'],
+            ['code' => '62001'],
             ['name' => 'Biaya Gaji dan Upah', 'type' => 'expense', 'sort' => $sort, 'cash_flow_type' => 'out']
         );
         //
         Account::firstOrCreate(
-            ['code' => '6301'],
+            ['code' => '63001'],
             ['name' => 'Biaya Operasional', 'type' => 'expense', 'sort' => $sort, 'cash_flow_type' => 'out']
         );
         //
         Account::firstOrCreate(
-            ['code' => '6401'],
+            ['code' => '64001'],
             ['name' => 'Biaya Sewa Rumah', 'type' => 'expense', 'sort' => $sort, 'cash_flow_type' => 'out']
         );
         Account::firstOrCreate(
-            ['code' => '6402'],
+            ['code' => '64002'],
             ['name' => 'Biaya Sewa Kos', 'type' => 'expense', 'sort' => $sort, 'cash_flow_type' => 'out']
         );
         Account::firstOrCreate(
-            ['code' => '6403'],
+            ['code' => '64003'],
             ['name' => 'Biaya Sewa Tenant / Booth', 'type' => 'expense', 'sort' => $sort, 'cash_flow_type' => 'out']
         );
         //
         Account::firstOrCreate(
-            ['code' => '6501'],
+            ['code' => '65001'],
             [
                 'name' => 'Tagihan Listrik',
                 'type' => 'expense',
@@ -189,7 +205,7 @@ class AccountSeeder extends Seeder
             ]
         );
         Account::firstOrCreate(
-            ['code' => '6502'],
+            ['code' => '65002'],
             [
                 'name' => 'Tagihan Air',
                 'type' => 'expense',
@@ -198,7 +214,7 @@ class AccountSeeder extends Seeder
             ]
         );
         Account::firstOrCreate(
-            ['code' => '6503'],
+            ['code' => '65003'],
             [
                 'name' => 'Tagihan Internet',
                 'type' => 'expense',
@@ -207,7 +223,7 @@ class AccountSeeder extends Seeder
             ]
         );
         Account::firstOrCreate(
-            ['code' => '6504'],
+            ['code' => '65004'],
             [
                 'name' => 'Tagihan Streaming',
                 'type' => 'expense',
@@ -216,7 +232,7 @@ class AccountSeeder extends Seeder
             ]
         );
         Account::firstOrCreate(
-            ['code' => '6505'],
+            ['code' => '65005'],
             [
                 'name' => 'Tagihan Layanan Cloud',
                 'type' => 'expense',
@@ -225,7 +241,7 @@ class AccountSeeder extends Seeder
             ]
         );
         Account::firstOrCreate(
-            ['code' => '6506'],
+            ['code' => '65006'],
             [
                 'name' => 'Tagihan Layanan AI',
                 'type' => 'expense',
@@ -234,7 +250,7 @@ class AccountSeeder extends Seeder
             ]
         );
         Account::firstOrCreate(
-            ['code' => '6507'],
+            ['code' => '65007'],
             [
                 'name' => 'Tagihan Domain, Hosting dan VPS',
                 'type' => 'expense',

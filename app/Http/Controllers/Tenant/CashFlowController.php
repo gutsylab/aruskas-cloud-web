@@ -114,9 +114,7 @@ class CashFlowController extends BaseController
 
                 return $total_text;
             })
-            ->filterColumn('lines_sum_debit', function ($query, $keyword) {
-                
-            })
+            ->filterColumn('lines_sum_debit', function ($query, $keyword) {})
             ->addColumn('type', function ($row) {
                 if ($row->type == 'cash_in') {
                     return '<span class="badge bg-success">Masuk</span>';
@@ -323,15 +321,17 @@ class CashFlowController extends BaseController
      */
     public function show(Request $request, $tenant_id, string $id)
     {
-        $cashFlow = Journal::with(['lines.account'])->findOrFail($id);
+        $cashFlow = Journal::with(['lines.account' => function ($query) {
+            $query->withTrashed();
+        }])->findOrFail($id);
 
         $type = $cashFlow->type == 'cash_in' ? 'in' : 'out';
 
-        $account = $cashFlow->lines()->whereHas('account', function ($query) {
-            $query->where('is_cash', '=', true);
+        $account = $cashFlow->lines->filter(function ($line) {
+            return $line->account && $line->account->is_cash;
         })->first()->account;
 
-        $lines = $cashFlow->lines()->where('account_id', '!=', $account->id)->get();
+        $lines = $cashFlow->lines->where('account_id', '!=', $account->id);
 
         return $this->viewTenant(
             'cash.cash-flows.show',
@@ -353,14 +353,16 @@ class CashFlowController extends BaseController
     {
         $type = request()->get('type', 'in');
 
-        $cashFlow = Journal::with(['lines.account'])->findOrFail($id);
+        $cashFlow = Journal::with(['lines.account' => function ($query) {
+            $query->withTrashed();
+        }])->findOrFail($id);
         $type = $cashFlow->type == 'cash_in' ? 'in' : 'out';
 
 
-        $selectedAccount = $cashFlow->lines()->whereHas('account', function ($query) {
-            $query->where('is_cash', '=', true);
+        $selectedAccount = $cashFlow->lines->filter(function ($line) {
+            return $line->account && $line->account->is_cash;
         })->first()->account;
-        $lines = $cashFlow->lines()->where('account_id', '!=', $selectedAccount->id)->get();
+        $lines = $cashFlow->lines->where('account_id', '!=', $selectedAccount->id);
 
         $categories = Account::where('is_cash', '=', false)
             ->whereIn('cash_flow_type', $type == 'in' ? ['in'] : ['out'])
@@ -369,7 +371,6 @@ class CashFlowController extends BaseController
 
         $accounts = Account::where('is_cash', '=', true)
             ->get();
-
 
 
         return $this->viewTenant(

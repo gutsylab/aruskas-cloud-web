@@ -78,6 +78,8 @@ Route::prefix('{tenant_id}')->middleware(['tenant'])->group(function () {
         Route::resource('/cash-categories', CashCategoryController::class);
 
         Route::get('/cash-accounts/dt', [CashAccountController::class, 'dataTable'])->name('cash-accounts.dt');
+        Route::get('/cash-accounts/{cash_account}/archive', [CashAccountController::class, 'archive'])->name('cash-accounts.archive');
+        Route::get('/cash-accounts/{cash_account}/active', [CashAccountController::class, 'active'])->name('cash-accounts.active');
         Route::resource('/cash-accounts', CashAccountController::class);
 
         // Legacy route for backward compatibility

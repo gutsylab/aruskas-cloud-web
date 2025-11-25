@@ -59,7 +59,7 @@
                                 <div class="form-group mb-4">
                                     <label for="account_id"
                                         class="form-label"><strong>{{ $type == 'in' ? 'Masuk ke' : 'Keluar dari' }}</strong></label>
-                                    <p>{{ $account->name }}</p>
+                                    <p>{{ $account->code }} - {{ $account->name }}</p>
                                 </div>
                             </div>
                             <div class="col-md-6">

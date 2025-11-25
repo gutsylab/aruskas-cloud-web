@@ -75,6 +75,27 @@
                     }
                 </script>
             @endif
+
+            <script>
+                function doSubmit(formId) {
+                    const btn = document.getElementById('btn-submit');
+                    const btnText = document.getElementById('btn-text');
+                    const spinner = btn.querySelector('.spinner-border');
+                    const icon = btn.querySelector('i');
+
+                    // Disable button
+                    btn.disabled = true;
+
+                    // Hide icon, show spinner
+                    icon.classList.add('d-none');
+                    spinner.classList.remove('d-none');
+                    btnText.textContent = 'Menyimpan...';
+
+                    // Submit form
+                    const form = document.getElementById(formId);
+                    form.submit();
+                }
+            </script>
         </div>
     </main>
 

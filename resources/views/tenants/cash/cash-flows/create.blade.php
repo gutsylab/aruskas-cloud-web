@@ -45,7 +45,7 @@
                                             @foreach ($accounts as $account)
                                                 <option value="{{ $account->id }}"
                                                     {{ old('account_id') == $account->id ? 'selected' : '' }}>
-                                                    {{ $account->name }}</option>
+                                                    {{ $account->code }} - {{ $account->name }}</option>
                                             @endforeach
                                         </select>
                                         @error('account_id')
@@ -155,9 +155,12 @@
                     <div class="d-flex justify-content-end gap-3 my-5">
                         <a href="{{ route('cash-flows.index', ['tenant_id' => $tenant->tenant_id]) }}"
                             class="btn btn-light-light text-muted"><i class="ri-close-line"></i> Batalkan</a>
-                        <button type="button" onclick="doSubmit()" class="btn btn-primary"><i class="ri-save-line"></i>
-                            Simpan Arus
-                            Kas Baru</button>
+                        <button type="button" id="btn-submit" onclick="doSubmit('form-create')"
+                            class="btn btn-primary">
+                            <i class="ri-save-line"></i>
+                            <span class="spinner-border spinner-border-sm d-none" role="status"
+                                aria-hidden="true"></span>
+                            <span id="btn-text">Simpan Arus Kas Baru</span></button>
                     </div>
                 </form>
             </div>
@@ -191,11 +194,6 @@
             singleDatePicker('.single-datepicker');
             singleChoiceSelect('.form-select');
         });
-
-        function doSubmit() {
-            const form = document.getElementById('form-create');
-            form.submit();
-        }
 
         function addNewLine() {
             const categorySelect = document.getElementById('new-category');

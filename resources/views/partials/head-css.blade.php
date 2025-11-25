@@ -19,11 +19,11 @@
 <style>
     table.dataTable td,
     table.dataTable th {
-        padding: 6px 8px;
+        /* padding: 6px 8px; */
     }
 
     .table td,
     .table th {
-        padding: 6px 8px;
+        /* padding: 6px 8px; */
     }
 </style>
