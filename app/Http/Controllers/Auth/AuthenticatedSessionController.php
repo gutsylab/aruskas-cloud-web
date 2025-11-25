@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Http\Controllers\BaseController;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\Request;
@@ -9,7 +10,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
-class AuthenticatedSessionController extends Controller
+class AuthenticatedSessionController extends BaseController
 {
     /**
      * Display the login view.
@@ -22,7 +23,8 @@ class AuthenticatedSessionController extends Controller
             abort(404, 'Tenant not found');
         }
 
-        return view('auth.login', compact('tenant'));
+        // return view('auth.login', compact('tenant'));
+        return $this->viewTenantAuth(compact('tenant'));
     }
 
     /**

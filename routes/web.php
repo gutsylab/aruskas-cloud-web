@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Global\EmailVerificationController;
 use App\Http\Controllers\Global\TenantRegistrationController;
+use App\Http\Controllers\Tenant\CashAccountController;
 use App\Http\Controllers\Tenant\CashCategoryController;
 use App\Http\Controllers\Tenant\CashFlowController;
 use App\Http\Controllers\Tenant\DashboardController;
@@ -73,6 +74,9 @@ Route::prefix('{tenant_id}')->middleware(['tenant'])->group(function () {
 
         Route::get('/cash-categories/dt', [CashCategoryController::class, 'dataTable'])->name('cash-categories.dt');
         Route::resource('/cash-categories', CashCategoryController::class);
+
+        Route::get('/cash-accounts/dt', [CashAccountController::class, 'dataTable'])->name('cash-accounts.dt');
+        Route::resource('/cash-accounts', CashAccountController::class);
 
         // Legacy route for backward compatibility
         Route::get('/users', function () {

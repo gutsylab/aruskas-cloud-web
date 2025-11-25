@@ -14,7 +14,6 @@ class PermissionsCashSeeder extends Seeder
      */
     public function run(): void
     {
-        Log::info("PermissionsCashSeeder: Started");
         // Seed data for tenant database
 
         $group = TenantPermissions::GROUP_CASH;
@@ -236,7 +235,5 @@ class PermissionsCashSeeder extends Seeder
             'application' => $application,
             'application_label' => $application_label,
         ]);
-
-        Log::info("PermissionsCashSeeder: Completed");
     }
 }

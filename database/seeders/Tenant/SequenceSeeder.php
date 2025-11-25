@@ -15,7 +15,6 @@ class SequenceSeeder extends Seeder
     public function run(): void
     {
         // Seed data for tenant database
-        Log::info('SequenceSeeder: Started');
 
         Sequence::firstOrCreate(
             ['code' => 'cash_flow_in'],
@@ -38,7 +37,5 @@ class SequenceSeeder extends Seeder
                 'prefix' => 'TF',
             ]
         );
-
-        Log::info('SequenceSeeder: Completed');
     }
 }

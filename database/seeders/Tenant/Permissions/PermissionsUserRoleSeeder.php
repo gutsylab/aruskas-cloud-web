@@ -19,10 +19,6 @@ class PermissionsUserRoleSeeder extends Seeder
     public function run(): void
     {
         // Seed data for tenant database
-
-        Log::info("PermissionsUserRoleSeeder: Started");
-
-
         $group = TenantPermissions::GROUP_USER_AND_ROLE;
         $group_label = 'USER MANAGEMENT';
         $sub_group = TenantPermissions::SUBGROUP_USER;
@@ -188,7 +184,5 @@ class PermissionsUserRoleSeeder extends Seeder
             'application' => $application,
             'application_label' => $application_label,
         ]);
-
-        Log::info("PermissionsUserRoleSeeder: Completed");
     }
 }
