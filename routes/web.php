@@ -75,6 +75,8 @@ Route::prefix('{tenant_id}')->middleware(['tenant'])->group(function () {
         Route::resource('/cash-flows', CashFlowController::class);
 
         Route::get('/cash-categories/dt', [CashCategoryController::class, 'dataTable'])->name('cash-categories.dt');
+        Route::get('/cash-categories/{cash_category}/archive', [CashCategoryController::class, 'archive'])->name('cash-categories.archive');
+        Route::get('/cash-categories/{cash_category}/active', [CashCategoryController::class, 'active'])->name('cash-categories.active');
         Route::resource('/cash-categories', CashCategoryController::class);
 
         Route::get('/cash-accounts/dt', [CashAccountController::class, 'dataTable'])->name('cash-accounts.dt');

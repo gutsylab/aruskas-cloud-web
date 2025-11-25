@@ -155,15 +155,18 @@ class CashAccountController extends BaseController
     {
         $account = Account::withTrashed()->with(['journalLines'])->find($id);
         //
+
+        $title = $id == 0 ? 'Tambah ' . $this->title : 'Ubah ' . $this->title;
+
         return $this->viewTenant(
             'cash.accounts.edit',
-            'Ubah ' . $this->title,
+            $title,
             $this->groupMenu(),
             compact('account'),
             [
                 ['Kas' => ''],
                 ['Akun' => route('cash-accounts.index')],
-                ['Ubah' => 'javascript:void(0)'],
+                [$title => 'javascript:void(0)'],
             ]
         );
     }
