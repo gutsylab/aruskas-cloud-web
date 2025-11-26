@@ -25,20 +25,32 @@ class AccountingController extends ApiController
         if (request()->has('start_date')) {
             // check if start date is valid format
             if (!strtotime(request()->get('start_date'))) {
+<<<<<<< HEAD
                 return $this->responseError('Format tanggal mulai tidak valid', 400);
+=======
+                return $this->responseError('Invalid start date format', 400);
+>>>>>>> origin/main
             }
             $start_date = request()->get('start_date');
         }
         if (request()->has('end_date')) {
             // check if end date is valid format
             if (!strtotime(request()->get('end_date'))) {
+<<<<<<< HEAD
                 return $this->responseError('Format tanggal akhir tidak valid', 400);
+=======
+                return $this->responseError('Invalid end date format', 400);
+>>>>>>> origin/main
             }
             $end_date = request()->get('end_date');
         }
 
         if (strtotime($start_date) > strtotime($end_date)) {
+<<<<<<< HEAD
             return $this->responseError('Tanggal mulai tidak boleh lebih besar dari tanggal akhir', 400);
+=======
+            return $this->responseError('Start date cannot be greater than end date', 400);
+>>>>>>> origin/main
         }
 
 
@@ -53,32 +65,52 @@ class AccountingController extends ApiController
         $account_id = request()->get('account_id');
 
         if (!$account_id || $account_id <= 0) {
+<<<<<<< HEAD
             return $this->responseError('Akun harus dipilih', 400);
+=======
+            return $this->responseError('Account is required', 400);
+>>>>>>> origin/main
         }
 
         if (request()->has('start_date')) {
             // check if start date is valid format
             if (!strtotime(request()->get('start_date'))) {
+<<<<<<< HEAD
                 return $this->responseError('Format tanggal mulai tidak valid', 400);
+=======
+                return $this->responseError('Invalid start date format', 400);
+>>>>>>> origin/main
             }
             $start_date = request()->get('start_date');
         }
         if (request()->has('end_date')) {
             // check if end date is valid format
             if (!strtotime(request()->get('end_date'))) {
+<<<<<<< HEAD
                 return $this->responseError('Format tanggal akhir tidak valid', 400);
+=======
+                return $this->responseError('Invalid end date format', 400);
+>>>>>>> origin/main
             }
             $end_date = request()->get('end_date');
         }
 
         if (strtotime($start_date) > strtotime($end_date)) {
+<<<<<<< HEAD
             return $this->responseError('Tanggal mulai tidak boleh lebih besar dari tanggal akhir', 400);
+=======
+            return $this->responseError('Start date cannot be greater than end date', 400);
+>>>>>>> origin/main
         }
 
         $account = Account::select('id', 'code', 'name')
             ->where('id', '=', $account_id)->first();
         if (!$account) {
+<<<<<<< HEAD
             return $this->responseError('Akun tidak ditemukan', 404);
+=======
+            return $this->responseError('Account not found', 404);
+>>>>>>> origin/main
         }
 
 
@@ -97,7 +129,11 @@ class AccountingController extends ApiController
         if (request()->has('end_date')) {
             // check if end date is valid format
             if (!strtotime(request()->get('end_date'))) {
+<<<<<<< HEAD
                 return $this->responseError('Format tanggal akhir tidak valid', 400);
+=======
+                return $this->responseError('Invalid end date format', 400);
+>>>>>>> origin/main
             }
             $end_date = request()->get('end_date');
         }
@@ -120,7 +156,11 @@ class AccountingController extends ApiController
         if (request()->has('start_date')) {
             // check if start date is valid format
             if (!strtotime(request()->get('start_date'))) {
+<<<<<<< HEAD
                 return $this->responseError('Format tanggal mulai tidak valid', 400);
+=======
+                return $this->responseError('Invalid start date format', 400);
+>>>>>>> origin/main
             }
             $start_date = request()->get('start_date');
         }
@@ -128,14 +168,22 @@ class AccountingController extends ApiController
         if (request()->has('end_date')) {
             // check if end date is valid format
             if (!strtotime(request()->get('end_date'))) {
+<<<<<<< HEAD
                 return $this->responseError('Format tanggal akhir tidak valid', 400);
+=======
+                return $this->responseError('Invalid end date format', 400);
+>>>>>>> origin/main
             }
             $end_date = request()->get('end_date');
         }
 
         // end date must be greater than start date
         if (strtotime($end_date) < strtotime($start_date)) {
+<<<<<<< HEAD
             return $this->responseError('Tanggal mulai harus lebih kecil dari tanggal akhir');
+=======
+            return $this->responseError('Start date must be less than End date');
+>>>>>>> origin/main
         }
 
 

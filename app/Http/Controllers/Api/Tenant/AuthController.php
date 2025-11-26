@@ -53,7 +53,11 @@ class AuthController extends Controller
         if (!$tenant) {
             return response()->json([
                 'success' => false,
+<<<<<<< HEAD
                 'message' => 'Akun tidak ditemukan'
+=======
+                'message' => 'Tenant not found'
+>>>>>>> origin/main
             ], 404);
         }
 
@@ -75,7 +79,11 @@ class AuthController extends Controller
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json([
                 'success' => false,
+<<<<<<< HEAD
                 'message' => 'Email atau password yang Anda masukkan tidak sesuai dengan data kami.'
+=======
+                'message' => 'These credentials do not match our records.'
+>>>>>>> origin/main
             ], 401);
         }
 
@@ -83,7 +91,11 @@ class AuthController extends Controller
         if (!$user->email_verified_at) {
             return response()->json([
                 'success' => false,
+<<<<<<< HEAD
                 'message' => 'Silakan verifikasi alamat email Anda sebelum login.'
+=======
+                'message' => 'Please verify your email address before logging in.'
+>>>>>>> origin/main
             ], 403);
         }
 
@@ -99,7 +111,11 @@ class AuthController extends Controller
 
         return response()->json([
             'success' => true,
+<<<<<<< HEAD
             'message' => 'Login berhasil',
+=======
+            'message' => 'Login successful',
+>>>>>>> origin/main
             'data' => [
                 'user' => [
                     'id' => $user->id,
@@ -118,6 +134,36 @@ class AuthController extends Controller
         ], 200);
     }
 
+<<<<<<< HEAD
+=======
+    /**
+     * Get authenticated user information.
+     *
+     * @group Tenant Authentication
+     * @authenticated
+     *
+     * @response 200 {
+     *   "success": true,
+     *   "data": {
+     *     "user": {
+     *       "id": 1,
+     *       "name": "John Doe",
+     *       "email": "admin@example.com"
+     *     },
+     *     "tenant": {
+     *       "id": 1,
+     *       "name": "ABC Company",
+     *       "tenant_id": "TNT123456"
+     *     }
+     *   }
+     * }
+     *
+     * @response 401 {
+     *   "success": false,
+     *   "message": "Unauthenticated"
+     * }
+     */
+>>>>>>> origin/main
     public function me(Request $request)
     {
         $tenant = request()->attributes->get('tenant');
@@ -131,6 +177,25 @@ class AuthController extends Controller
         ]);
     }
 
+<<<<<<< HEAD
+=======
+    /**
+     * Handle tenant logout via API.
+     *
+     * @group Tenant Authentication
+     * @authenticated
+     *
+     * @response 200 {
+     *   "success": true,
+     *   "message": "Logout successful"
+     * }
+     *
+     * @response 401 {
+     *   "success": false,
+     *   "message": "Unauthenticated"
+     * }
+     */
+>>>>>>> origin/main
     public function logout(Request $request)
     {
         // Revoke the current token
@@ -138,7 +203,11 @@ class AuthController extends Controller
 
         return response()->json([
             'success' => true,
+<<<<<<< HEAD
             'message' => 'Logout berhasil'
+=======
+            'message' => 'Logout successful'
+>>>>>>> origin/main
         ]);
     }
 
@@ -160,7 +229,11 @@ class AuthController extends Controller
 
         return response()->json([
             'success' => true,
+<<<<<<< HEAD
             'message' => 'Semua sesi berhasil dicabut'
+=======
+            'message' => 'All sessions revoked successfully'
+>>>>>>> origin/main
         ]);
     }
 
@@ -197,7 +270,11 @@ class AuthController extends Controller
 
         return response()->json([
             'success' => true,
+<<<<<<< HEAD
             'message' => 'Token berhasil diperbarui',
+=======
+            'message' => 'Token refreshed successfully',
+>>>>>>> origin/main
             'data' => [
                 'token' => $token,
             ]

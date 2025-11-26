@@ -8,7 +8,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Journal extends Model
 {
+<<<<<<< HEAD
     use BelongsToTenant;
+=======
+    use BelongsToTenant, SoftDeletes;
+>>>>>>> origin/main
 
     protected $fillable = [
         'code',

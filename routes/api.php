@@ -11,7 +11,10 @@ use App\Http\Controllers\Api\Tenant\Report\AccountingController;
 use App\Http\Controllers\Api\Tenant\AccountController as ApiAccountController;
 use App\Http\Controllers\Api\Tenant\CashFlowController as ApiCashFlowController;
 use App\Http\Controllers\Api\Tenant\CashTransferController as ApiCashTransferController;
+<<<<<<< HEAD
 use Illuminate\Support\Facades\Auth;
+=======
+>>>>>>> origin/main
 
 // Global API routes (no tenant middleware required)
 // Laravel automatically adds 'api/' prefix, so we only need 'v1'
@@ -55,7 +58,11 @@ Route::prefix('{tenant_id}/v1')->middleware(['tenant', \App\Http\Middleware\Conv
         Route::get('/user', function () {
             $tenant = request()->attributes->get('tenant');
             return response()->json([
+<<<<<<< HEAD
                 'user' => Auth::user(),
+=======
+                'user' => auth()->user(),
+>>>>>>> origin/main
                 'tenant' => $tenant,
             ]);
         });

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Tenant;
 
+<<<<<<< HEAD
 use Illuminate\Http\Request;
 use App\Constants\TenantPermissions;
 use App\Http\Controllers\Controller;
@@ -20,14 +21,28 @@ class DashboardController extends BaseController
             'moduleName' => TenantPermissions::MODULE_DASHBOARD,
         ];
     }
+=======
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class DashboardController extends Controller
+{
+>>>>>>> origin/main
     public function index()
     {
         $tenant = request()->attributes->get('tenant');
         $user = Auth::user();
 
+<<<<<<< HEAD
         return $this->viewTenant('dashboard', 'Dashboard', $this->groupMenu(), [
             'tenant' => $tenant,
             'user' => $user,
+=======
+        return view('dashboard', [
+            'tenant' => $tenant,
+            'user' => $user
+>>>>>>> origin/main
         ]);
     }
 

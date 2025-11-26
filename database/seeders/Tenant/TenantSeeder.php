@@ -2,11 +2,17 @@
 
 namespace Database\Seeders\Tenant;
 
+<<<<<<< HEAD
 use App\Models\Tenant\User;
 use App\Models\Tenant\Account;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+=======
+use App\Models\Tenant\Account;
+use App\Models\Tenant\User;
+use Illuminate\Database\Seeder;
+>>>>>>> origin/main
 
 class TenantSeeder extends Seeder
 {
@@ -17,12 +23,17 @@ class TenantSeeder extends Seeder
     {
 
         // if env is production, prevent seeding
+<<<<<<< HEAD
         if (app()->environment('production')) {
+=======
+        if (app()->environment('production') || true) {
+>>>>>>> origin/main
             // $this->command->error('Seeding in production environment is not allowed.');
             // return;
         }
 
         // Seed data for tenant database
+<<<<<<< HEAD
 
         try {
             $this->call(\Database\Seeders\Tenant\Permissions\PermissionsSeeder::class);
@@ -35,5 +46,12 @@ class TenantSeeder extends Seeder
             Log::error("TenantSeeder: Stack trace - " . $e->getTraceAsString());
             throw $e;
         }
+=======
+        $this->call([
+            SequenceSeeder::class,
+            // Add more tenant seeders here
+            AccountSeeder::class
+        ]);
+>>>>>>> origin/main
     }
 }

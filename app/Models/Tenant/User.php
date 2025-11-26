@@ -48,6 +48,7 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+<<<<<<< HEAD
 
     public function roles()
     {
@@ -107,4 +108,6 @@ class User extends Authenticatable
                 $query->where('module', '=', $moduleName);
             })->exists();
     }
+=======
+>>>>>>> origin/main
 }

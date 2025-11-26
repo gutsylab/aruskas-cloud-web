@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 @import 'tailwindcss';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
@@ -9,3 +10,30 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+=======
+/**
+ * Laravel Public/Landing Page CSS
+ * This file imports all public-facing CSS components
+ */
+
+/* Import Bootstrap CSS */
+@import 'bootstrap';
+
+/* Import shared variables */
+@import './shared/variables.css';
+
+/* Import public-specific components */
+@import './public/public-buttons.css';
+@import './public/public-alerts.css';
+@import './public/public-badges.css';
+@import './public/public-cards.css';
+@import './public/public-navbar.css';
+@import './public/public-forms.css';
+@import './public/public-typography.css';
+@import './public/public-layout.css';
+@import './public/public-responsive.css';
+
+/* Import public custom components */
+@import './public/landing.css';
+@import './public/hero.css';
+>>>>>>> origin/main

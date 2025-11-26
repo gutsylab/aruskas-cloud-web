@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+<<<<<<< HEAD
         // First create the roles table since users reference it
         Schema::create('roles', function (Blueprint $table) {
             $table->id();
@@ -41,6 +42,8 @@ return new class extends Migration
             $table->timestamps();
         });
 
+=======
+>>>>>>> origin/main
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
@@ -51,6 +54,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
+<<<<<<< HEAD
         Schema::create('role_user', function (Blueprint $table) {
             $table->foreignId('role_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
@@ -63,6 +67,8 @@ return new class extends Migration
             $table->primary(['permission_id', 'role_id']);
         });
 
+=======
+>>>>>>> origin/main
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
             $table->string('token');
@@ -96,12 +102,16 @@ return new class extends Migration
      */
     public function down(): void
     {
+<<<<<<< HEAD
         Schema::disableForeignKeyConstraints();
 
+=======
+>>>>>>> origin/main
         Schema::dropIfExists('users');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
         Schema::dropIfExists('personal_access_tokens');
+<<<<<<< HEAD
 
         // custom tables
         Schema::dropIfExists('role_user');
@@ -110,5 +120,7 @@ return new class extends Migration
         Schema::dropIfExists('roles');
 
         Schema::enableForeignKeyConstraints();
+=======
+>>>>>>> origin/main
     }
 };

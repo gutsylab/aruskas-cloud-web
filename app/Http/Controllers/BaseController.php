@@ -26,6 +26,7 @@ class BaseController extends Controller
 
         return view($view, $data);
     }
+<<<<<<< HEAD
 
     protected function view(string $view,  string $title = '', array $groupMenu = [], array $data = [], array $breadcrumbs = [])
     {
@@ -76,4 +77,6 @@ class BaseController extends Controller
             $data
         );
     }
+=======
+>>>>>>> origin/main
 }
