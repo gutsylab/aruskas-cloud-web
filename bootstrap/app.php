@@ -1,10 +1,10 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
+use Illuminate\Session\TokenMismatchException;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Session\TokenMismatchException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -17,7 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 ->group(base_path('routes/admin.php'));
         },
     )
-    ->withMiddleware(function (Middleware $middleware): void {
+    ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             'tenant' => \App\Http\Middleware\TenantResolver::class,
             'tenant.auth' => \App\Http\Middleware\TenantAuth::class,
@@ -27,7 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Don't apply tenant middleware globally to web routes
         // We'll apply it selectively in routes/web.php
     })
-    ->withExceptions(function (Exceptions $exceptions): void {
+    ->withExceptions(function (Exceptions $exceptions) {
         // Handle CSRF token expired - show custom 419 page with redirect
         $exceptions->respond(function (\Symfony\Component\HttpFoundation\Response $response, \Throwable $exception, $request) {
             if ($exception instanceof TokenMismatchException && $response->getStatusCode() === 419) {

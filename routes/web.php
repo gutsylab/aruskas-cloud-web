@@ -1,14 +1,15 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\Global\FileManagerController;
-use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
-use App\Http\Controllers\Tenant\DashboardController;
-use App\Http\Controllers\Tenant\CashCategoryController;
-use App\Http\Controllers\Global\TenantRegistrationController;
+use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Global\EmailVerificationController;
+use App\Http\Controllers\Global\TenantRegistrationController;
+use App\Http\Controllers\Tenant\CashAccountController;
+use App\Http\Controllers\Tenant\CashCategoryController;
+use App\Http\Controllers\Tenant\CashFlowController;
+use App\Http\Controllers\Tenant\DashboardController;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 
 // Global routes (no tenant required)
 Route::get('/', function () {
@@ -37,7 +38,7 @@ Route::prefix('{tenant_id}')->middleware(['tenant'])->group(function () {
     Route::get('/', function () {
         $tenantId = request()->route('tenant_id');
 
-        if (!$tenantId) {
+        if (! $tenantId) {
             abort(404, 'Tenant not found');
         }
 
@@ -67,27 +68,22 @@ Route::prefix('{tenant_id}')->middleware(['tenant'])->group(function () {
         Route::put('/profile', [DashboardController::class, 'updateProfile'])->name('profile.update');
 
         Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+        Route::post('/resend-verification-email', [AuthenticatedSessionController::class, 'resend_verification_email'])->name('resend.verification.email');
 
-        // Cash Management Routes
-        Route::prefix('cash')->name('cash.')->group(function () {
-            // Cash Categories
-            Route::prefix('categories')->name('categories.')->group(function () {
-                // Route::get('/', [CashCategoryController::class, 'index'])->name('index');
-                // Route::get('/create', [CashCategoryController::class, 'create'])->name('create');
-                // Route::get('/datatables', [CashCategoryController::class, 'datatables'])->name('datatables');
-                // Route::post('/', [CashCategoryController::class, 'store'])->name('store');
-                // Route::get('/{id}', [CashCategoryController::class, 'show'])->name('show');
-                // Route::get('/{id}/edit', [CashCategoryController::class, 'edit'])->name('edit');
-                // Route::put('/{id}', [CashCategoryController::class, 'update'])->name('update');
-                // Route::delete('/{id}', [CashCategoryController::class, 'destroy'])->name('destroy');
+        Route::get('/cash-flows/dt', [CashFlowController::class, 'dataTable'])->name('cash-flows.dt');
+        Route::get('/cash-flows/{cash_flow}/set-draft', [CashFlowController::class, 'setDraft'])->name('cash-flows.set-draft');
+        Route::get('/cash-flows/{cash_flow}/set-posted', [CashFlowController::class, 'setPosted'])->name('cash-flows.set-posted');
+        Route::resource('/cash-flows', CashFlowController::class);
 
-                // // Additional routes for soft deletes and filtering
-                // Route::get('/type/{type}', [CashCategoryController::class, 'getByType'])->name('by-type');
-                // Route::get('/trashed/list', [CashCategoryController::class, 'trashed'])->name('trashed');
-                // Route::post('/{id}/restore', [CashCategoryController::class, 'restore'])->name('restore');
-                // Route::delete('/{id}/force', [CashCategoryController::class, 'forceDelete'])->name('force-delete');
-            });
-        });
+        Route::get('/cash-categories/dt', [CashCategoryController::class, 'dataTable'])->name('cash-categories.dt');
+        Route::get('/cash-categories/{cash_category}/archive', [CashCategoryController::class, 'archive'])->name('cash-categories.archive');
+        Route::get('/cash-categories/{cash_category}/active', [CashCategoryController::class, 'active'])->name('cash-categories.active');
+        Route::resource('/cash-categories', CashCategoryController::class);
+
+        Route::get('/cash-accounts/dt', [CashAccountController::class, 'dataTable'])->name('cash-accounts.dt');
+        Route::get('/cash-accounts/{cash_account}/archive', [CashAccountController::class, 'archive'])->name('cash-accounts.archive');
+        Route::get('/cash-accounts/{cash_account}/active', [CashAccountController::class, 'active'])->name('cash-accounts.active');
+        Route::resource('/cash-accounts', CashAccountController::class);
 
         // Legacy route for backward compatibility
         Route::get('/users', function () {
@@ -97,20 +93,20 @@ Route::prefix('{tenant_id}')->middleware(['tenant'])->group(function () {
         // Debug route - remove in production
         Route::get('/debug-auth', function () {
             $tenant = request()->attributes->get('tenant');
-            $user = Auth::user();
+            $user   = Auth::user();
 
             return response()->json([
-                'authenticated' => Auth::check(),
-                'user_id' => $user ? $user->id : null,
-                'user_email' => $user ? $user->email : null,
-                'tenant_name' => $tenant ? $tenant->name : null,
-                'tenant_id' => $tenant ? $tenant->tenant_id : null,
+                'authenticated'     => Auth::check(),
+                'user_id'           => $user ? $user->id : null,
+                'user_email'        => $user ? $user->email : null,
+                'tenant_name'       => $tenant ? $tenant->name : null,
+                'tenant_id'         => $tenant ? $tenant->tenant_id : null,
                 'tenant_path_param' => request()->route('tenant_id'),
-                'session_id' => session()->getId(),
-                'session_data' => [
-                    'tenant_id' => session('tenant_id'),
+                'session_id'        => session()->getId(),
+                'session_data'      => [
+                    'tenant_id'         => session('tenant_id'),
                     'tenant_connection' => session('tenant_connection'),
-                ]
+                ],
             ]);
         });
     });
@@ -120,10 +116,10 @@ Route::prefix('{tenant_id}')->middleware(['tenant'])->group(function () {
         $tenant = request()->attributes->get('tenant');
 
         return response()->json([
-            'status' => 'tenant_test_accessed',
+            'status'            => 'tenant_test_accessed',
             'tenant_path_param' => request()->route('tenant_id'),
-            'tenant_resolved' => $tenant ? $tenant->tenant_id : null,
-            'tenant_name' => $tenant ? $tenant->name : null,
+            'tenant_resolved'   => $tenant ? $tenant->tenant_id : null,
+            'tenant_name'       => $tenant ? $tenant->name : null,
         ]);
     })->name('tenant.test');
 });

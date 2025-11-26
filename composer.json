@@ -30,11 +30,11 @@
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
-        }
-        ,
+        },
         "files": [
             "app/Helpers/SequenceHelper.php",
-            "app/Helpers/Helper.php"
+            "app/Helpers/Helper.php",
+            "app/Helpers/PermissionHelper.php"
         ]
     },
     "autoload-dev": {
