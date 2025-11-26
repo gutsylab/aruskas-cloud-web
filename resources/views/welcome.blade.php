@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GutsyPOS Cloud - Multi-Tenant POS System</title>
+    <title>ArusKAS Cloud - Multi-Tenant POS System</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-50">
@@ -12,7 +12,7 @@
         <div class="max-w-4xl mx-auto text-center px-4">
             <!-- Logo/Title -->
             <h1 class="text-5xl font-bold text-gray-900 mb-4">
-                GutsyPOS Cloud
+                ArusKAS Cloud
             </h1>
             <p class="text-xl text-gray-600 mb-8">
                 Complete Multi-Tenant Point of Sale System
@@ -52,7 +52,7 @@
                     Already have a business account?
                 </p>
                 <p class="text-sm text-gray-500">
-                    Access your tenant at: <code class="bg-gray-200 px-2 py-1 rounded">gutsypos-cloud.test/YOUR_TENANT_ID</code>
+                    Access your tenant at: <code class="bg-gray-200 px-2 py-1 rounded">aruskas-cloud.test/YOUR_TENANT_ID</code>
                 </p>
             </div>
         </div>

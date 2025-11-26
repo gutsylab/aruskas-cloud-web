@@ -56,7 +56,7 @@ class PermissionsSeeder extends Seeder
         // Now create role and assign to merchant owner
 
         try {
-            $db_prefix = env('DB_TENANT_PREFIX', 'gutsypos') . env('DB_TENANT_SEPARATOR', '_');
+            $db_prefix = env('DB_TENANT_PREFIX', 'aruskas') . env('DB_TENANT_SEPARATOR', '_');
 
             // Ambil nama database tenant yang sebenarnya dari koneksi saat ini
             $tenantConnection = DB::connection()->getName();

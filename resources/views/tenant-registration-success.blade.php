@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registration Successful - GutsyPOS Cloud</title>
+    <title>Registration Successful - ArusKAS Cloud</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-50 min-h-screen flex items-center justify-center">
@@ -17,7 +17,7 @@
             </div>
 
             <!-- Success Message -->
-            <h1 class="text-3xl font-bold text-gray-900 mb-4">Welcome to GutsyPOS Cloud!</h1>
+            <h1 class="text-3xl font-bold text-gray-900 mb-4">Welcome to ArusKAS Cloud!</h1>
             <p class="text-lg text-gray-600 mb-4">Your business account has been created successfully.</p>
             
             <!-- Email Verification Notice -->
@@ -105,7 +105,7 @@
             <div class="mt-8 pt-6 border-t border-gray-200">
                 <p class="text-sm text-gray-600">
                     Need help getting started? 
-                    <a href="mailto:support@gutsypos.com" class="text-blue-600 hover:underline">Contact our support team</a>
+                    <a href="mailto:support@aruskas.com" class="text-blue-600 hover:underline">Contact our support team</a>
                 </p>
             </div>
         </div>

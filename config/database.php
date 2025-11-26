@@ -40,7 +40,7 @@ return [
     */
 
     'tenant' => [
-        'prefix' => env('DB_TENANT_PREFIX', 'gutsypos'),
+        'prefix' => env('DB_TENANT_PREFIX', 'aruskas'),
         'separator' => env('DB_TENANT_SEPARATOR', '_'),
     ],
 
@@ -73,7 +73,7 @@ return [
             'url' => env('DB_GLOBAL_URL'),
             'host' => env('DB_GLOBAL_HOST', '127.0.0.1'),
             'port' => env('DB_GLOBAL_PORT', '3306'),
-            'database' => env('DB_GLOBAL_DATABASE', 'gutsypos_global'),
+            'database' => env('DB_GLOBAL_DATABASE', 'aruskas_global'),
             'username' => env('DB_GLOBAL_USERNAME', 'root'),
             'password' => env('DB_GLOBAL_PASSWORD', ''),
             'unix_socket' => env('DB_GLOBAL_SOCKET', ''),
