@@ -106,10 +106,6 @@ class AccountSeeder extends Seeder
             ['code' => '41002'],
             ['name' => 'Pendapatan Jasa', 'type' => 'revenue', 'sort' => $sort, 'cash_flow_type' => 'in']
         );
-        Account::firstOrCreate(
-            ['code' => '41003'],
-            ['name' => 'Pendapatan Produk', 'type' => 'revenue', 'sort' => $sort, 'cash_flow_type' => 'in']
-        );
 
         // 6xx - Expense Accounts
         $sort = 6;
