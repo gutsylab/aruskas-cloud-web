@@ -68,6 +68,7 @@ Route::prefix('{tenant_id}')->middleware(['tenant'])->group(function () {
         Route::put('/profile', [DashboardController::class, 'updateProfile'])->name('profile.update');
 
         Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+        Route::post('/resend-verification-email', [AuthenticatedSessionController::class, 'resend_verification_email'])->name('resend.verification.email');
 
         Route::get('/cash-flows/dt', [CashFlowController::class, 'dataTable'])->name('cash-flows.dt');
         Route::get('/cash-flows/{cash_flow}/set-draft', [CashFlowController::class, 'setDraft'])->name('cash-flows.set-draft');

@@ -95,6 +95,46 @@
                     const form = document.getElementById(formId);
                     form.submit();
                 }
+
+                function doLogout() {
+                    confirmAlert('Konfirmasi Logout', 'Anda yakin ingin keluar ?', 'question', function() {
+                        // Create a form element
+                        var form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = '{{ route('logout') }}';
+
+                        // Add CSRF token input
+                        var csrfInput = document.createElement('input');
+                        csrfInput.type = 'hidden';
+                        csrfInput.name = '_token';
+                        csrfInput.value = '{{ csrf_token() }}';
+                        form.appendChild(csrfInput);
+
+                        // Append the form to the body and submit it
+                        document.body.appendChild(form);
+                        form.submit();
+                    });
+                }
+
+                @if (!auth()->user()->hasVerifiedEmail())
+                    function doResendVerificationEmail() {
+                        // Create a form element
+                        var form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = '{{ route('resend.verification.email', ['tenant_id' => $tenant->tenant_id]) }}';
+
+                        // Add CSRF token input
+                        var csrfInput = document.createElement('input');
+                        csrfInput.type = 'hidden';
+                        csrfInput.name = '_token';
+                        csrfInput.value = '{{ csrf_token() }}';
+                        form.appendChild(csrfInput);
+
+                        // Append the form to the body and submit it
+                        document.body.appendChild(form);
+                        form.submit();
+                    }
+                @endif
             </script>
         </div>
     </main>

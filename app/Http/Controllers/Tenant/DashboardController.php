@@ -27,7 +27,7 @@ class DashboardController extends BaseController
 
         return $this->viewTenant('dashboard', 'Dashboard', $this->groupMenu(), [
             'tenant' => $tenant,
-            'user' => $user
+            'user' => $user,
         ]);
     }
 

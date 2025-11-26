@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\BaseController;
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use App\Models\Global\Merchant;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Controllers\BaseController;
+use App\Http\Requests\Auth\LoginRequest;
+use App\Jobs\SendTenantEmailVerification;
 
 class AuthenticatedSessionController extends BaseController
 {
@@ -74,14 +76,6 @@ class AuthenticatedSessionController extends BaseController
             'debug_connection' => $connectionName,
         ]);
 
-        // Debug after login
-        error_log("=== LOGIN SUCCESS DEBUG ===");
-        error_log("User logged in: " . $user->email);
-        error_log("Auth check: " . (Auth::check() ? 'YES' : 'NO'));
-        error_log("Session ID: " . session()->getId());
-        error_log("Intended URL: " . $request->session()->get('url.intended', 'none'));
-        error_log("===========================");
-
         if ($request->expectsJson()) {
             $token = $user->createToken('auth-token')->plainTextToken;
 
@@ -94,7 +88,34 @@ class AuthenticatedSessionController extends BaseController
         }
 
         return redirect()->route('dashboard', ['tenant_id' => $tenant->tenant_id])
-            ->with('success', 'Login successful!');
+            ->with('success', 'Selamat datang kembali, ' . $user->name . '!');
+    }
+
+    public function resend_verification_email(Request $request)
+    {
+        $tenant = request()->attributes->get('tenant');
+
+        if (!$tenant) {
+            return response()->json(['error' => 'Tenant not found'], 404);
+        }
+
+        $user = Auth::user();
+
+        if ($user->hasVerifiedEmail()) {
+            return back()->with('info', 'Email sudah terverifikasi.');
+        }
+
+        // Get merchant from global database
+        $merchant = Merchant::where('tenant_id', $tenant->tenant_id)->first();
+
+        if (!$merchant) {
+            return back()->with('error', 'Data merchant tidak ditemukan.');
+        }
+
+        // Dispatch email verification job
+        SendTenantEmailVerification::dispatch($merchant);
+
+        return back()->with('success', 'Tautan verifikasi email telah dikirim ulang ke alamat email Anda.');
     }
 
     /**

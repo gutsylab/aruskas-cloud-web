@@ -58,7 +58,6 @@ class User extends Authenticatable
     {
         return $this->roles()->where('name', '=', $roleName)->exists();
     }
-
     public function assignRole(string $roleName): void
     {
         $role = Role::where('name', $roleName)->first();

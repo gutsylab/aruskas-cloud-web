@@ -575,7 +575,7 @@
                                     Support</a></li>
                         </ul>
                         <ul class="list-unstyled mb-0">
-                            <li><a class="dropdown-item" href="javascript:void(0)"><i
+                            <li><a class="dropdown-item" href="javascript:void(0)" onclick="doLogout()"><i
                                         class="bi bi-box-arrow-right me-1"></i> Sign Out</a></li>
                         </ul>
                     </div>
