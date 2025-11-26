@@ -2,6 +2,19 @@
 
 namespace App\Http\Controllers\Auth;
 
+<<<<<<< HEAD
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use App\Models\Global\Merchant;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use App\Http\Controllers\BaseController;
+use App\Http\Requests\Auth\LoginRequest;
+use App\Jobs\SendTenantEmailVerification;
+
+class AuthenticatedSessionController extends BaseController
+=======
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\Request;
@@ -10,6 +23,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class AuthenticatedSessionController extends Controller
+>>>>>>> origin/main
 {
     /**
      * Display the login view.
@@ -22,7 +36,12 @@ class AuthenticatedSessionController extends Controller
             abort(404, 'Tenant not found');
         }
 
+<<<<<<< HEAD
+        // return view('auth.login', compact('tenant'));
+        return $this->viewTenantAuth(compact('tenant'));
+=======
         return view('auth.login', compact('tenant'));
+>>>>>>> origin/main
     }
 
     /**
@@ -72,6 +91,8 @@ class AuthenticatedSessionController extends Controller
             'debug_connection' => $connectionName,
         ]);
 
+<<<<<<< HEAD
+=======
         // Debug after login
         error_log("=== LOGIN SUCCESS DEBUG ===");
         error_log("User logged in: " . $user->email);
@@ -80,6 +101,7 @@ class AuthenticatedSessionController extends Controller
         error_log("Intended URL: " . $request->session()->get('url.intended', 'none'));
         error_log("===========================");
 
+>>>>>>> origin/main
         if ($request->expectsJson()) {
             $token = $user->createToken('auth-token')->plainTextToken;
 
@@ -92,7 +114,38 @@ class AuthenticatedSessionController extends Controller
         }
 
         return redirect()->route('dashboard', ['tenant_id' => $tenant->tenant_id])
+<<<<<<< HEAD
+            ->with('success', 'Selamat datang kembali, ' . $user->name . '!');
+    }
+
+    public function resend_verification_email(Request $request)
+    {
+        $tenant = request()->attributes->get('tenant');
+
+        if (!$tenant) {
+            return response()->json(['error' => 'Tenant not found'], 404);
+        }
+
+        $user = Auth::user();
+
+        if ($user->hasVerifiedEmail()) {
+            return back()->with('info', 'Email sudah terverifikasi.');
+        }
+
+        // Get merchant from global database
+        $merchant = Merchant::where('tenant_id', $tenant->tenant_id)->first();
+
+        if (!$merchant) {
+            return back()->with('error', 'Data merchant tidak ditemukan.');
+        }
+
+        // Dispatch email verification job
+        SendTenantEmailVerification::dispatch($merchant);
+
+        return back()->with('success', 'Tautan verifikasi email telah dikirim ulang ke alamat email Anda.');
+=======
             ->with('success', 'Login successful!');
+>>>>>>> origin/main
     }
 
     /**

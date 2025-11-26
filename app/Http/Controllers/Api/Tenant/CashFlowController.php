@@ -132,7 +132,10 @@ class CashFlowController extends ApiController
     public function store(Request $request)
     {
         $tenant = request()->attributes->get('tenant');
+<<<<<<< HEAD
+=======
 
+>>>>>>> origin/main
         $validatedData = $request->validate([
             'cash_flow_type' => 'required|string|max:255|in:in,out',
             'date' => 'required|date|date_format:Y-m-d',

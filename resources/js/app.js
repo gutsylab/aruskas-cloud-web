@@ -1,4 +1,6 @@
 import './bootstrap';
+<<<<<<< HEAD
+=======
 
 // Import Bootstrap JavaScript
 import 'bootstrap';
@@ -442,3 +444,4 @@ window.sweetAlert = {
         Swal.close();
     }
 };
+>>>>>>> origin/main

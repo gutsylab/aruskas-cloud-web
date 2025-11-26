@@ -57,6 +57,8 @@ class RegistrationController extends ApiController
         return null;
     }
 
+<<<<<<< HEAD
+=======
     /**
      * Handle tenant registration via API.
      *
@@ -103,6 +105,7 @@ class RegistrationController extends ApiController
      *   "message": "Failed to create tenant: Error details"
      * }
      */
+>>>>>>> origin/main
     public function register(TenantRegistrationRequest $request)
     {
         DB::beginTransaction();
@@ -118,7 +121,11 @@ class RegistrationController extends ApiController
             if (!$plan) {
                 return response()->json([
                     'success' => false,
+<<<<<<< HEAD
+                    'message' => 'Paket berlangganan gratis tidak ditemukan. Silakan hubungi tim support kami.'
+=======
                     'message' => 'Default subscription plan not found. Please contact support.'
+>>>>>>> origin/main
                 ], 500);
             }
 
@@ -172,7 +179,11 @@ class RegistrationController extends ApiController
 
             return response()->json([
                 'success' => true,
+<<<<<<< HEAD
+                'message' => 'Akun telah terdaftar dengan sukses. Akun Anda sedang disiapkan. Silakan periksa email Anda untuk memverifikasi akun.',
+=======
                 'message' => 'Tenant registered successfully. Your account is being set up. Please check your email to verify your account.',
+>>>>>>> origin/main
                 'data' => [
                     'merchant' => [
                         'id' => $merchant->id,
@@ -190,7 +201,11 @@ class RegistrationController extends ApiController
                     'tenant_url' => url("/{$tenantId}"),
                     'admin_email' => $request->admin_email,
                     'setup_status' => 'processing',
+<<<<<<< HEAD
+                    'note' => 'Akun Anda sedang disiapkan. Silakan periksa email Anda untuk memverifikasi akun.'
+=======
                     'note' => 'Your tenant database is being configured. You can try logging in after a few moments.'
+>>>>>>> origin/main
                 ]
             ], 201);
         } catch (\Exception $e) {
@@ -198,11 +213,17 @@ class RegistrationController extends ApiController
 
             return response()->json([
                 'success' => false,
+<<<<<<< HEAD
+                'message' => 'Gagal membuat tenant: ' . $e->getMessage()
+=======
                 'message' => 'Failed to create tenant: ' . $e->getMessage()
+>>>>>>> origin/main
             ], 500);
         }
     }
 
+<<<<<<< HEAD
+=======
     /**
      * Get available subscription plans.
      *
@@ -224,6 +245,7 @@ class RegistrationController extends ApiController
      *   }
      * }
      */
+>>>>>>> origin/main
     public function getPlans()
     {
         $plans = SubscriptionPlan::where('status', true)

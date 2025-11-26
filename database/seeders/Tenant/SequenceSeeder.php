@@ -5,6 +5,10 @@ namespace Database\Seeders\Tenant;
 use App\Models\Tenant\Sequence;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+<<<<<<< HEAD
+use Illuminate\Support\Facades\Log;
+=======
+>>>>>>> origin/main
 
 class SequenceSeeder extends Seeder
 {
@@ -14,6 +18,10 @@ class SequenceSeeder extends Seeder
     public function run(): void
     {
         // Seed data for tenant database
+<<<<<<< HEAD
+
+=======
+>>>>>>> origin/main
         Sequence::firstOrCreate(
             ['code' => 'cash_flow_in'],
             [

@@ -11,6 +11,39 @@ return new class extends Migration
      */
     public function up(): void
     {
+<<<<<<< HEAD
+        // First create the roles table since users reference it
+        Schema::create('roles', function (Blueprint $table) {
+            $table->id();
+            $table->string('name')->unique();
+            $table->string('description')->nullable();
+            $table->timestamps();
+        });
+
+        // Then create permissions table
+        Schema::create('permissions', function (Blueprint $table) {
+            $table->id();
+            $table->string('name')->unique();
+            $table->string('label');
+
+            $table->string('module');
+            $table->string('module_label');
+
+            $table->string('group');
+            $table->string('group_label');
+
+            $table->string('sub_group');
+            $table->string('sub_group_label')->nullable();
+
+            $table->string('application')->nullable();
+            $table->string('application_label')->nullable();
+
+            $table->string('description')->nullable();
+            $table->timestamps();
+        });
+
+=======
+>>>>>>> origin/main
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
@@ -21,6 +54,21 @@ return new class extends Migration
             $table->timestamps();
         });
 
+<<<<<<< HEAD
+        Schema::create('role_user', function (Blueprint $table) {
+            $table->foreignId('role_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->primary(['role_id', 'user_id']);
+        });
+
+        Schema::create('permission_role', function (Blueprint $table) {
+            $table->foreignId('permission_id')->constrained()->onDelete('cascade');
+            $table->foreignId('role_id')->constrained()->onDelete('cascade');
+            $table->primary(['permission_id', 'role_id']);
+        });
+
+=======
+>>>>>>> origin/main
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
             $table->string('token');
@@ -54,9 +102,25 @@ return new class extends Migration
      */
     public function down(): void
     {
+<<<<<<< HEAD
+        Schema::disableForeignKeyConstraints();
+
+=======
+>>>>>>> origin/main
         Schema::dropIfExists('users');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
         Schema::dropIfExists('personal_access_tokens');
+<<<<<<< HEAD
+
+        // custom tables
+        Schema::dropIfExists('role_user');
+        Schema::dropIfExists('permission_role');
+        Schema::dropIfExists('permissions');
+        Schema::dropIfExists('roles');
+
+        Schema::enableForeignKeyConstraints();
+=======
+>>>>>>> origin/main
     }
 };
